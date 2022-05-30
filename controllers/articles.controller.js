@@ -82,11 +82,11 @@ updateArticle = (req, res) => {
                 res.status(404).send({ error: 'Article not found' });
                 return;
             }
-            for (const prop in req.body) {
+            for (const prop in req.body.article) {
                 if (prop === 'title') {
-                    article.slug = req.body[prop];
+                    article.slug = req.body.article[prop];
                 }
-                article[prop] = req.body[prop];
+                article[prop] = req.body.article[prop];
             }
             article.updatedAt = new Date();
             article.save((err, article) => {
@@ -94,7 +94,7 @@ updateArticle = (req, res) => {
                     res.status(500).send({ error: err });
                     return;
                 }
-                res.status(200).send(article);
+                res.status(200).send({article});
             });
         });
     });
