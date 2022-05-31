@@ -14,7 +14,7 @@ signUp = (req, res) => {
             return;
         }
         user.bio = '';
-        user.image = '';
+        user.image = 'https://st3.depositphotos.com/2229436/13671/v/600/depositphotos_136717406-stock-illustration-flat-user-icon-member-sign.jpg';
         user.favorites = [];
         user.following = [];
         user.save(err => {
@@ -101,14 +101,16 @@ getLoggedInUser = (req, res) => {
                 res.status(404).send({ error: 'User not found' });
                 return;
             }
-            res.status(200).send({user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                bio: user.bio,
-                image: user.image,
-                token: token,
-            }});
+            res.status(200).send({
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    bio: user.bio,
+                    image: user.image,
+                    token: token,
+                }
+            });
         });
     });
 
@@ -142,24 +144,25 @@ updateUser = (req, res) => {
                     user['password'] = bcrypt.hashSync(req.body.user.password, 8);
                     continue;
                 }
-                if(prop !== 'password'){
+                if (prop !== 'password') {
                     user[prop] = req.body.user[prop];
                 }
             }
-            console.log(user);
             user.save(err => {
                 if (err) {
                     res.status(500).send({ error: err });
                     return;
                 }
-                res.status(200).send({user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    bio: user.bio,
-                    image: user.image,
-                    token: token,
-                }});
+                res.status(200).send({
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        email: user.email,
+                        bio: user.bio,
+                        image: user.image,
+                        token: token,
+                    }
+                });
             });
         });
     });

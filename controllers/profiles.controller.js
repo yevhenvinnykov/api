@@ -27,12 +27,12 @@ getProfile = (req, res) => {
                     res.status(404).send({ error: 'User not found' });
                     return;
                 }
-                res.status(200).send({
+                res.status(200).send({profile: {
                     username: user.username,
                     bio: user.bio,
                     image: user.image,
                     following: authUser.following.some(u => u._id.equals(user._id))
-                })
+                }})
             });
         })
     })
@@ -64,18 +64,27 @@ followProfile = (req, res) => {
                     res.status(404).send({ error: 'User not found' });
                     return;
                 }
-                authUser.following.push(user);
+                if(authUser.following.find(u => u.equals(user._id))) {
+                    res.status(200).send({profile: {
+                        username: user.username,
+                        bio: user.bio,
+                        image: user.image,
+                        following: true
+                    }});
+                    return;
+                }
+                authUser.following.push(user._id);
                 authUser.save((err, user) => {
                     if (err) {
                         res.status(500).send({ error: err });
                         return;
                     }
-                    res.status(200).send({
+                    res.status(200).send({profile: {
                         username: user.username,
                         bio: user.bio,
                         image: user.image,
                         following: true
-                    })
+                    }});
                 });
             });
         })
@@ -108,20 +117,19 @@ unfollowProfile = (req, res) => {
                     res.status(404).send({ error: 'User not found' });
                     return;
                 }
-                const index = authUser.following.findIndex(u => u._id.equals(user._id));
-
+                const index = authUser.following.findIndex(id => id.equals(user._id));
                 authUser.following.splice(index, 1);
                 authUser.save((err, user) => {
                     if (err) {
                         res.status(500).send({ error: err });
                         return;
                     }
-                    res.status(200).send({
+                    res.status(200).send({profile: {
                         username: user.username,
                         bio: user.bio,
                         image: user.image,
                         following: false
-                    })
+                    }});
                 });
             });
         })

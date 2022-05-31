@@ -18,30 +18,21 @@ createComment = (req, res) => {
         User.findOne({
             _id: decoded.id
         }, (err, authUser) => {
-            console.log(authUser);
             Article.findOne({
                 slug: req.params['slug'],
             }, (err, article) => {
-               const comment = new Comment({
+                const comment = new Comment({
                     body: req.body.comment.body,
-                    author: {
-                        username: authUser.username,
-                        bio: authUser.bio,
-                        image: authUser.image,
-                        following: false
-                    },
+                    author: authUser._id,
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     article: article
                 });
                 comment.id = comment._id;
                 comment.save((err, comment) => {
-                    console.log('Comment saved');
-                    res.status(200).json({comment});
-                    console.log(comment);
+                    res.status(200).json({ comment });
                 });
             });
-
         })
     });
 };
@@ -49,7 +40,6 @@ createComment = (req, res) => {
 
 
 getComments = (req, res) => {
-    console.log(req.params);
     Article.findOne({
         slug: req.params['slug']
     }, (err, article) => {
@@ -59,12 +49,12 @@ getComments = (req, res) => {
         }
         Comment.find({
             'article': article._id
-        }, (err, comments) => {
+        }).populate('author').exec().then((comments) => {
             if (err) {
                 res.status(500).send(err);
                 return;
             }
-            res.status(200).send({comments});
+            res.status(200).send({ comments });
         })
     });
 };
@@ -95,8 +85,6 @@ deleteComment = (req, res) => {
                         return;
                     }
                     res.status(200).send({});
-                    console.log(comment);
-                    console.log('comment deleted');
                 });
             });
         })

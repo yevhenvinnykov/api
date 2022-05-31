@@ -10,12 +10,7 @@ const articleSchema = mongoose.Schema({
     updatedAt: Date,
     favorited: Boolean,
     favoritesCount: Number,
-    author: {
-        username: String,
-        bio: String,
-        image: String,
-        following: Boolean
-    }
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 const Article = mongoose.model('Article', articleSchema);

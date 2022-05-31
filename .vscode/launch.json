@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "node",
+            "name": "Attach by Process ID",
+            "request": "attach",
+            "processId": "${command:PickProcess}"
+        }
+    ]
+}
