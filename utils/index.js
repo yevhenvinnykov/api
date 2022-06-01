@@ -2,7 +2,7 @@ const addFavoriteInfoToArticles = require('./addFavoriteInfoToArticles');
 const addUserInfoToArticle = require('./addUserInfoToArticle');
 const createArticleHelper = require('./createArticleHelper');
 const createQueryParams = require('./createQueryParams');
-const updateArticle = require('./updateArticle');
+const updateArticleHelper = require('./updateArticleHelper');
 const createToken = require('./createToken');
 const createUser = require('./createUser');
 const updateUserHelper = require('./updateUserHelper');
@@ -14,7 +14,7 @@ module.exports = {
     addUserInfoToArticle,
     createArticleHelper,
     createQueryParams,
-    updateArticle,
+    updateArticleHelper,
     createToken,
     createUser,
     updateUserHelper,

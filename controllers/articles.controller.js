@@ -164,6 +164,7 @@ getArticlesFromFollowedUsers = (req, res) => {
                 .populate('author', 'username bio image following')
                 .skip(req.query['offset'] || 0)
                 .limit(req.query['limit'] || 5)
+                .sort([['updatedAt', 'descending']])
                 .exec()
                 .then(articles => {
                     followedArticles.push(...articles);
@@ -185,6 +186,7 @@ getArticles = async (req, res) => {
     Article.find(queryParams)
         .skip(req.query['offset'] || 0)
         .limit(req.query['limit'] || 5)
+        .sort([['updatedAt', 'descending']])
         .populate('author', 'username bio image following')
         .exec()
         .then(articles => {
@@ -213,7 +215,7 @@ getTags = (req, res) => {
         if(err) res.status(500).send(createError('Something went wrong'));
         const tags = new Set();
         for (const article of articles) {
-            tags.add(...article.tagList);
+           article.tagList.forEach(tag => tags.add(tag));
         }
         res.status(200).send({ tags: [...tags] });
     });
