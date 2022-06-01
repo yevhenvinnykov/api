@@ -8,14 +8,9 @@ getProfile = (req, res) => {
         User.findOne({
             username: req.params['username']
         }, (err, user) => {
-            if (err) {
-                res.status(500).send({ error: err });
-                return;
-            }
-            if (!user) {
-                res.status(404).send({ error: 'User not found' });
-                return;
-            }
+            if (err) return res.status(500).send({ error: err });
+            if (!user) return res.status(404)
+                .send({ error: 'User not found' });
             res.status(200).send({
                 profile: {
                     username: user.username,
@@ -28,7 +23,6 @@ getProfile = (req, res) => {
     });
 };
 
-
 followProfile = (req, res) => {
     User.findOne({
         _id: req.userId
@@ -36,14 +30,8 @@ followProfile = (req, res) => {
         User.findOne({
             username: req.params['username']
         }, (err, user) => {
-            if (err) {
-                res.status(500).send({ error: err });
-                return;
-            }
-            if (!user) {
-                res.status(404).send({ error: 'User not found' });
-                return;
-            }
+            if (err) return res.status(500).send({ error: err });
+            if (!user) return res.status(404).send({ error: 'User not found' });
             const response = {
                 profile: {
                     username: user.username,
@@ -53,22 +41,16 @@ followProfile = (req, res) => {
                 }
             };
             if (authUser.following.find(u => u.equals(user._id))) {
-                res.status(200).send(response);
-                return;
+                return res.status(200).send(response);
             }
             authUser.following.push(user._id);
             authUser.save((err, user) => {
-                if (err) {
-                    res.status(500).send({ error: err });
-                    return;
-                }
+                if (err) return res.status(500).send({ error: err });
                 res.status(200).send(response);
             });
         });
     });
 };
-
-
 
 unfollowProfile = (req, res) => {
     User.findOne({
@@ -77,14 +59,9 @@ unfollowProfile = (req, res) => {
         User.findOne({
             username: req.params['username']
         }, (err, user) => {
-            if (err) {
-                res.status(500).send({ error: err });
-                return;
-            }
-            if (!user) {
-                res.status(404).send({ error: 'User not found' });
-                return;
-            }
+            if (err) return res.status(500).send({ error: err });
+            if (!user) return res.status(404)
+                .send({ error: 'User not found' });
             const response = {
                 profile: {
                     username: user.username,
@@ -94,16 +71,10 @@ unfollowProfile = (req, res) => {
                 }
             };
             const index = authUser.following.findIndex(id => id.equals(user._id));
-            if(index === -1){
-                res.status(200).send(response);
-                return;
-            }
+            if (index === -1) return res.status(200).send(response);
             authUser.following.splice(index, 1);
             authUser.save((err, user) => {
-                if (err) {
-                    res.status(500).send({ error: err });
-                    return;
-                }
+                if (err) return res.status(500).send({ error: err });
                 res.status(200).send(response);
             });
         });
