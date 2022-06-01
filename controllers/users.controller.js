@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const db = require('../models');
 const User = db.user;
-const createToken  = require('../utils/createToken');
+const { createToken } = require('../utils/index');
 
 signUp = (req, res) => {
     new User({
