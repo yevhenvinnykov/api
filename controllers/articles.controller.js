@@ -162,8 +162,6 @@ getArticlesFromFollowedUsers = (req, res) => {
                 'author': userId
             })
                 .populate('author', 'username bio image following')
-                .skip(req.query['offset'] || 0)
-                .limit(req.query['limit'] || 5)
                 .sort([['updatedAt', 'descending']])
                 .exec()
                 .then(articles => {
@@ -175,7 +173,9 @@ getArticlesFromFollowedUsers = (req, res) => {
                     articlesCount += count;
                 });
         }
-        const articlesWithFavoriteInfo = addFavoriteInfoToArticles(followedArticles, authUser);
+        const start = +req.query.offset || 0;
+        const end = +req.query.limit + start || 5;
+        const articlesWithFavoriteInfo = addFavoriteInfoToArticles(followedArticles.slice(start, end), authUser);
         res.status(200)
             .send({ articles: articlesWithFavoriteInfo, articlesCount });
     });
