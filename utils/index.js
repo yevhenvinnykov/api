@@ -6,6 +6,7 @@ const updateArticle = require('./updateArticle');
 const createToken = require('./createToken');
 const createUser = require('./createUser');
 const updateUserHelper = require('./updateUserHelper');
+const createCommentHelper = require('./createCommentHelper');
 
 module.exports = {
     addFavoriteInfoToArticles,
@@ -15,5 +16,6 @@ module.exports = {
     updateArticle,
     createToken,
     createUser,
-    updateUserHelper
+    updateUserHelper,
+    createCommentHelper
 };
