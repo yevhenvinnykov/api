@@ -3,30 +3,17 @@ const User = db.user;
 
 checkIfUserExists = (req, res, next) => {
     User.findOne({
-        email: req.body.email
+        email: req.body.user.email
     }).exec((err, user) => {
-        if (err) {
-            res.status(500).send({ error: err });
-            return;
-        }
-        if (user) {
-            res.status(400).send({ error: 'User already exists' });
-            return;
-        }
+        if (err) return res.status(500).send({ error: err });
+        if (user) return res.status(400).send({ error: 'User already exists' });
         User.findOne({
-            username: req.body.username
+            username: req.body.user.username
         }).exec((err, user) => {
-            if (err) {
-                res.status(500).send({ error: err });
-                return;
-            }
-            if (user) {
-                res.status(400).send({ error: 'User already exists' });
-                return;
-            }
+            if (err) res.status(500).send({ error: err });
+            if (user) return res.status(400).send({ error: 'User already exists' });
             next();
         });
-
     });
 };
 

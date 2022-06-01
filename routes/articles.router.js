@@ -11,13 +11,14 @@ const {
 
 const { verifyToken } = require('../middleware/token.middleware');
 const { verifyOptionalToken } = require('../middleware/optionalToken.middleware');
+const { checkIfArticleTitleIsUnique } = require('../middleware/article.middleware');
 
 
 module.exports = (app) => {
-    app.post('/api/articles', [verifyToken], createArticle);
+    app.post('/api/articles', [verifyToken, checkIfArticleTitleIsUnique], createArticle);
     app.get('/api/articles/feed', [verifyToken], getArticlesFromFollowedUsers);
     app.post('/api/articles/:slug/favorite', [verifyToken], likeArticle);
-    app.put('/api/articles/:slug', [verifyToken], updateArticle);
+    app.put('/api/articles/:slug', [verifyToken, checkIfArticleTitleIsUnique], updateArticle);
     app.get('/api/articles/:slug', [verifyOptionalToken], getArticle);
     app.delete('/api/articles/:slug', [verifyToken], deleteArticle);
     app.delete('/api/articles/:slug/favorite', [verifyToken], dislikeArticle);

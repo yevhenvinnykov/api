@@ -7,5 +7,5 @@ module.exports = (app) => {
     app.post('/api/users/signup', [checkIfUserExists], signUp);
     app.post('/api/users/login', logIn);
     app.get('/api/users', [verifyToken], getLoggedInUser);
-    app.put('/api/users', [verifyToken], updateUser);
+    app.put('/api/users', [verifyToken, checkIfUserExists], updateUser);
 };
