@@ -1,7 +1,17 @@
-const { checkIfUserExists, validateEmail, validatePassword } = require('../middleware/signup.middleware');
+const {
+    checkIfUserExists,
+    validateEmail,
+    validatePassword
+} = require('../middleware/signup.middleware');
+
 const { verifyToken } = require('../middleware/token.middleware');
 
-const { logIn, signUp, getLoggedInUser, updateUser } = require('../controllers/users.controller');
+const {
+    logIn,
+    signUp,
+    getLoggedInUser,
+    updateUser
+} = require('../controllers/users.controller');
 
 module.exports = (app) => {
     app.post('/api/users/signup', [checkIfUserExists, validateEmail, validatePassword], signUp);

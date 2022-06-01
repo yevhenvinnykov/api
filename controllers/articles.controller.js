@@ -6,7 +6,8 @@ const {
     updateArticleHelper,
     addUserInfoToArticle,
     addFavoriteInfoToArticles,
-    createQueryParams
+    createQueryParams,
+    createError
 } = require('../utils/index');
 
 createArticle = (req, res) => {
@@ -14,16 +15,14 @@ createArticle = (req, res) => {
         _id: req.userId
     }, (err, user) => {
         if (err) {
-            return res.status(500).send({ error: err });
+            return res.status(500).send(createError('Something went wrong'));
         }
         if (!user) {
-            return res.status(404).send({ error: 'User not found' });
+            return res.status(404).send(createError('User not found'));
         }
         createArticleHelper(req.body.article, user._id)
             .save((err, article) => {
-                if (err) {
-                    return res.status(500).send({ error: err });
-                }
+                if (err) return res.status(500).send(createError('Something went wrong'));
                 res.status(200).send({ article });
             });
     });
@@ -33,14 +32,10 @@ updateArticle = (req, res) => {
     Article.findOne({
         slug: req.params['slug']
     }, (err, article) => {
-        if (err) {
-            return res.status(500).send({ error: err });
-        }
-        if (!article) {
-            return res.status(404).send({ error: 'Article not found' });
-        }
+        if (err) return res.status(500).send(createError('Something went wrong'));
+        if (!article) return res.status(404).send(createError('Article not found'));
         if (!article.author.equals(req.userId)) {
-            return res.status(401).send({ error: 'Unauthorized' });
+            return res.status(401).send(createError('You are not authorized'));
         }
         updateArticleHelper(article, req.body.article)
             .save((err, article) => {
@@ -60,7 +55,7 @@ getArticle = (req, res) => {
         .exec()
         .then((article) => {
             if (!article) {
-                return res.status(404).send({ error: 'Article not found' });
+                return res.status(404).send(createError('Article not found'));
             }
             if (!req.userId) {
                 const responseArticle = {
@@ -74,9 +69,7 @@ getArticle = (req, res) => {
             User.findOne({
                 _id: req.userId
             }, (err, authUser) => {
-                if (err) {
-                    return res.status(500).send({ error: err });
-                }
+                if (err) return res.status(500).send(createError('Something went wrong'));
                 if (authUser) {
                     const resultArticle = addUserInfoToArticle(authUser, article);
                     res.status(200).send({ article: resultArticle });
@@ -90,18 +83,14 @@ deleteArticle = (req, res) => {
     User.findOne({
         _id: req.userId
     }, async (err, authUser) => {
-        if (err) {
-            return res.status(500).send({ error: err });
-        }
-        if (!authUser) {
-            return res.status(404).send({ error: 'User not found' });
-        }
+        if (err) return res.status(500).send(createError('Something went wrong'));
+        if (!authUser) return res.status(404).send(createError('User not found'));
         const result = await Article.deleteOne({
             slug: req.params.slug,
             author: authUser._id
         });
         if (!result.deletedCount) {
-            return res.status(404).send({ error: 'Article not found' });
+            return res.status(404).send(createError('Article not found'));
         }
         res.status(200).send({});
     });
@@ -111,19 +100,12 @@ likeArticle = (req, res) => {
     User.findOne({
         _id: req.userId
     }, (err, user) => {
-        if (err) {
-            return res.status(500).send({ error: err });
-        }
-        if (!user) {
-            return res.status(404).send({ error: 'User not found' });
-        }
+        if (err) return res.status(500).send(createError('Something went wrong'));
+        if (!user) return res.status(404).send(createError('User not found'));
         Article.findOne({
             slug: req.params.slug
         }, (err, article) => {
-            if (err) {
-                return res.status(500)
-                    .send({ error: err });
-            }
+            if (err) return res.status(500).send(createError('Something went wrong'));
             if (user.favorites.find(id => id.equals(article._id))) {
                 return res.status(200)
                     .send({ article: { ...article._doc, favorited: true } });
@@ -142,19 +124,14 @@ dislikeArticle = (req, res) => {
     User.findOne({
         _id: req.userId
     }, (err, user) => {
-        if (err) {
-            return res.status(500).send({ error: err });
-        }
+        if (err) return res.status(500).send(createError('Something went wrong'));
         if (!user) {
-            return res.status(404).send({ error: 'User not found' });
+            return res.status(404).send(createError('User not found'));
         }
         Article.findOne({
             slug: req.params.slug
         }, (err, article) => {
-            if (err) {
-                return res.status(500)
-                    .send({ error: err });
-            }
+            if (err) return res.status(500).send(createError('Something went wrong'));
             const index = user.favorites.indexOf(article._id);
             if (index === -1) {
                 return res.status(200)
@@ -174,11 +151,9 @@ getArticlesFromFollowedUsers = (req, res) => {
     User.findOne({
         _id: req.userId
     }, async (err, authUser) => {
-        if (err) {
-            return res.status(500).send({ error: err });
-        }
+        if (err)  return res.status(500).send(createError('Something went wrong'));
         if (!authUser) {
-            return res.status(404).send({ error: 'User not found' });
+            return res.status(404).send(createError('User not found'));
         }
         const followedArticles = [];
         let articlesCount = 0;
@@ -218,10 +193,10 @@ getArticles = async (req, res) => {
                     _id: req.userId
                 }, (err, authUser) => {
                     if (err) {
-                        return res.status(500).send({ error: err });
+                        return res.status(500).send(createError('Something went wrong'));
                     }
                     if (!authUser) {
-                        return res.status(404).send({ error: 'User not found' });
+                        return res.status(404).send(createError('User not found'));
                     }
                     articles = addFavoriteInfoToArticles(articles, authUser);
                 });
@@ -235,6 +210,7 @@ getArticles = async (req, res) => {
 
 getTags = (req, res) => {
     Article.find({}, (err, articles) => {
+        if(err) res.status(500).send(createError('Something went wrong'));
         const tags = new Set();
         for (const article of articles) {
             tags.add(...article.tagList);

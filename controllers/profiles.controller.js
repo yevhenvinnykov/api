@@ -1,5 +1,6 @@
 const db = require('../models');
 const User = db.user;
+const { createError } = require('../utils/index');
 
 getProfile = (req, res) => {
     User.findOne({
@@ -8,9 +9,9 @@ getProfile = (req, res) => {
         User.findOne({
             username: req.params['username']
         }, (err, user) => {
-            if (err) return res.status(500).send({ error: err });
+            if (err) return res.status(500).send(createError('Something went wrong'));
             if (!user) return res.status(404)
-                .send({ error: 'User not found' });
+                .send(createError('User not found'));
             res.status(200).send({
                 profile: {
                     username: user.username,
@@ -30,8 +31,8 @@ followProfile = (req, res) => {
         User.findOne({
             username: req.params['username']
         }, (err, user) => {
-            if (err) return res.status(500).send({ error: err });
-            if (!user) return res.status(404).send({ error: 'User not found' });
+            if (err) return res.status(500).send(createError('Something went wrong'));
+            if (!user) return res.status(404).send(createError('User not found'));
             const response = {
                 profile: {
                     username: user.username,
@@ -45,7 +46,7 @@ followProfile = (req, res) => {
             }
             authUser.following.push(user._id);
             authUser.save((err, user) => {
-                if (err) return res.status(500).send({ error: err });
+                if (err) return res.status(500).send(createError('Something went wrong'));
                 res.status(200).send(response);
             });
         });
@@ -59,9 +60,9 @@ unfollowProfile = (req, res) => {
         User.findOne({
             username: req.params['username']
         }, (err, user) => {
-            if (err) return res.status(500).send({ error: err });
+            if (err) return res.status(500).send(createError('Something went wrong'));
             if (!user) return res.status(404)
-                .send({ error: 'User not found' });
+                .send(createError('User not found'));
             const response = {
                 profile: {
                     username: user.username,
@@ -74,7 +75,7 @@ unfollowProfile = (req, res) => {
             if (index === -1) return res.status(200).send(response);
             authUser.following.splice(index, 1);
             authUser.save((err, user) => {
-                if (err) return res.status(500).send({ error: err });
+                if (err) return res.status(500).send(createError('Something went wrong'));
                 res.status(200).send(response);
             });
         });

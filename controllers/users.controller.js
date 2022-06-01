@@ -4,13 +4,14 @@ const User = db.user;
 const {
     createToken,
     createUser,
-    updateUserHelper
+    updateUserHelper,
+    createError
 } = require('../utils/index');
 
 signUp = (req, res) => {
     createUser(req.body.user)
         .save((err, user) => {
-            if (err) return res.status(500).send({ error: err });
+            if (err) return res.status(500).send(createError('Something went wrong'));
             res.status(200).send({
                 user: {
                     id: user.id,
@@ -28,17 +29,14 @@ logIn = (req, res) => {
     User.findOne({
         email: req.body.user.email
     }, (err, user) => {
-        if (err) return res.status(500).send({ error: err });
-        if (!user) return res.status(404).send({ error: 'User not found' });
+        if (err) return res.status(500).send(createError('Something went wrong'));
+        if (!user) return res.status(404).send(createError('User not found'));
         const passwordIsValid = bcrypt.compareSync(
             req.body.user.password,
             user.password
         );
         if (!passwordIsValid) {
-            return res.status(401).send({
-                token: null,
-                message: 'Email or password is invalid'
-            });
+            return res.status(401).send(createError('Email or password is not valid'));
         }
         res.status(200).send({
             user: {
@@ -57,8 +55,8 @@ getLoggedInUser = (req, res) => {
     User.findOne({
         _id: req.userId
     }, (err, user) => {
-        if (err) return res.status(500).send({ error: err });
-        if (!user) return res.status(404).send({ error: 'User not found' });
+        if (err) return res.status(500).send(createError('Something went wrong'));
+        if (!user) return res.status(404).send(createError('User not found'));
         res.status(200).send({
             user: {
                 id: user.id,
@@ -76,11 +74,11 @@ updateUser = (req, res) => {
     User.findOne({
         _id: req.userId
     }, (err, user) => {
-        if (err) return res.status(500).send({ error: err });
-        if (!user) return res.status(404).send({ error: 'User not found' });
+        if (err) return res.status(500).send(createError('Something went wrong'));
+        if (!user) return res.status(404).send(createError('User not found'));
         updateUserHelper(user, req.body.user)
             .save(err => {
-                if (err) return res.status(500).send({ error: err });
+                if (err) return res.status(500).send(createError('Something went wrong'));
                 res.status(200).send({
                     user: {
                         id: user.id,
