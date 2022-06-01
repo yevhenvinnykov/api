@@ -96,12 +96,16 @@ getArticle = (req, res) => {
     if (!token) {
         Article.findOne({
             slug: req.params['slug']
-        }).populate('author').exec().then((article) => {
+        })
+        .populate('author')
+        .exec()
+        .then((article) => {
             if (!article) {
                 res.status(404).send({ error: 'Article not found' });
                 return;
             }
-            res.status(200).send({ article: { ...article._doc, author: { ...article.author._doc, following: false } } });
+            res.status(200)
+            .send({ article: { ...article._doc, author: { ...article.author._doc, following: false } } });
         });
         return;
     }
@@ -114,7 +118,10 @@ getArticle = (req, res) => {
         }, (err, authUser) => {
             Article.findOne({
                 slug: req.params['slug']
-            }).populate('author').exec().then((article) => {
+            })
+            .populate('author')
+            .exec()
+            .then((article) => {
                 if (!article) {
                     res.status(404).send({ error: 'Article not found' });
                     return;
@@ -139,7 +146,8 @@ getArticle = (req, res) => {
                     });
                     return;
                 }
-                res.status(200).send({ article: { ...article._doc, author: { ...article.author, following: false } } });
+                res.status(200)
+                .send({ article: { ...article._doc, author: { ...article.author, following: false } } });
             });
         });
 
@@ -220,7 +228,8 @@ likeArticle = (req, res) => {
                 article.save();
                 user.favorites.push(article._id);
                 user.save();
-                res.status(200).send({ article: { ...article._doc, favorited: true } });
+                res.status(200)
+                .send({ article: { ...article._doc, favorited: true } });
             });
         });
     });

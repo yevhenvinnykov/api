@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const db = require('../models');
 const User = db.user;
 const jwt = require('jsonwebtoken');
+const createToken  = require('../utils/createToken');
 
 signUp = (req, res) => {
     new User({
@@ -22,9 +23,6 @@ signUp = (req, res) => {
                 res.status(500).send({ error: err });
                 return;
             }
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-                expiresIn: 3600
-            });
             res.status(200).send({
                 user: {
                     id: user.id,
@@ -32,7 +30,7 @@ signUp = (req, res) => {
                     email: user.email,
                     bio: user.bio,
                     image: user.image,
-                    token: token,
+                    token: createToken(user.id),
                 }
             });
 
@@ -63,9 +61,6 @@ logIn = (req, res) => {
             });
             return;
         }
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-            expiresIn: 3600
-        });
         res.status(200).send({
             user: {
                 id: user.id,
@@ -73,32 +68,62 @@ logIn = (req, res) => {
                 email: user.email,
                 bio: user.bio,
                 image: user.image,
-                token: token,
+                token: createToken(user.id),
             }
         });
     });
 };
 
 getLoggedInUser = (req, res) => {
-    let token = req.headers['x-access-token'];
-    if (!token) {
-        return res.status(403).send({ error: 'No token provided' });
-    }
-    jwt.verify(token, process.env.JWT_SECRET, {
-        expiresIn: 3600
-    }, (err, decoded) => {
+    User.findOne({
+        _id: req.userId
+    }, (err, user) => {
         if (err) {
-            return res.status(401).send({ error: 'Unauthorized' });
+            res.status(500).send({ error: err });
+            return;
         }
-        User.findOne({
-            _id: decoded.id
-        }, (err, user) => {
+        if (!user) {
+            res.status(404).send({ error: 'User not found' });
+            return;
+        }
+        res.status(200).send({
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                bio: user.bio,
+                image: user.image,
+                token: createToken(user.id),
+            }
+        });
+    });
+};
+
+
+updateUser = (req, res) => {
+    User.findOne({
+        _id: req.userId
+    }, (err, user) => {
+        if (err) {
+            res.status(500).send({ error: err });
+            return;
+        }
+        if (!user) {
+            res.status(404).send({ error: 'User not found' });
+            return;
+        }
+        for (prop in req.body.user) {
+            if (prop === 'password' && req.body.user.password.length) {
+                user['password'] = bcrypt.hashSync(req.body.user.password, 8);
+                continue;
+            }
+            if (prop !== 'password') {
+                user[prop] = req.body.user[prop];
+            }
+        }
+        user.save(err => {
             if (err) {
                 res.status(500).send({ error: err });
-                return;
-            }
-            if (!user) {
-                res.status(404).send({ error: 'User not found' });
                 return;
             }
             res.status(200).send({
@@ -108,65 +133,13 @@ getLoggedInUser = (req, res) => {
                     email: user.email,
                     bio: user.bio,
                     image: user.image,
-                    token: token,
+                    token: createToken(user.id),
                 }
             });
         });
     });
-
 };
 
-
-updateUser = (req, res) => {
-    let token = req.headers['x-access-token'];
-    if (!token) {
-        return res.status(403).send({ error: 'No token provided' });
-    }
-    jwt.verify(token, process.env.JWT_SECRET, {
-        expiresIn: 3600
-    }, (err, decoded) => {
-        if (err) {
-            return res.status(401).send({ error: 'Unauthorized' });
-        }
-        User.findOne({
-            _id: decoded.id
-        }, (err, user) => {
-            if (err) {
-                res.status(500).send({ error: err });
-                return;
-            }
-            if (!user) {
-                res.status(404).send({ error: 'User not found' });
-                return;
-            }
-            for (prop in req.body.user) {
-                if (prop === 'password' && req.body.user.password.length) {
-                    user['password'] = bcrypt.hashSync(req.body.user.password, 8);
-                    continue;
-                }
-                if (prop !== 'password') {
-                    user[prop] = req.body.user[prop];
-                }
-            }
-            user.save(err => {
-                if (err) {
-                    res.status(500).send({ error: err });
-                    return;
-                }
-                res.status(200).send({
-                    user: {
-                        id: user.id,
-                        username: user.username,
-                        email: user.email,
-                        bio: user.bio,
-                        image: user.image,
-                        token: token,
-                    }
-                });
-            });
-        });
-    });
-};
 
 module.exports = {
     signUp,

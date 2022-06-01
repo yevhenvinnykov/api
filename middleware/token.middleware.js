@@ -1,5 +1,3 @@
-const db = require('../models');
-const User = db.user;
 const jwt = require('jsonwebtoken');
 
 verifyToken = (req, res, next) => {
@@ -10,10 +8,14 @@ verifyToken = (req, res, next) => {
     jwt.verify(token, process.env.JWT_SECRET, {
         expiresIn: 3600
     }, (err, decoded) => {
-        if(err) {
-            return res.status(401).send({ error: 'Unauthorized'});
+        if (err) {
+            return res.status(401).send({ error: 'Unauthorized' });
         }
         req.userId = decoded.id;
         next();
     });
+};
+
+module.exports = {
+    verifyToken
 };

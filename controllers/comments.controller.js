@@ -49,7 +49,10 @@ getComments = (req, res) => {
         }
         Comment.find({
             'article': article._id
-        }).populate('author').exec().then((comments) => {
+        })
+        .populate('author')
+        .exec()
+        .then((comments) => {
             if (err) {
                 res.status(500).send(err);
                 return;
