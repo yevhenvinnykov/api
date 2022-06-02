@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 
 module.exports = (user, userData) => {
     for (prop in userData) {
-        if (prop === 'password' && userData.password.length) {
+        if (prop === 'password') {
             user['password'] = bcrypt.hashSync(userData.password, 8);
             continue;
         }
