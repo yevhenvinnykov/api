@@ -6,9 +6,7 @@ module.exports = (user, userData) => {
             user['password'] = bcrypt.hashSync(userData.password, 8);
             continue;
         }
-        if (prop !== 'password') {
-            user[prop] = userData[prop];
-        }
+        user[prop] = userData[prop];
     }
     return user;
 };
