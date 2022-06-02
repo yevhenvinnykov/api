@@ -29,6 +29,7 @@ getComments = (req, res) => {
         Comment.find({
             'article': article._id
         }).populate('author', 'image username bio following')
+            .sort([['updatedAt', 'descending']])
             .exec()
             .then((comments) => {
                 if (err) return res.status(500).send(createError('Something went wrong'));
