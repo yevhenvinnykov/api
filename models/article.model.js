@@ -6,10 +6,10 @@ const articleSchema = mongoose.Schema({
     description: String,
     body: String,
     tagList: [String],
-    createdAt: Date,
-    updatedAt: Date,
-    favorited: Boolean,
-    favoritesCount: Number,
+    createdAt: { type: Date, default: new Date() },
+    updatedAt: { type: Date, default: new Date() },
+    favorited: { type: Boolean, default: false },
+    favoritesCount: { type: Number, default: 0 },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 

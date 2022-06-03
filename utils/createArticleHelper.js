@@ -8,10 +8,6 @@ module.exports = (articleData, userId) => {
         body: articleData.body,
         tagList: articleData.tagList,
         slug: articleData.title,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        favorited: false,
-        favoritesCount: 0,
         author: userId
     });
 };
