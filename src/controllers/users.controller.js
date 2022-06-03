@@ -8,21 +8,13 @@ const {
     createError
 } = require('../utils/index');
 
-signUp = (req, res) => {
-    createUser(req.body.user)
-        .save((err, user) => {
-            if (err) return res.status(500).send(createError('Something went wrong'));
-            res.status(200).send({
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    bio: user.bio,
-                    image: user.image,
-                    token: createToken(user.id),
-                }
-            });
-        });
+signUp = async (req, res) => {
+    try {
+        const user = await createUser(req.body.user);
+        res.status(200).send(user);
+    } catch (error) {
+        handleError(error, res);
+    }
 };
 
 logIn = (req, res) => {
@@ -93,6 +85,9 @@ updateUser = (req, res) => {
     });
 };
 
+handleError = (error, res) => {
+    res.status(500).send(createError('Something went wrong'));
+};
 
 module.exports = {
     signUp,
