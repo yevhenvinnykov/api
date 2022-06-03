@@ -5,8 +5,6 @@ module.exports = (commentData, authorId, articleId) => {
     const comment = new Comment({
         body: commentData,
         author: authorId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
         article: articleId
     });
     comment.id = comment._id;
