@@ -2,86 +2,75 @@ const db = require('../models');
 const User = db.user;
 const { createError } = require('../utils/index');
 
-getProfile = (req, res) => {
-    User.findOne({
-        _id: req.userId
-    }, (err, authUser) => {
-        User.findOne({
-            username: req.params['username']
-        }, (err, user) => {
-            if (err) return res.status(500).send(createError('Something went wrong'));
-            if (!user) return res.status(404)
-                .send(createError('User not found'));
-            res.status(200).send({
-                profile: {
-                    username: user.username,
-                    bio: user.bio,
-                    image: user.image,
-                    following: authUser.following.some(u => u._id.equals(user._id))
-                }
-            });
-        });
-    });
-};
-
-followProfile = (req, res) => {
-    User.findOne({
-        _id: req.userId
-    }, (err, authUser) => {
-        User.findOne({
-            username: req.params['username']
-        }, (err, user) => {
-            if (err) return res.status(500).send(createError('Something went wrong'));
-            if (!user) return res.status(404).send(createError('User not found'));
-            const response = {
-                profile: {
-                    username: user.username,
-                    bio: user.bio,
-                    image: user.image,
-                    following: true
-                }
-            };
-            if (authUser.following.find(u => u.equals(user._id))) {
-                return res.status(200).send(response);
+getProfile = async (req, res) => {
+    try {
+        const authUser = await User.findOne({ _id: req.userId }).exec();
+        const profile = await User.findOne({ username: req.params['username'] }).exec();
+        if (!profile) return res.status(404)
+            .send(createError('User not found'));
+        res.status(200).send({
+            profile: {
+                username: profile.username,
+                bio: profile.bio,
+                image: profile.image,
+                following: authUser.following.some(u => u._id.equals(profile._id))
             }
-            authUser.following.push(user._id);
-            authUser.save((err, user) => {
-                if (err) return res.status(500).send(createError('Something went wrong'));
-                res.status(200).send(response);
-            });
         });
-    });
+    } catch (error) {
+        handleError(error, res);
+    }
 };
 
-unfollowProfile = (req, res) => {
-    User.findOne({
-        _id: req.userId
-    }, (err, authUser) => {
-        User.findOne({
-            username: req.params['username']
-        }, (err, user) => {
-            if (err) return res.status(500).send(createError('Something went wrong'));
-            if (!user) return res.status(404)
-                .send(createError('User not found'));
-            const response = {
-                profile: {
-                    username: user.username,
-                    bio: user.bio,
-                    image: user.image,
-                    following: false
-                }
-            };
-            const index = authUser.following.findIndex(id => id.equals(user._id));
-            if (index === -1) return res.status(200).send(response);
-            authUser.following.splice(index, 1);
-            authUser.save((err, user) => {
-                if (err) return res.status(500).send(createError('Something went wrong'));
-                res.status(200).send(response);
-            });
-        });
-    });
+followProfile = async (req, res) => {
+    try {
+        const authUser = await User.findOne({ _id: req.userId }).exec();
+        const profile = await User.findOne({ username: req.params['username'] }).exec();
+        if (!profile) return res.status(404).send(createError('User not found'));
+        const response = {
+            profile: {
+                username: profile.username,
+                bio: profile.bio,
+                image: profile.image,
+                following: true
+            }
+        };
+        if (authUser.following.find(u => u.equals(profile._id))) {
+            return res.status(200).send(response);
+        }
+        authUser.following.push(profile._id);
+        await authUser.save();
+        res.status(200).send(response);
+    } catch (error) {
+        handleError(error, res);
+    }
 };
 
+unfollowProfile = async (req, res) => {
+    try {
+        const authUser = await User.findOne({ _id: req.userId }).exec();
+        const profile = await User.findOne({ username: req.params['username'] }).exec();
+        if (!profile) return res.status(404).send(createError('User not found'));
+        const response = {
+            profile: {
+                username: profile.username,
+                bio: profile.bio,
+                image: profile.image,
+                following: false
+            }
+        };
+        const index = authUser.following.findIndex(id => id.equals(profile._id));
+        if (index === -1) return res.status(200).send(response);
+        authUser.following.splice(index, 1);
+        await authUser.save();
+        res.status(200).send(response);
+    } catch (error) {
+        handleError(error, res);
+    }
+};
+
+handleError = (error, res) => {
+    res.status(500).send(createError('Something went wrong'));
+}
 
 module.exports = {
     getProfile,

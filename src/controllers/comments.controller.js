@@ -33,7 +33,7 @@ deleteComment = async (req, res) => {
     try {
         const comment = await Comment.findOne({ _id: req.params['id'] }).exec();
         if (comment.author.equals(req.userId)) {
-            await Comment.deleteOne({ _id: 111 }).exec();
+            await Comment.deleteOne({ _id: req.params['id'] }).exec();
             res.status(200).send({});
         }
     } catch (error) {
