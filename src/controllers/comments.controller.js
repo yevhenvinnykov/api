@@ -4,54 +4,45 @@ const Article = db.article;
 const User = db.user;
 const { createCommentHelper, createError } = require('../utils/index');
 
-createComment = (req, res) => {
-    User.findOne({
-        _id: req.userId
-    }, (err, authUser) => {
-        Article.findOne({
-            slug: req.params['slug'],
-        }, (err, article) => {
-            if (err) return res.status(500).send(createError('Something went wrong'));
-            createCommentHelper(req.body.comment.body, authUser._id, article._id)
-                .save((err, comment) => {
-                    if (err) return res.status(500).send(createError('Something went wrong'));
-                    res.status(200).json({ comment });
-                });
-        });
-    });
+createComment = async (req, res) => {
+    try {
+        const authUser = await User.findOne({ _id: req.userId }).exec();
+        const article = await Article.findOne({ slug: req.params['slug'] }).exec();
+        const comment = await createCommentHelper(req.body.comment.body, authUser._id, article._id).save();
+        res.status(200).json({ comment });
+
+    } catch (err) {
+        handleError(error, res);
+    }
 };
 
-getComments = (req, res) => {
-    Article.findOne({
-        slug: req.params['slug']
-    }, (err, article) => {
-        if (err) return res.status(500).send(createError('Something went wrong'));
-        Comment.find({
-            'article': article._id
-        }).populate('author', 'image username bio following')
+getComments = async (req, res) => {
+    try {
+        const article = await Article.findOne({ slug: req.params['slug'] }).exec();
+        const comments = await Comment.find({ article: article._id })
+            .populate('author', 'image username bio following')
             .sort([['updatedAt', 'descending']])
-            .exec()
-            .then((comments) => {
-                if (err) return res.status(500).send(createError('Something went wrong'));
-                res.status(200).send({ comments });
-            });
-    });
+            .exec();
+        res.status(200).send({ comments });
+    } catch (err) {
+        handleError(error, res);
+    }
 };
 
-deleteComment = (req, res) => {
-    Comment.findOne({
-        _id: req.params['id']
-    }, (err, comment) => {
-        if (err) return res.status(500).send(createError('Something went wrong'));
+deleteComment = async (req, res) => {
+    try {
+        const comment = await Comment.findOne({ _id: req.params['id'] }).exec();
         if (comment.author.equals(req.userId)) {
-            Comment.deleteOne({
-                _id: req.params['id']
-            }, (err, data) => {
-                if (err) return res.status(500).send(err);
-                res.status(200).send({});
-            });
-        };
-    });
+            await Comment.deleteOne({ _id: 111 }).exec();
+            res.status(200).send({});
+        }
+    } catch (error) {
+        handleError(error, res);
+    }
+};
+
+handleError = (err, res) => {
+    res.status(500).send(createError('Something went wrong'));
 };
 
 module.exports = {
