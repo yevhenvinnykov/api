@@ -1,4 +1,4 @@
-const addUserInfoToArticle = require('../../utils/addUserInfoToArticle');
+const addUserInfoToArticle = require('../../src/utils/addUserInfoToArticle');
 
 describe('AddUserInfoToArticle', () => {
 

@@ -1,4 +1,4 @@
-const createCommentHelper = require('../../utils/createCommentHelper');
+const createCommentHelper = require('../../src/utils/createCommentHelper');
 
 describe('CreateCommentHelper', () => {
     test('create a comment', () => {

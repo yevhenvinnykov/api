@@ -1,4 +1,4 @@
-const updateArticleHelper = require('../../utils/updateArticleHelper');
+const updateArticleHelper = require('../../src/utils/updateArticleHelper');
 
 describe('UpdateArticleHelper', () => {
     test('should update the article\'s title', () => {

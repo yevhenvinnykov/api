@@ -1,8 +1,8 @@
 const mockingoose = require('mockingoose');
-const db = require('../../models');
+const db = require('../../src/models');
 const User = db.user;
 
-const createQueryParams = require('../../utils/createQueryParams');
+const createQueryParams = require('../../src/utils/createQueryParams');
 
   describe('CreateQueryParams', () => {
 

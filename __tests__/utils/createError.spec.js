@@ -1,4 +1,4 @@
-const createError = require('../../utils/createError');
+const createError = require('../../src/utils/createError');
 
 describe('CreateError', () => {
 

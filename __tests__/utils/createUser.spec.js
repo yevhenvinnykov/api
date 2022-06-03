@@ -1,4 +1,4 @@
-const createUser = require('../../utils/createUser');
+const createUser = require('../../src/utils/createUser');
 
 describe('CreateUser', () => {
     test('should create a user', () => {

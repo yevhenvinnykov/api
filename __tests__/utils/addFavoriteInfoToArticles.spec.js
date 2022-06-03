@@ -1,4 +1,4 @@
-const addFavoriteInfoToArticles = require('../../utils/addFavoriteInfoToArticles');
+const addFavoriteInfoToArticles = require('../../src/utils/addFavoriteInfoToArticles');
 
 describe('AddFavoriteInfoToArticles', () => {
     let articlesMock;

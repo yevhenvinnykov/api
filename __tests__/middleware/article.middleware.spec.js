@@ -1,7 +1,7 @@
 const mockingoose = require('mockingoose');
-const db = require('../../models');
+const db = require('../../src/models');
 const Article = db.article;
-const { checkIfArticleTitleIsUnique } = require('../../middleware/article.middleware');
+const { checkIfArticleTitleIsUnique } = require('../../src/middleware/article.middleware');
 
 describe('CheckIfArticleTitleIsUnique', () => {
     let reqMock, resMock, nextMock;

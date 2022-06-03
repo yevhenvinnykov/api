@@ -1,4 +1,4 @@
-const createArticleHelper = require('../../utils/createArticleHelper');
+const createArticleHelper = require('../../src/utils/createArticleHelper');
 
 describe('CreateArticleHelper', () => {
     test('create an article', () => {

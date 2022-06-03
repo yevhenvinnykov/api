@@ -1,4 +1,4 @@
-const { validatePassword } = require('../../../middleware/user.middleware');
+const { validatePassword } = require('../../../src/middleware/user.middleware');
 
 describe('ValidatePassword', () => {
     let reqMock, resMock, nextMock;

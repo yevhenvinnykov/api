@@ -1,4 +1,4 @@
-const updateUserHelper = require('../../utils/updateUserHelper');
+const updateUserHelper = require('../../src/utils/updateUserHelper');
 
 describe('UpdateUserHelper', () => {
     test('should update the user\'s name', () => {

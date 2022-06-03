@@ -1,4 +1,4 @@
-const { verifyOptionalToken } = require('../../middleware/optionalToken.middleware');
+const { verifyOptionalToken } = require('../../src/middleware/optionalToken.middleware');
 
 jest.mock('jsonwebtoken', () => ({
   verify: jest.fn((token, secretOrPublicKey, options, callback) => {

@@ -1,4 +1,4 @@
-const createToken = require('../../utils/createToken');
+const createToken = require('../../src/utils/createToken');
 
 describe('CreateToken', () => {
     test('should create a token', () => {

@@ -1,7 +1,7 @@
 const mockingoose = require('mockingoose');
-const db = require('../../../models');
+const db = require('../../../src/models');
 const User = db.user;
-const { checkIfUserExists } = require('../../../middleware/user.middleware');
+const { checkIfUserExists } = require('../../../src/middleware/user.middleware');
 
 describe('CheckIfUserExists', () => {
 
