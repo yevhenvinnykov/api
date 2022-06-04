@@ -8,7 +8,7 @@ const {
     addFavoriteInfoToArticles,
     createQueryParams,
     createError
-} = require('../utils/index');
+} = require('../oldUtils/index');
 
 createArticle = async (req, res) => {
     try {

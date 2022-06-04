@@ -6,7 +6,7 @@ const {
     createUser,
     updateUserHelper,
     createError
-} = require('../utils/index');
+} = require('../oldUtils/index');
 
 signUp = async (req, res) => {
     try {

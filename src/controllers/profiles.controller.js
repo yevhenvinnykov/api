@@ -1,6 +1,6 @@
 const db = require('../models');
 const User = db.user;
-const { createError } = require('../utils/index');
+const { createError } = require('../oldUtils/index');
 
 getProfile = async (req, res) => {
     try {

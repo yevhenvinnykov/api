@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { createError } = require('../utils/index');
+const { createError } = require('../oldUtils/index');
 
 verifyOptionalToken = (req, res, next) => {
     let token = req.headers['x-access-token'];

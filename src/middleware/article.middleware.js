@@ -1,6 +1,6 @@
 const db = require('../models');
 const Article = db.article;
-const { createError } = require('../utils/index');
+const { createError } = require('../oldUtils/index');
 
 checkIfArticleTitleIsUnique = async (req, res, next) => {
     try {
