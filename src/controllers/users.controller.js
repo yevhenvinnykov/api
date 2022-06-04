@@ -28,7 +28,7 @@ logIn = async (req, res) => {
         if (!passwordIsValid) {
             return res.status(401).send(createError('Email or password is not valid'));
         }
-        res.status(200).send(createResponse(user));
+        res.status(200).send(createUserResponse(user));
     } catch (error) {
         handleError(error, res);
     }
@@ -38,7 +38,7 @@ getLoggedInUser = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.userId });
         if (!user) return res.status(404).send(createError('User not found'));
-        res.status(200).send(createResponse(user));
+        res.status(200).send(createUserResponse(user));
     } catch (error) {
         handleError(error, res);
     }
@@ -49,7 +49,7 @@ updateUser = async (req, res) => {
         const user = await User.findOne({ _id: req.userId }).exec();
         if (!user) return res.status(404).send(createError('User not found'));
         const updatedUser = await updateUserHelper(user, req.body.user);
-        res.status(200).send(createResponse(updatedUser));
+        res.status(200).send(createUserResponse(updatedUser));
     } catch (error) {
         handleError(error, res);
     }

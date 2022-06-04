@@ -9,5 +9,5 @@ module.exports = (articleData, userId) => {
         tagList: articleData.tagList,
         slug: articleData.title,
         author: userId
-    });
+    }).save();
 };

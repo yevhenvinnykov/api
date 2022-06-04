@@ -6,5 +6,5 @@ module.exports = (article, articleData) => {
         article[prop] = articleData[prop];
     }
     article.updatedAt = new Date();
-    return article;
+    return article.save();
 };
