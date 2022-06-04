@@ -8,5 +8,5 @@ module.exports = (user, userData) => {
         }
         user[prop] = userData[prop];
     }
-    return user;
+    return user.save();
 };

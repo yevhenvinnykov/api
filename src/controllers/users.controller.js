@@ -17,11 +17,9 @@ signUp = async (req, res) => {
     }
 };
 
-logIn = (req, res) => {
-    User.findOne({
-        email: req.body.user.email
-    }, (err, user) => {
-        if (err) return res.status(500).send(createError('Something went wrong'));
+logIn = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.user.email }).exec();
         if (!user) return res.status(404).send(createError('User not found'));
         const passwordIsValid = bcrypt.compareSync(
             req.body.user.password,
@@ -30,63 +28,48 @@ logIn = (req, res) => {
         if (!passwordIsValid) {
             return res.status(401).send(createError('Email or password is not valid'));
         }
-        res.status(200).send({
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                bio: user.bio,
-                image: user.image,
-                token: createToken(user.id),
-            }
-        });
-    });
+        res.status(200).send(createResponse(user));
+    } catch (error) {
+        handleError(error, res);
+    }
 };
 
-getLoggedInUser = (req, res) => {
-    User.findOne({
-        _id: req.userId
-    }, (err, user) => {
-        if (err) return res.status(500).send(createError('Something went wrong'));
+getLoggedInUser = async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.userId });
         if (!user) return res.status(404).send(createError('User not found'));
-        res.status(200).send({
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                bio: user.bio,
-                image: user.image,
-                token: createToken(user.id),
-            }
-        });
-    });
+        res.status(200).send(createResponse(user));
+    } catch (error) {
+        handleError(error, res);
+    }
 };
 
-updateUser = (req, res) => {
-    User.findOne({
-        _id: req.userId
-    }, (err, user) => {
-        if (err) return res.status(500).send(createError('Something went wrong'));
+updateUser = async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.userId }).exec();
         if (!user) return res.status(404).send(createError('User not found'));
-        updateUserHelper(user, req.body.user)
-            .save(err => {
-                if (err) return res.status(500).send(createError('Something went wrong'));
-                res.status(200).send({
-                    user: {
-                        id: user.id,
-                        username: user.username,
-                        email: user.email,
-                        bio: user.bio,
-                        image: user.image,
-                        token: createToken(user.id),
-                    }
-                });
-            });
-    });
+        const updatedUser = await updateUserHelper(user, req.body.user);
+        res.status(200).send(createResponse(updatedUser));
+    } catch (error) {
+        handleError(error, res);
+    }
 };
 
 handleError = (error, res) => {
     res.status(500).send(createError('Something went wrong'));
+};
+
+createUserResponse = (user) => {
+    return {
+        user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            bio: user.bio,
+            image: user.image,
+            token: createToken(user.id),
+        }
+    };
 };
 
 module.exports = {
