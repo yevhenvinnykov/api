@@ -2,29 +2,22 @@ const db = require('../models');
 const User = db.user;
 const { createError } = require('../utils/index');
 
-checkIfUserExists = (req, res, next) => {
-    const email = req.body.user.email;
-    if(!email) return next();
-    User.findOne({
-        email: email
-    }).exec((err, user) => {
-        if (err) return res.status(500).send(createError('Something went wrong'));
-        if (user) return res.status(400).send(createError('User with this email already exists'));
+checkIfUserExists = async (req, res, next) => {
+    try {
+        const email = req.body.user.email;
         const username = req.body.user.username;
-        if(!username) return next();
-        User.findOne({
-            username: username
-        }).exec((err, user) => {
-            if (err) res.status(500).send(createError('Something went wrong'));
-            if (user) return res.status(400).send(createError('User with this username already exists'));
-            next();
-        });
-    });
+        const user = await User.findOne({ $or: [{ email }, { username }] }).exec();
+        if (!user) return next();
+        const takenField = user.email === email ? 'email' : 'username';
+        res.status(400).send(createError(`User with this ${takenField} already exists`));
+    } catch (error) {
+        res.status(500).send(createError('Something went wrong'));
+    }
 };
 
 validateEmail = (req, res, next) => {
     const email = req.body.user.email;
-    if(!email) return next();
+    if (!email) return next();
     const validator = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (!validator.test(req.body.user.email)) return res.status(400)
         .send(createError('Invalid email'));
@@ -33,7 +26,7 @@ validateEmail = (req, res, next) => {
 
 validatePassword = (req, res, next) => {
     const password = req.body.user.password;
-    if(!password) return next();
+    if (!password) return next();
     const errors = [];
     if (password.length < 6 || password.length > 25) {
         errors.push('Password must be between 6 and 25 characters long');
