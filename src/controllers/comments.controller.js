@@ -1,5 +1,5 @@
 const CommentsService = require('../services/comments.service');
-const { createError } = require('../oldUtils/index');
+const { ErrorHandler } = require('../utils/errorHandler');
 
 class CommentsController {
     static async createComment(req, res) {
@@ -9,7 +9,7 @@ class CommentsController {
             const comment = await CommentsService.createComment(userId, slug, req.body.comment.body);
             res.status(200).json({ comment });
         } catch (error) {
-            handleError(error, res);
+           ErrorHandler.catchError(res, error);
         }
     }
 
@@ -19,7 +19,7 @@ class CommentsController {
             const comments = await CommentsService.getComments(slug);
             res.status(200).send({ comments });
         } catch (error) {
-            handleError(error, res);
+            ErrorHandler.catchError(res, error);
         }
     };
 
@@ -29,12 +29,8 @@ class CommentsController {
             await CommentsService.deleteComment(id, req.userId);
             res.status(200).json({});
         } catch (error) {
-            handleError(error, res);
+            ErrorHandler.catchError(res, error);
         }
-    };
-
-    handleError = (err, res) => {
-        res.status(500).send(createError('Something went wrong'));
     };
 }
 

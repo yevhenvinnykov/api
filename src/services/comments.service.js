@@ -1,42 +1,48 @@
 const db = require('../models');
 const Article = db.article;
-const User = db.user;
 const Comment = db.comment;
+const { ErrorHandler, BadRequestError, NotFoundError } = require('../utils/errorHandler');
 
 class CommentsService {
     static async createComment(userId, slug, commentBody) {
         try {
-            const authUser = await User.findOne({ _id: userId }).exec();
             const article = await Article.findOne({ slug }).exec();
-            return await new Comment({
+            const comment = await new Comment({
                 body: commentBody,
-                author: authUser._id,
+                author: userId,
                 article: article._id
             }).save();
+            if (!comment) throw new BadRequestError('Something went wrong when creating comment');
+            return comment;
         } catch (error) {
-           console.log(error);
+            ErrorHandler.catchError(res, error);
         }
     }
 
-    static async getComments(slug){
+    static async getComments(slug) {
         try {
             const article = await Article.findOne({ slug }).exec();
-            return await Comment.find({ article: article._id })
+            const comments = await Comment.find({ article: article._id })
                 .populate('author', 'image username bio following')
                 .sort([['updatedAt', 'descending']])
                 .exec();
+            if (!comments) throw new NotFoundError('Comments not found');
+            return comments;
         } catch (error) {
-            console.log(error);
+            ErrorHandler.catchError(res, error);
         }
     }
 
-    static async deleteComment(commentId, authUserId){
+    static async deleteComment(commentId, authUserId) {
         try {
             const comment = await Comment.findOne({ _id: commentId }).exec();
-            if (!comment.author.equals(authUserId)) return; // TODO: Add implementation
-            return await Comment.deleteOne({ _id: commentId }).exec();
+            if (!comment.author.equals(authUserId)) {
+                throw new BadRequestError('You are not authorized');
+            }
+            const { deletedCount } = await Comment.deleteOne({ _id: commentId }).exec();
+            if (!deletedCount) throw new NotFoundError('Comment not found');
         } catch (error) {
-            console.log(error);
+            ErrorHandler.catchError(res, error);
         }
     }
 }
