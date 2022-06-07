@@ -19,6 +19,8 @@
     "mongoose": "^6.3.4"
   },
   "devDependencies": {
+    "eslint": "^8.17.0",
+    "eslint-config-google": "^0.14.0",
     "jest": "^28.1.0",
     "mockingoose": "^2.15.2",
     "nodemon": "^2.0.16"

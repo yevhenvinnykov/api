@@ -1,22 +1,22 @@
 const jwt = require('jsonwebtoken');
-const { ErrorHandler, BadRequestError } = require('../utils/errorHandler');
+const {ErrorHandler, BadRequestError} = require('../utils/errorHandler');
 
 verifyToken = (req, res, next) => {
-    try {
-        let token = req.headers['x-access-token'];
-        if (!token) throw new BadRequestError('No token provided');
-        jwt.verify(token, process.env.JWT_SECRET, {
-            expiresIn: 3600
-        }, (err, decoded) => {
-            if (err) throw new BadRequestError('You are not authorized');
-            req.userId = decoded.id;
-            next();
-        });
-    } catch (error) {
-        ErrorHandler.catchError(res, error);
-    }
+  try {
+    const token = req.headers['x-access-token'];
+    if (!token) throw new BadRequestError('No token provided');
+    jwt.verify(token, process.env.JWT_SECRET, {
+      expiresIn: 3600,
+    }, (err, decoded) => {
+      if (err) throw new BadRequestError('You are not authorized');
+      req.userId = decoded.id;
+      next();
+    });
+  } catch (error) {
+    ErrorHandler.catchError(res, error);
+  }
 };
 
 module.exports = {
-    verifyToken
+  verifyToken,
 };

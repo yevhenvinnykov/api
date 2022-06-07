@@ -1,52 +1,57 @@
-const db = require('../models');
-const User = db.user;
-const { ErrorHandler, BadRequestError } = require('../utils/errorHandler');
+const {ErrorHandler, BadRequestError} = require('../utils/errorHandler');
+const UsersDB = require('../db/users.db');
 
 checkIfUserExists = async (req, res, next) => {
-    try {
-        const email = req.body.user.email;
-        const username = req.body.user.username;
-        const user = await User.findOne({ $or: [{ email }, { username }] }).exec();
-        if (!user) return next();
-        const takenField = user.email === email ? 'email' : 'username';
-        throw new BadRequestError(`User with this ${takenField} already exists`);
-    } catch (error) {
-        ErrorHandler.catchError(res, error);
-    }
+  try {
+    const {email, username} = req.body.user;
+    const user = await UsersDB
+        .findOneByOr([{email}, {username}], 'email username');
+    if (!user) return next();
+    const takenField = user.email === email ? 'email' : 'username';
+    throw new BadRequestError(`User with this ${takenField} already exists`);
+  } catch (error) {
+    ErrorHandler.catchError(res, error);
+  }
 };
 
 validateEmail = (req, res, next) => {
-    try {
-        const email = req.body.user.email;
-        if (!email) return next();
-        const validator = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (!validator.test(req.body.user.email)) throw new BadRequestError('Email or password is not valid');
-        next();
-    } catch (error) {
-        ErrorHandler.catchError(res, error);
+  try {
+    const email = req.body.user.email;
+    if (!email) return next();
+    const validator = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!validator.test(email)) {
+      throw new BadRequestError('Email or password is not valid');
     }
+    next();
+  } catch (error) {
+    ErrorHandler.catchError(res, error);
+  }
 };
 
 validatePassword = (req, res, next) => {
-    try {
-        const password = req.body.user.password;
-        if (!password) return next();
-        const errors = [];
-        if (password.length < 6 || password.length > 25) {
-            errors.push('Password must be between 6 and 25 characters long');
-        }
-        if (!/.*\d/.test(password)) errors.push('Password must contain at least one digit');
-        if (!/.*[A-Z]/.test(password)) errors.push('Password must contain at least one capital letter');
-        if (errors.length) throw new BadRequestError(errors);
-        next();
-    } catch (error) {
-        ErrorHandler.catchError(res, error);
+  try {
+    const password = req.body.user.password;
+    if (!password) return next();
+    const errors = [];
+    if (password.length < 6 || password.length > 25) {
+      errors.push('Password must be between 6 and 25 characters long');
     }
+    if (!/.*\d/.test(password)) {
+      errors.push('Password must contain at least one digit');
+    }
+    if (!/.*[A-Z]/.test(password)) {
+      errors.push('Password must contain at least one capital letter');
+    }
+    if (errors.length) throw new BadRequestError(errors);
+    next();
+  } catch (error) {
+    ErrorHandler.catchError(res, error);
+  }
 };
 
 
 module.exports = {
-    checkIfUserExists,
-    validateEmail,
-    validatePassword
+  checkIfUserExists,
+  validateEmail,
+  validatePassword,
 };
