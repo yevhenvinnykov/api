@@ -19,13 +19,11 @@ class BadRequestError extends Error {
 class ErrorHandler {
   static catchError(res, err) {
     if (err.constructor.name === 'NotFoundError') {
-      console.log(err);
       return res.status(404)
           .json(ErrorHandler.createErrorResponse(err.message || 'DB Error'));
     }
 
     if (err.constructor.name === 'BadRequestError') {
-      console.log(err);
       return res.status(400)
           .json(ErrorHandler.createErrorResponse(err.message || 'DB error'));
     }

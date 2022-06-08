@@ -13,7 +13,6 @@ class ArticlesService {
 
   static async updateArticle({slug, authUserId, updateData}) {
     let article = await ArticlesService.#fetchArticleFromDB(slug);
-    if (!article) throw new NotFoundError('Article not found');
     if (!article.author.equals(authUserId)) {
       throw new BadRequestError('You are not authorized to update the article');
     }
