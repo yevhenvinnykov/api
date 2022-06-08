@@ -4,7 +4,7 @@ const {
   validatePassword,
 } = require('../middleware/user.middleware');
 
-const {verifyToken} = require('../middleware/token.middleware');
+const {verifyToken} = require('../middleware/token/token.middleware');
 
 const UsersController = require('../controllers/users.controller');
 

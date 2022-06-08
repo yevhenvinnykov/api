@@ -1,10 +1,10 @@
 const ArticlesController = require('../controllers/articles.controller');
 
-const {verifyToken} = require('../middleware/token.middleware');
+const {verifyToken} = require('../middleware/token/token.middleware');
 const {verifyOptionalToken} = require('../middleware/optionalToken.middleware');
 const {
   checkIfArticleTitleIsUnique,
-} = require('../middleware/article.middleware');
+} = require('../middleware/article/article.middleware');
 
 
 module.exports = (app) => {

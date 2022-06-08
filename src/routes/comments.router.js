@@ -1,6 +1,6 @@
 const CommentsController = require('../controllers/comments.controller');
 
-const {verifyToken} = require('../middleware/token.middleware');
+const {verifyToken} = require('../middleware/token/token.middleware');
 
 module.exports = (app) => {
   app.post(

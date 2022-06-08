@@ -1,6 +1,6 @@
 const ProfilesController = require('../controllers/profiles.controller');
 
-const {verifyToken} = require('../middleware/token.middleware');
+const {verifyToken} = require('../middleware/token/token.middleware');
 
 module.exports = (app) => {
   app.post(
