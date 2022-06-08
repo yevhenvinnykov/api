@@ -1,6 +1,6 @@
-const {NotFoundError, BadRequestError} = require('../utils/errorHandler');
-const UsersDB = require('../db/users.db');
-const ArticlesDB = require('../db/articles.db');
+const {NotFoundError, BadRequestError} = require('../../utils/errorHandler');
+const UsersDB = require('../../db/users.db');
+const ArticlesDB = require('../../db/articles.db');
 
 class ArticlesService {
   static async createArticle({authUserId, articleData}) {
@@ -65,14 +65,13 @@ class ArticlesService {
     const authUser = await ArticlesService.#fetchAuthUserFromDB(authUserId);
     let articles = [];
     let articlesCount = 0;
-    const start = +query.offset || 0;
-    const end = +query.limit + start || 5;
+    const start = +query?.offset || 0;
+    const end = +query?.limit + start || 5;
     for (const userId of authUser.following) {
       const userArticles = await ArticlesDB
           .find({author: userId}, {limit: 0, offset: 0});
       articles.push(...userArticles);
       articlesCount += userArticles.length;
-      if (articles.length > end) break;
     }
     articles = articles.slice(start, end);
     articles = ArticlesService
@@ -133,8 +132,8 @@ class ArticlesService {
     };
     const articles = await ArticlesDB
         .find(condtions, options);
+    if (!articles) throw new NotFoundError('Articles not found');
     const articlesCount = await ArticlesDB.count(condtions);
-    if (!articlesCount) throw new NotFoundError('Article not found');
     return [articles, articlesCount];
   }
 
@@ -156,7 +155,7 @@ class ArticlesService {
   }
 
   static async #handleArticleLike(authUser, article, index) {
-    if (index) {
+    if (typeof index === 'number') {
       article.favoritesCount--;
       await article.save();
       authUser.favorites.splice(index, 1);

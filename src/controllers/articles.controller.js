@@ -1,4 +1,4 @@
-const ArticlesService = require('../services/articles.service');
+const ArticlesService = require('../services/articles/articles.service');
 const {ErrorHandler} = require('../utils/errorHandler');
 
 

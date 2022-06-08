@@ -1,4 +1,4 @@
-const UsersService = require('../services/users.service');
+const UsersService = require('../services/users/users.service');
 const {ErrorHandler} = require('../utils/ErrorHandler');
 
 

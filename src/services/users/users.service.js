@@ -1,13 +1,15 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {BadRequestError, NotFoundError} = require('../utils/errorHandler');
-const UsersDB = require('../db/users.db');
+const {BadRequestError, NotFoundError} = require('../../utils/errorHandler');
+const UsersDB = require('../../db/users.db');
 
 class UsersService {
   static async createUser({userData}) {
     await UsersDB.create(userData);
     const user = await UsersDB.findOneBy('email', userData.email);
-    if (!user) throw new NotFoundError('User not found');
+    if (!user) {
+      throw new BadRequestError('Something went wrong when creating the user');
+    }
     user.token = UsersService.#createToken(user.id);
     return user;
   }

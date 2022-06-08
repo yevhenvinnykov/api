@@ -1,7 +1,7 @@
 const db = require('./models');
 const Comment = db.comment;
 
-class CommentDB {
+class CommentsDB {
   static async create(commentBody, userId, articleId) {
     return await new Comment({
       body: commentBody,
@@ -26,4 +26,4 @@ class CommentDB {
   }
 }
 
-module.exports = CommentDB;
+module.exports = CommentsDB;

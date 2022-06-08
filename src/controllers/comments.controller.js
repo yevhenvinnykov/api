@@ -1,4 +1,4 @@
-const CommentsService = require('../services/comments.service');
+const CommentsService = require('../services/comments/comments.service');
 const {ErrorHandler} = require('../utils/errorHandler');
 
 class CommentsController {

@@ -1,5 +1,5 @@
-const {NotFoundError} = require('../utils/errorHandler');
-const UsersDB = require('../db/users.db');
+const {NotFoundError} = require('../../utils/errorHandler');
+const UsersDB = require('../../db/users.db');
 
 
 class ProfilesService {

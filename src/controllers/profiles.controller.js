@@ -1,4 +1,4 @@
-const ProfilesService = require('../services/profiles.service');
+const ProfilesService = require('../services/profiles/profiles.service');
 const {ErrorHandler} = require('../utils/errorHandler');
 
 
