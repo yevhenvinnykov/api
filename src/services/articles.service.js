@@ -21,15 +21,16 @@ class ArticlesService {
   }
 
   static async getArticle({slug, authUserId}) {
-    const article = await ArticlesService.#fetchArticleFromDB(slug);
+    let article = await ArticlesService.#fetchArticleFromDB(slug);
     const authUser = authUserId ?
             await ArticlesService.#fetchAuthUserFromDB(authUserId) :
             null;
-    article._doc.author._doc.following = !!authUser && authUser.following
+    article = JSON.parse(JSON.stringify(article));
+    article.author.following = !!authUser && authUser.following
         .some((id) => id.equals(article.author._id));
-    article._doc.favorited = !!authUser && authUser.favorites
+    article.favorited = !!authUser && authUser.favorites
         .some((id) => id.equals(article._id));
-    return article._doc;
+    return article;
   }
 
   static async deleteArticle({slug, authUserId}) {
