@@ -25,9 +25,8 @@ class ErrorHandler {
 
     if (err.constructor.name === 'BadRequestError') {
       return res.status(400)
-          .json(ErrorHandler.createErrorResponse(err.message || 'DB error'));
+          .json(ErrorHandler.createErrorResponse(err.message || 'DB Error'));
     }
-    console.log(err);
     return res.status(500)
         .json(ErrorHandler.createErrorResponse(
             err.message || 'Internal Server Error',
