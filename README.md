@@ -19,10 +19,11 @@ Example Node (Express + Mongoose) app containing real world examples (CRUD, auth
 ### Application Structure
 * app.js - The entry point to the application. This file defines the express server and connects it to MongoDB using mongoose. It also requires the routes and models that will be used in the application.
 * routes/ - This folder contains the route definitions for the API.
-* models/ - This folder contains the schema definitions for the Mongoose models.
-* controllers/ - This folder containes controllers responsible for business logic
-* middleware/ - This route containes middleware for validation of tokens and passwords, and ensures uniqueness 
-* utils/ - This folder contains miscellaneous utilities
+* db/ - This folder contains the schema definitions for the Mongoose models and services for operations with data from the DB.
+* controllers/ - This folder contains controllers responsible for server-client data transfer and error handling.
+* middleware/ - This route contains middleware for validation of tokens and passwords, and ensures uniqueness 
+* service/ - This folder contains classes responsible for bridging the controllers and the DB, adding additional data to the response before it gets sent.
+* utils/ - This folder contains an error-handling class
 
 ## Authentication
 Requests are authenticated using the **x-access-token** header with a valid JWT. The middlewares in the routes are used to authenticate requests. The **token middleware** will return a 401 status code if the request cannot be authenticated. The payload of the JWT can then be accessed from req.userId in the endpoint. The **optional token** will not return a 401 status code if the request cannot be authenticated.
