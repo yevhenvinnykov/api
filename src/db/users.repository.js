@@ -13,7 +13,7 @@ class UsersRepository {
 
   static async update(user, userData) {
     for (const prop in userData) {
-      if (!user.hasOwnProperty(prop)) continue;
+      if (!(prop in user)) continue;
       if (prop === 'password') {
         user['password'] = bcrypt.hashSync(userData.password, 8);
         continue;
