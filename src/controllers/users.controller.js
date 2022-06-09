@@ -2,8 +2,8 @@ const UsersService = require('../services/users/users.service');
 const {ErrorHandler} = require('../utils/ErrorHandler');
 
 
-class UsersController {
-  static async handleUserCRU_(req, res) {
+const UsersController = {
+  async handleUserCRU_(req, res) {
     let action;
     switch (req.method) {
       case 'POST': action = 'createUser';
@@ -19,9 +19,9 @@ class UsersController {
     } catch (error) {
       return ErrorHandler.catchError(res, error);
     }
-  }
+  },
 
-  static async logIn(req, res) {
+  async logIn(req, res) {
     try {
       const {email, password} = req.body.user;
       const user = await UsersService.logIn(email, password);
@@ -29,7 +29,7 @@ class UsersController {
     } catch (error) {
       return ErrorHandler.catchError(res, error);
     }
-  }
+  },
 };
 
 module.exports = UsersController;
