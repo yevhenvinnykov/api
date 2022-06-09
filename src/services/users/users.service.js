@@ -3,49 +3,49 @@ const jwt = require('jsonwebtoken');
 const {BadRequestError, NotFoundError} = require('../../utils/errorHandler');
 const UsersRepository = require('../../db/users.repository');
 
-class UsersService {
-  static async createUser({userData}) {
+const UsersService = {
+  async createUser({userData}) {
     await UsersRepository.create(userData);
     const user = await UsersRepository.findOneBy('email', userData.email);
     if (!user) {
       throw new BadRequestError('Something went wrong when creating the user');
     }
-    user.token = UsersService.#createToken(user.id);
+    user.token = this.createToken(user.id);
     return user;
-  }
+  },
 
-  static async getLoggedInUser({authUserId}) {
+  async getLoggedInUser({authUserId}) {
     const user = await UsersRepository.findOneBy('_id', authUserId);
     if (!user) throw new NotFoundError('User not found');
     return user;
-  }
+  },
 
-  static async updateUser({authUserId, userData}) {
+  async updateUser({authUserId, userData}) {
     const user = await UsersRepository.findOneBy('_id', authUserId);
     if (!user) throw new NotFoundError('User not found');
     await UsersRepository.update(user, userData);
-    user.token = UsersService.#createToken(user.id);
+    user.token = this.createToken(user.id);
     return user;
-  }
+  },
 
-  static async logIn(email, password) {
+  async logIn(email, password) {
     let user = await UsersRepository.findOneBy('email', email, 'password');
     if (!user) throw new NotFoundError('User not found');
-    UsersService.#validatePassword(password, user.password);
+    this.validatePassword(password, user.password);
     user = await UsersRepository.findOneBy('email', email);
-    user.token = UsersService.#createToken(user.id);
+    user.token = this.createToken(user.id);
     return user;
-  }
+  },
 
-  static #createToken(id) {
+  createToken(id) {
     return jwt.sign({id}, process.env.JWT_SECRET = 'secret', {expiresIn: 3600});
-  }
+  },
 
-  static #validatePassword(decoded, encoded) {
+  validatePassword(decoded, encoded) {
     if (!bcrypt.compareSync(decoded, encoded)) {
       throw new BadRequestError('Email or password is not valid');
     }
-  }
-}
+  },
+};
 
 module.exports = UsersService;
