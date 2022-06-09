@@ -12,7 +12,7 @@ module.exports = (app) => {
         UserMiddleware.validateEmail,
         UserMiddleware.validatePassword,
       ],
-      UsersController.handleUserCRU_)
+      UsersController.signUp)
   ;
   app.post(
       '/api/users/login',
@@ -21,7 +21,7 @@ module.exports = (app) => {
   app.get(
       '/api/users',
       [TokenMiddleware.verifyToken],
-      UsersController.handleUserCRU_,
+      UsersController.getLoggedInUser,
   );
   app.put(
       '/api/users',
@@ -31,7 +31,7 @@ module.exports = (app) => {
         UserMiddleware.validateEmail,
         UserMiddleware.validatePassword,
       ],
-      UsersController.handleUserCRU_,
+      UsersController.updateUser,
   );
 };
 
