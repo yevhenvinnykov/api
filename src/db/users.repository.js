@@ -2,16 +2,16 @@ const db = require('./models');
 const User = db.user;
 const bcrypt = require('bcryptjs');
 
-class UsersRepository {
-  static async create({username, email, password}) {
+const UsersRepository = {
+  async create({username, email, password}) {
     return await new User({
       username,
       email,
       password: bcrypt.hashSync(password, 8),
     }).save();
-  }
+  },
 
-  static async update(user, userData) {
+  async update(user, userData) {
     for (const prop in userData) {
       if (!(prop in user)) continue;
       if (prop === 'password') {
@@ -21,29 +21,29 @@ class UsersRepository {
       user[prop] = userData[prop];
     }
     return await user.save();
-  }
+  },
 
-  static async follow(authUser, idToFollow) {
+  async follow(authUser, idToFollow) {
     authUser.following.push(idToFollow);
     return await authUser.save();
-  }
+  },
 
-  static async unfollow(authUser, index) {
+  async unfollow(authUser, index) {
     authUser.following.splice(index, 1);
     return await authUser.save();
-  }
+  },
 
-  static async findOneBy(
+  async findOneBy(
       field,
       value,
       options = 'username email token bio image',
   ) {
     return await User.findOne({[field]: value}).select(options).exec();
-  }
+  },
 
-  static async findOneByOr(values, options = 'username email token bio image') {
+  async findOneByOr(values, options = 'username email token bio image') {
     return await User.findOne({$or: values}).select(options).exec();
-  }
-}
+  },
+};
 
 module.exports = UsersRepository;
