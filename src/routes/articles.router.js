@@ -11,43 +11,43 @@ module.exports = (app) => {
   app.post(
       '/api/articles',
       [verifyToken, checkIfArticleTitleIsUnique],
-      ArticlesController.handleArticleCRUD,
+      ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.get(
       '/api/articles/feed',
       [verifyToken],
-      ArticlesController.getArticles,
+      ArticlesController.getArticles.bind(ArticlesController),
   );
   app.post(
       '/api/articles/:slug/favorite',
       [verifyToken],
-      ArticlesController.handleArticleLikeDislike,
+      ArticlesController.handleArticleLikeDislike.bind(ArticlesController),
   );
   app.put(
       '/api/articles/:slug',
       [verifyToken, checkIfArticleTitleIsUnique],
-      ArticlesController.handleArticleCRUD,
+      ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.get(
       '/api/articles/:slug',
       [verifyOptionalToken],
-      ArticlesController.handleArticleCRUD,
+      ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.delete(
       '/api/articles/:slug',
       [verifyToken],
-      ArticlesController.handleArticleCRUD,
+      ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.delete(
       '/api/articles/:slug/favorite',
       [verifyToken],
-      ArticlesController.handleArticleLikeDislike,
+      ArticlesController.handleArticleLikeDislike.bind(ArticlesController),
   );
   app.get(
       '/api/articles',
       [verifyOptionalToken],
-      ArticlesController.getArticles,
+      ArticlesController.getArticles.bind(ArticlesController),
   );
-  app.get('/api/tags/', ArticlesController.getTags);
+  app.get('/api/tags/', ArticlesController.getTags.bind(ArticlesController));
 };
 
