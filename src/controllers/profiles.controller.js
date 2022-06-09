@@ -3,18 +3,30 @@ const {ErrorHandler} = require('../middleware/errors/errorHandler');
 
 
 const ProfilesController = {
-  async handleProfileCR_D(req, res) {
+  async getProfile(req, res) {
     try {
-      let action;
-      switch (req.method) {
-        case 'GET': action = 'getProfile';
-          break;
-        case 'POST': action = 'followProfile';
-          break;
-        case 'DELETE': action = 'unfollowProfile';
-      }
-      const profile =
-      await ProfilesService[action](req.userId, req.params.username);
+      const profile = await ProfilesService
+          .getProfile(req.userId, req.params.username);
+      res.status(200).json(profile);
+    } catch (error) {
+      ErrorHandler.catchError(res, error);
+    }
+  },
+
+  async followProfile(req, res) {
+    try {
+      const profile = await ProfilesService
+          .followProfile(req.userId, req.params.username);
+      res.status(200).json(profile);
+    } catch (error) {
+      ErrorHandler.catchError(res, error);
+    }
+  },
+
+  async unfollowProfile(req, res) {
+    try {
+      const profile = await ProfilesService
+          .unfollowProfile(req.userId, req.params.username);
       res.status(200).json(profile);
     } catch (error) {
       ErrorHandler.catchError(res, error);

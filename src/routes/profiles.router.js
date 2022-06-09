@@ -6,17 +6,17 @@ module.exports = (app) => {
   app.post(
       '/api/profiles/:username/follow',
       [TokenMiddleware.verifyToken],
-      ProfilesController.handleProfileCR_D,
+      ProfilesController.followProfile,
   );
   app.delete(
       '/api/profiles/:username/follow',
       [TokenMiddleware.verifyToken],
-      ProfilesController.handleProfileCR_D,
+      ProfilesController.unfollowProfile,
   );
   app.get(
       '/api/profiles/:username',
       [TokenMiddleware.verifyToken],
-      ProfilesController.handleProfileCR_D,
+      ProfilesController.getProfile,
   );
 };
 
