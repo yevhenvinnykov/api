@@ -2,8 +2,8 @@ const ProfilesService = require('../services/profiles/profiles.service');
 const {ErrorHandler} = require('../utils/errorHandler');
 
 
-class ProfilesController {
-  static async handleProfileCR_D(req, res) {
+const ProfilesController = {
+  async handleProfileCR_D(req, res) {
     try {
       let action;
       switch (req.method) {
@@ -19,7 +19,7 @@ class ProfilesController {
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }
-  }
-}
+  },
+};
 
 module.exports = ProfilesController;
