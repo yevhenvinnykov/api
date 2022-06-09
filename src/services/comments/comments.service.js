@@ -14,7 +14,7 @@ const CommentsService = {
     return comment;
   },
 
-  async getComments({slug}) {
+  async getComments(slug) {
     const article = await await ArticlesRepository.findOneBy('slug', slug);
     if (!article) throw new NotFoundError('Article not found');
     const comments = await CommentsRepository.findByArticleId(article._id);
@@ -22,7 +22,7 @@ const CommentsService = {
     return comments;
   },
 
-  async deleteComment({commentId, authUserId}) {
+  async deleteComment(commentId, authUserId) {
     const comment = await CommentsRepository.findOneBy('_id', commentId);
     if (!comment) throw new NotFoundError('Comment not found');
     if (!comment.author.equals(authUserId)) {

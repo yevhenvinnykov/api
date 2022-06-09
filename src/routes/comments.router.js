@@ -6,15 +6,15 @@ module.exports = (app) => {
   app.post(
       '/api/articles/:slug/comments',
       [TokenMiddleware.verifyToken],
-      CommentsController.handleCommentCR_D,
+      CommentsController.createComment,
   );
   app.get(
       '/api/articles/:slug/comments',
-      CommentsController.handleCommentCR_D,
+      CommentsController.getComments,
   );
   app.delete(
       '/api/articles/:slug/comments/:id',
       [TokenMiddleware.verifyToken],
-      CommentsController.handleCommentCR_D,
+      CommentsController.deleteComment,
   );
 };

@@ -2,27 +2,33 @@ const CommentsService = require('../services/comments/comments.service');
 const {ErrorHandler} = require('../middleware/errors/errorHandler');
 
 const CommentsController = {
-  async handleCommentCR_D(req, res) {
+  async getComments(req, res) {
     try {
-      let action;
-      switch (req.method) {
-        case 'GET': action = 'getComments';
-          break;
-        case 'POST': action = 'createComment';
-          break;
-        case 'DELETE': action = 'deleteComment';
-      }
+      const comments = await CommentsService.getComments(req.params.slug);
+      res.status(200).json({comments});
+    } catch (error) {
+      ErrorHandler.catchError(res, error);
+    }
+  },
+
+  async createComment(req, res) {
+    try {
       const data = {
-        slug: req.params?.slug,
-        commentBody: req.body?.comment?.body,
+        slug: req.params.slug,
+        commentBody: req.body.comment.body,
         authUserId: req.userId,
-        commentId: req.params?.id,
       };
-      const result = await CommentsService[action](data);
-      if (action === 'createComment' || action === 'deleteComment') {
-        return res.status(200).json({comment: result});
-      }
-      res.status(200).json({comments: result});
+      const comment = await CommentsService.createComment(data);
+      res.status(200).json({comment});
+    } catch (error) {
+      ErrorHandler.catchError(res, error);
+    }
+  },
+
+  async deleteComment(req, res) {
+    try {
+      await CommentsService.deleteComment(req.params.id, req.userId);
+      res.status(200).json({});
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }
