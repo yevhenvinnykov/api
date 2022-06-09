@@ -1,4 +1,4 @@
-const db = require('./models');
+const db = require('../models');
 const Article = db.article;
 
 const ArticlesRepository = {

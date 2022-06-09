@@ -1,6 +1,6 @@
 const CommentsService = require('./comments.service');
 const CommentsRepository = require('../../db/comments.repository');
-const ArticlesRepository = require('../../db/articles.repository');
+const ArticlesRepository = require('../../db/articles/articles.repository');
 const {BadRequestError} = require('../../middleware/errors/errorHandler');
 
 describe('COMMENTS SERVICE', () => {

@@ -1,6 +1,6 @@
 const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
 const CommentsRepository = require('../../db/comments.repository');
-const ArticlesRepository = require('../../db/articles.repository');
+const ArticlesRepository = require('../../db/articles/articles.repository');
 
 const CommentsService = {
   async createComment({authUserId, slug, commentBody}) {
