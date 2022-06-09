@@ -1,10 +1,10 @@
 const {NotFoundError, BadRequestError} = require('../../utils/errorHandler');
-const UsersDB = require('../../db/users.db');
-const ArticlesDB = require('../../db/articles.db');
+const UsersRepository = require('../../db/users.repository');
+const ArticlesRepository = require('../../db/articles.repository');
 
 class ArticlesService {
   static async createArticle({authUserId, articleData}) {
-    const article = await ArticlesDB.create(authUserId, articleData);
+    const article = await ArticlesRepository.create(authUserId, articleData);
     if (!article) {
       throw new BadRequestError('Something went wrong when creating article');
     }
@@ -16,7 +16,7 @@ class ArticlesService {
     if (!article.author.equals(authUserId)) {
       throw new BadRequestError('You are not authorized to update the article');
     }
-    article = await ArticlesDB.update(article, updateData);
+    article = await ArticlesRepository.update(article, updateData);
     return article;
   }
 
@@ -34,7 +34,8 @@ class ArticlesService {
   }
 
   static async deleteArticle({slug, authUserId}) {
-    const {deletedCount} = await ArticlesDB.delete({slug, author: authUserId});
+    const {deletedCount} = await ArticlesRepository
+        .delete({slug, author: authUserId});
     if (!deletedCount) {
       throw new BadRequestError('Article not found or you\'re not authorized');
     }
@@ -68,7 +69,7 @@ class ArticlesService {
     const start = +query?.offset || 0;
     const end = +query?.limit + start || 5;
     for (const userId of authUser.following) {
-      const userArticles = await ArticlesDB
+      const userArticles = await ArticlesRepository
           .find({author: userId}, {limit: 0, offset: 0});
       articles.push(...userArticles);
       articlesCount += userArticles.length;
@@ -111,14 +112,14 @@ class ArticlesService {
   }
 
   static async #fetchAuthUserFromDB(authUserId) {
-    const authUser = await UsersDB
+    const authUser = await UsersRepository
         .findOneBy('_id', authUserId, 'favorites following');
     if (!authUser) throw new NotFoundError('User not found');
     return authUser;
   }
 
   static async #fetchArticleFromDB(slug) {
-    const article = await ArticlesDB.findOneBy('slug', slug);
+    const article = await ArticlesRepository.findOneBy('slug', slug);
     if (!article) throw new NotFoundError('Article not found');
     return article;
   }
@@ -130,21 +131,21 @@ class ArticlesService {
       limit: queryFromRequest?.limit || 5,
       offset: queryFromRequest?.offset || 0,
     };
-    const articles = await ArticlesDB
+    const articles = await ArticlesRepository
         .find(condtions, options);
     if (!articles) throw new NotFoundError('Articles not found');
-    const articlesCount = await ArticlesDB.count(condtions);
+    const articlesCount = await ArticlesRepository.count(condtions);
     return [articles, articlesCount];
   }
 
   static async #createQueryConditions(query) {
     const queryConditions = {};
     if (query?.author) {
-      queryConditions.author = await UsersDB
+      queryConditions.author = await UsersRepository
           .findOneBy('username', query.author, '_id');
     }
     if (query?.favorited) {
-      const user = await UsersDB
+      const user = await UsersRepository
           .findOneBy('username', query.favorited, 'favorites');
       queryConditions._id = {$in: user?.favorites};
     }

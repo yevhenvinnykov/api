@@ -1,10 +1,10 @@
 const {ErrorHandler, BadRequestError} = require('../utils/errorHandler');
-const UsersDB = require('../db/users.db');
+const UsersRepository = require('../db/users.repository');
 
 checkIfUserExists = async (req, res, next) => {
   try {
     const {email, username} = req.body.user;
-    const user = await UsersDB
+    const user = await UsersRepository
         .findOneByOr([{email}, {username}], 'email username');
     if (!user) return next();
     const takenField = user.email === email ? 'email' : 'username';

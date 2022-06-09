@@ -1,12 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {BadRequestError, NotFoundError} = require('../../utils/errorHandler');
-const UsersDB = require('../../db/users.db');
+const UsersRepository = require('../../db/users.repository');
 
 class UsersService {
   static async createUser({userData}) {
-    await UsersDB.create(userData);
-    const user = await UsersDB.findOneBy('email', userData.email);
+    await UsersRepository.create(userData);
+    const user = await UsersRepository.findOneBy('email', userData.email);
     if (!user) {
       throw new BadRequestError('Something went wrong when creating the user');
     }
@@ -15,24 +15,24 @@ class UsersService {
   }
 
   static async getLoggedInUser({authUserId}) {
-    const user = await UsersDB.findOneBy('_id', authUserId);
+    const user = await UsersRepository.findOneBy('_id', authUserId);
     if (!user) throw new NotFoundError('User not found');
     return user;
   }
 
   static async updateUser({authUserId, userData}) {
-    const user = await UsersDB.findOneBy('_id', authUserId);
+    const user = await UsersRepository.findOneBy('_id', authUserId);
     if (!user) throw new NotFoundError('User not found');
-    await UsersDB.update(user, userData);
+    await UsersRepository.update(user, userData);
     user.token = UsersService.#createToken(user.id);
     return user;
   }
 
   static async logIn(email, password) {
-    let user = await UsersDB.findOneBy('email', email, 'password');
+    let user = await UsersRepository.findOneBy('email', email, 'password');
     if (!user) throw new NotFoundError('User not found');
     UsersService.#validatePassword(password, user.password);
-    user = await UsersDB.findOneBy('email', email);
+    user = await UsersRepository.findOneBy('email', email);
     user.token = UsersService.#createToken(user.id);
     return user;
   }

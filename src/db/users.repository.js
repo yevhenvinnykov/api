@@ -2,7 +2,7 @@ const db = require('./models');
 const User = db.user;
 const bcrypt = require('bcryptjs');
 
-class UsersDB {
+class UsersRepository {
   static async create({username, email, password}) {
     return await new User({
       username,
@@ -46,4 +46,4 @@ class UsersDB {
   }
 }
 
-module.exports = UsersDB;
+module.exports = UsersRepository;

@@ -1,9 +1,10 @@
-const ArticlesDB = require('../../db/articles.db');
+const ArticlesRepository = require('../../db/articles.repository');
 const {ErrorHandler, BadRequestError} = require('../../utils/errorHandler');
 
 checkIfArticleTitleIsUnique = async (req, res, next) => {
   try {
-    const article = await ArticlesDB.findOneBy('title', req.body.article.title);
+    const article = await ArticlesRepository
+        .findOneBy('title', req.body.article.title);
     if (article) {
       throw new BadRequestError('Article with this title already exists');
     }

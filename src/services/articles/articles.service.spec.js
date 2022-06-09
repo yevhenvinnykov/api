@@ -1,6 +1,6 @@
 const ArticlesService = require('./articles.service');
-const ArticlesDB = require('../../db/articles.db');
-const UsersDB = require('../../db/users.db');
+const ArticlesRepository = require('../../db/articles.repository');
+const UsersRepository = require('../../db/users.repository');
 const {BadRequestError} = require('../../utils/errorHandler');
 
 describe('ARTICLES SERVICE', () => {
@@ -14,14 +14,15 @@ describe('ARTICLES SERVICE', () => {
     });
 
     test('should create an article', async () => {
-      jest.spyOn(ArticlesDB, 'create').mockReturnValue({article: 'article'});
+      jest.spyOn(ArticlesRepository, 'create')
+          .mockReturnValue({article: 'article'});
       const article = await ArticlesService
           .createArticle(mockData);
       expect(article).toEqual({article: 'article'});
     });
 
     test('should throw an error if the article is not created', async () => {
-      jest.spyOn(ArticlesDB, 'create').mockReturnValue(null);
+      jest.spyOn(ArticlesRepository, 'create').mockReturnValue(null);
       try {
         await ArticlesService.createArticle(mockData);
       } catch (error) {
@@ -42,15 +43,16 @@ describe('ARTICLES SERVICE', () => {
     });
 
     test('should update an article', async () => {
-      jest.spyOn(ArticlesDB, 'findOneBy')
+      jest.spyOn(ArticlesRepository, 'findOneBy')
           .mockReturnValue({title: 'title', author: {equals: () => true}});
-      jest.spyOn(ArticlesDB, 'update').mockReturnValue({title: 'updated'});
+      jest.spyOn(ArticlesRepository, 'update')
+          .mockReturnValue({title: 'updated'});
       const article = await ArticlesService.updateArticle(mockData);
       expect(article).toEqual({title: 'updated'});
     });
 
     test('should throw an error if auth user is not the author', async () => {
-      jest.spyOn(ArticlesDB, 'findOneBy')
+      jest.spyOn(ArticlesRepository, 'findOneBy')
           .mockReturnValue({title: 'title', author: {equals: () => false}});
       try {
         await ArticlesService.updateArticle(mockData);
@@ -74,12 +76,12 @@ describe('ARTICLES SERVICE', () => {
 
     beforeEach(() => {
       const mockArticle = {title: 'title', author: {_id: 1}};
-      jest.spyOn(ArticlesDB, 'findOneBy').mockReturnValue(mockArticle);
+      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
 
     test('should get the article and add to it favorited&followed info',
         async () => {
-          jest.spyOn(UsersDB, 'findOneBy').mockReturnValue({
+          jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
             following: [{equals: () => true}],
             favorites: [{equals: () => false}],
           });
@@ -98,7 +100,7 @@ describe('ARTICLES SERVICE', () => {
     });
 
     test('should throw an error if no article found', async () => {
-      jest.spyOn(ArticlesDB, 'findOneBy').mockReturnValue(null);
+      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(null);
       try {
         await ArticlesService.getArticle({slug: 'slug', authUserId: 1});
       } catch (error) {
@@ -109,7 +111,8 @@ describe('ARTICLES SERVICE', () => {
 
   describe('DELETE ARTICLE', () => {
     test('should delete an article', async () => {
-      jest.spyOn(ArticlesDB, 'delete').mockReturnValue({deletedCount: 1});
+      jest.spyOn(ArticlesRepository, 'delete')
+          .mockReturnValue({deletedCount: 1});
       const fn = async () => await ArticlesService
           .deleteArticle({slug: 'slug', authUserId: 1});
       expect(fn).not.toThrow(BadRequestError);
@@ -117,7 +120,8 @@ describe('ARTICLES SERVICE', () => {
 
     test('should throw an error if article wasn\'t deleted', async () => {
       try {
-        jest.spyOn(ArticlesDB, 'delete').mockReturnValue({deletedCount: 0});
+        jest.spyOn(ArticlesRepository, 'delete')
+            .mockReturnValue({deletedCount: 0});
         await ArticlesService.deleteArticle({slug: 'slug', authUserId: 1});
       } catch (error) {
         expect(error.message)
@@ -136,11 +140,11 @@ describe('ARTICLES SERVICE', () => {
     const expectedData = {title: 'title', favorited: true};
 
     beforeEach(() => {
-      jest.spyOn(ArticlesDB, 'findOneBy').mockReturnValue(mockArticle);
+      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
 
     test('should mutate the article and the authUser return them', async () => {
-      jest.spyOn(UsersDB, 'findOneBy').mockReturnValue({
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
         favorites: [{equals: () => false}],
         save: () => {},
       });
@@ -150,7 +154,7 @@ describe('ARTICLES SERVICE', () => {
     });
 
     test('should add favorited: true', async () => {
-      jest.spyOn(UsersDB, 'findOneBy').mockReturnValue({
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
         favorites: [{equals: () => true}],
       });
       const article = await ArticlesService
@@ -170,12 +174,12 @@ describe('ARTICLES SERVICE', () => {
     const expectedData = {title: 'title', favorited: false};
 
     beforeEach(() => {
-      jest.spyOn(ArticlesDB, 'findOneBy').mockReturnValue(mockArticle);
+      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
 
     test('should mutate the article and the authUser and return them',
         async () => {
-          jest.spyOn(UsersDB, 'findOneBy').mockReturnValue({
+          jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
             favorites: [1],
             save: () => {},
           });
@@ -185,7 +189,7 @@ describe('ARTICLES SERVICE', () => {
         });
 
     test('should add favorited: false', async () => {
-      jest.spyOn(UsersDB, 'findOneBy').mockReturnValue({
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
         favorites: [],
       });
       const article = await ArticlesService
@@ -210,8 +214,8 @@ describe('ARTICLES SERVICE', () => {
     const mockQuery = {limit: null, offset: null};
 
     beforeEach(() => {
-      jest.spyOn(ArticlesDB, 'find').mockReturnValue(mockArticles);
-      jest.spyOn(UsersDB, 'findOneBy').mockReturnValue({
+      jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
         favorites: [{equals: () => true}],
         following: [{equals: () => true}, {equals: () => true}],
         save: () => {},
@@ -226,7 +230,7 @@ describe('ARTICLES SERVICE', () => {
 
     test('should throw an error if no authUserId found', async () => {
       try {
-        jest.spyOn(UsersDB, 'findOneBy').mockReturnValue(null);
+        jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(null);
         await ArticlesService.getArticlesFromFollowedUsers(1, mockQuery);
       } catch (error) {
         expect(error.message).toBe('User not found');
@@ -257,13 +261,13 @@ describe('ARTICLES SERVICE', () => {
     };
 
     beforeEach(() => {
-      jest.spyOn(ArticlesDB, 'find').mockReturnValue(mockArticles);
-      jest.spyOn(UsersDB, 'findOneBy').mockReturnValue({
+      jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
         favorites: [{equals: (id) => id === 1}, {equals: (id) => id === 3}],
         following: [{equals: () => true}],
         save: () => {},
       });
-      jest.spyOn(ArticlesDB, 'count').mockReturnValue(1);
+      jest.spyOn(ArticlesRepository, 'count').mockReturnValue(1);
     });
 
     beforeEach(() => {
@@ -288,7 +292,7 @@ describe('ARTICLES SERVICE', () => {
     });
 
     test('should throw an error if no articles are found', async () => {
-      jest.spyOn(ArticlesDB, 'find').mockReturnValue(null);
+      jest.spyOn(ArticlesRepository, 'find').mockReturnValue(null);
       try {
         await ArticlesService.getArticles(1, mockQuery);
       } catch (error) {
@@ -304,8 +308,8 @@ describe('ARTICLES SERVICE', () => {
     const expectedData = ['tag'];
 
     beforeEach(() => {
-      jest.spyOn(ArticlesDB, 'find').mockReturnValue(mockArticles);
-      jest.spyOn(ArticlesDB, 'count').mockReturnValue(1);
+      jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
+      jest.spyOn(ArticlesRepository, 'count').mockReturnValue(1);
     });
 
     test('should return tags', async () => {

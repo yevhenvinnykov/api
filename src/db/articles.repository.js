@@ -1,7 +1,7 @@
 const db = require('./models');
 const Article = db.article;
 
-class ArticlesDB {
+class ArticlesRepository {
   static async create(authUserId, articleData) {
     return await new Article({
       title: articleData.title,
@@ -47,4 +47,4 @@ class ArticlesDB {
   }
 }
 
-module.exports = ArticlesDB;
+module.exports = ArticlesRepository;
