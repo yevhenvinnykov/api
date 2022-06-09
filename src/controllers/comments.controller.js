@@ -1,8 +1,8 @@
 const CommentsService = require('../services/comments/comments.service');
 const {ErrorHandler} = require('../utils/errorHandler');
 
-class CommentsController {
-  static async handleCommentCR_D(req, res) {
+const CommentsController = {
+  async handleCommentCR_D(req, res) {
     try {
       let action;
       switch (req.method) {
@@ -26,7 +26,7 @@ class CommentsController {
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }
-  }
-}
+  },
+};
 
 module.exports = CommentsController;
