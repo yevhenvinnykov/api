@@ -1,4 +1,4 @@
-const {NotFoundError, BadRequestError} = require('../../utils/errorHandler');
+const {NotFoundError, BadRequestError} = require('../../middleware/errors/errorHandler');
 const UsersRepository = require('../../db/users.repository');
 const ArticlesRepository = require('../../db/articles.repository');
 

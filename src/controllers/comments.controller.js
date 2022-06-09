@@ -1,5 +1,5 @@
 const CommentsService = require('../services/comments/comments.service');
-const {ErrorHandler} = require('../utils/errorHandler');
+const {ErrorHandler} = require('../middleware/errors/errorHandler');
 
 const CommentsController = {
   async handleCommentCR_D(req, res) {

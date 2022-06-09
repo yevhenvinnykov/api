@@ -1,7 +1,7 @@
 const ArticlesService = require('./articles.service');
 const ArticlesRepository = require('../../db/articles.repository');
 const UsersRepository = require('../../db/users.repository');
-const {BadRequestError} = require('../../utils/errorHandler');
+const {BadRequestError} = require('../../middleware/errors/errorHandler');
 
 describe('ARTICLES SERVICE', () => {
   describe('CREATE ARTICLE', () => {

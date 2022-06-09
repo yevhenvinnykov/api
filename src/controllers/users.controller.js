@@ -1,5 +1,5 @@
 const UsersService = require('../services/users/users.service');
-const {ErrorHandler} = require('../utils/ErrorHandler');
+const {ErrorHandler} = require('../middleware/errors/ErrorHandler');
 
 
 const UsersController = {

@@ -1,4 +1,4 @@
-const {NotFoundError} = require('../../utils/errorHandler');
+const {NotFoundError} = require('../../middleware/errors/errorHandler');
 const UsersRepository = require('../../db/users.repository');
 
 

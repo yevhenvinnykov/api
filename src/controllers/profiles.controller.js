@@ -1,5 +1,5 @@
 const ProfilesService = require('../services/profiles/profiles.service');
-const {ErrorHandler} = require('../utils/errorHandler');
+const {ErrorHandler} = require('../middleware/errors/errorHandler');
 
 
 const ProfilesController = {

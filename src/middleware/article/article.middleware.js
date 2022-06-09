@@ -1,5 +1,5 @@
 const ArticlesRepository = require('../../db/articles.repository');
-const {ErrorHandler, BadRequestError} = require('../../utils/errorHandler');
+const {ErrorHandler, BadRequestError} = require('../errors/errorHandler');
 
 checkIfArticleTitleIsUnique = async (req, res, next) => {
   try {

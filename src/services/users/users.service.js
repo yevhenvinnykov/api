@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {BadRequestError, NotFoundError} = require('../../utils/errorHandler');
+const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
 const UsersRepository = require('../../db/users.repository');
 
 const UsersService = {
