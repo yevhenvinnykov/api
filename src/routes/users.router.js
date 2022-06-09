@@ -1,17 +1,17 @@
-const {
-  checkIfUserExists,
-  validateEmail,
-  validatePassword,
-} = require('../middleware/user.middleware');
+const UserMiddleware = require('../middleware/user/user.middleware');
 
-const {verifyToken} = require('../middleware/token/token.middleware');
+const TokenMiddleware = require('../middleware/token/token.middleware');
 
 const UsersController = require('../controllers/users.controller');
 
 module.exports = (app) => {
   app.post(
       '/api/users/signup',
-      [checkIfUserExists, validateEmail, validatePassword],
+      [
+        UserMiddleware.checkIfUserExists,
+        UserMiddleware.validateEmail,
+        UserMiddleware.validatePassword,
+      ],
       UsersController.handleUserCRU_)
   ;
   app.post(
@@ -20,12 +20,17 @@ module.exports = (app) => {
   );
   app.get(
       '/api/users',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       UsersController.handleUserCRU_,
   );
   app.put(
       '/api/users',
-      [verifyToken, checkIfUserExists, validateEmail, validatePassword],
+      [
+        TokenMiddleware.verifyToken,
+        UserMiddleware.checkIfUserExists,
+        UserMiddleware.validateEmail,
+        UserMiddleware.validatePassword,
+      ],
       UsersController.handleUserCRU_,
   );
 };

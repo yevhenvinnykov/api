@@ -1,21 +1,21 @@
 const ProfilesController = require('../controllers/profiles.controller');
 
-const {verifyToken} = require('../middleware/token/token.middleware');
+const TokenMiddleware = require('../middleware/token/token.middleware');
 
 module.exports = (app) => {
   app.post(
       '/api/profiles/:username/follow',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       ProfilesController.handleProfileCR_D,
   );
   app.delete(
       '/api/profiles/:username/follow',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       ProfilesController.handleProfileCR_D,
   );
   app.get(
       '/api/profiles/:username',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       ProfilesController.handleProfileCR_D,
   );
 };

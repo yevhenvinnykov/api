@@ -1,7 +1,5 @@
 const ArticlesRepository = require('../../db/articles.repository');
-const {
-  checkIfArticleTitleIsUnique,
-} = require('./article.middleware');
+const ArticleMiddleware = require('./article.middleware');
 
 describe('CHECK IF ARTICLE TITLE IS UNIQUE', () => {
   let reqMock;
@@ -28,7 +26,7 @@ describe('CHECK IF ARTICLE TITLE IS UNIQUE', () => {
   test('when there\'s no article with such a title',
       async () => {
         jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(null);
-        await checkIfArticleTitleIsUnique(reqMock, resMock, nextMock);
+        await ArticleMiddleware.checkIfTitleIsUnique(reqMock, resMock, nextMock);
         expect(nextMock).toHaveBeenCalledTimes(1);
       });
 
@@ -37,7 +35,7 @@ describe('CHECK IF ARTICLE TITLE IS UNIQUE', () => {
   async () => {
     jest.spyOn(ArticlesRepository, 'findOneBy')
         .mockReturnValue({title: 'title'});
-    await checkIfArticleTitleIsUnique(reqMock, resMock, nextMock);
+    await ArticleMiddleware.checkIfTitleIsUnique(reqMock, resMock, nextMock);
     expect(nextMock).toHaveBeenCalledTimes(0);
     expect(statusSpy).toHaveBeenCalledWith(400);
     expect(jsonSpy).toHaveBeenCalledWith({

@@ -1,53 +1,59 @@
 const ArticlesController = require('../controllers/articles.controller');
 
-const {verifyToken} = require('../middleware/token/token.middleware');
-const {verifyOptionalToken} = require('../middleware/optionalToken.middleware');
-const {
-  checkIfArticleTitleIsUnique,
-} = require('../middleware/article/article.middleware');
+const TokenMiddleware = require('../middleware/token/token.middleware');
+const ArticleMiddleware = require('../middleware/article/article.middleware');
 
 
 module.exports = (app) => {
   app.post(
       '/api/articles',
-      [verifyToken, checkIfArticleTitleIsUnique],
+      [
+        TokenMiddleware.verifyToken,
+        ArticleMiddleware.checkIfTitleIsUnique,
+      ],
       ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.get(
       '/api/articles/feed',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       ArticlesController.getArticles.bind(ArticlesController),
   );
   app.post(
       '/api/articles/:slug/favorite',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       ArticlesController.handleArticleLikeDislike.bind(ArticlesController),
   );
   app.put(
       '/api/articles/:slug',
-      [verifyToken, checkIfArticleTitleIsUnique],
+      [
+        TokenMiddleware.verifyToken,
+        ArticleMiddleware.checkIfTitleIsUnique,
+      ],
       ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.get(
       '/api/articles/:slug',
-      [verifyOptionalToken],
+      [TokenMiddleware.verifyOptionalToken],
       ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.delete(
       '/api/articles/:slug',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       ArticlesController.handleArticleCRUD.bind(ArticlesController),
   );
   app.delete(
       '/api/articles/:slug/favorite',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       ArticlesController.handleArticleLikeDislike.bind(ArticlesController),
   );
   app.get(
       '/api/articles',
-      [verifyOptionalToken],
+      [TokenMiddleware.verifyOptionalToken],
       ArticlesController.getArticles.bind(ArticlesController),
   );
-  app.get('/api/tags/', ArticlesController.getTags.bind(ArticlesController));
+  app.get(
+      '/api/tags/',
+      ArticlesController.getTags.bind(ArticlesController),
+  );
 };
 

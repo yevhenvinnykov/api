@@ -1,11 +1,11 @@
 const CommentsController = require('../controllers/comments.controller');
 
-const {verifyToken} = require('../middleware/token/token.middleware');
+const TokenMiddleware = require('../middleware/token/token.middleware');
 
 module.exports = (app) => {
   app.post(
       '/api/articles/:slug/comments',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       CommentsController.handleCommentCR_D,
   );
   app.get(
@@ -14,7 +14,7 @@ module.exports = (app) => {
   );
   app.delete(
       '/api/articles/:slug/comments/:id',
-      [verifyToken],
+      [TokenMiddleware.verifyToken],
       CommentsController.handleCommentCR_D,
   );
 };

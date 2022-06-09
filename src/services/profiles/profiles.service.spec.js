@@ -5,7 +5,7 @@ describe('PROFILES SERVICE', () => {
   describe('GET PROFILE', () => {
     test('should return profile', async () => {
       jest.spyOn(UsersRepository, 'findOneBy')
-          .mockReturnValue({_id: 1, following: [{_id: {equals: () => true}}]});
+          .mockReturnValue({_id: 1, following: [{equals: () => true}]});
       const profile = await ProfilesService.getProfile(1, 'username');
       expect(profile).toEqual({profile: {following: true}});
     });

@@ -16,8 +16,8 @@ class BadRequestError extends Error {
   }
 }
 
-class ErrorHandler {
-  static catchError(res, err) {
+const ErrorHandler = {
+  catchError(res, err) {
     if (err.constructor.name === 'NotFoundError') {
       return res.status(404)
           .json(ErrorHandler.createErrorResponse(err.message || 'DB Error'));
@@ -31,9 +31,9 @@ class ErrorHandler {
         .json(ErrorHandler.createErrorResponse(
             err.message || 'Internal Server Error',
         ));
-  }
+  },
 
-  static createErrorResponse(error) {
+  createErrorResponse(error) {
     const errorArray = Array.isArray(error) ? error : [error];
     const errorResponse = {
       errors: {
@@ -44,8 +44,8 @@ class ErrorHandler {
       errorResponse.errors['Error: '].push(message);
     }
     return errorResponse;
-  }
-}
+  },
+};
 
 module.exports = {
   NotFoundError,

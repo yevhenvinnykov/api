@@ -1,4 +1,4 @@
-const {verifyToken} = require('./token.middleware');
+const TokenMiddleware = require('./token.middleware');
 
 jest.mock('jsonwebtoken', () => ({
   verify: jest.fn((token, secretOrPublicKey, options, callback) => {
@@ -30,7 +30,7 @@ describe('TOKEN MIDDLEWARE', () => {
   test(`when there\'s a token, next should be called
   and a userId should be added to the req`,
   () => {
-    verifyToken(reqMock, resMock, nextMock);
+    TokenMiddleware.verifyToken(reqMock, resMock, nextMock);
     expect(nextMock).toHaveBeenCalledTimes(1);
     expect(reqMock.userId).toBe('user_id');
   });
@@ -39,7 +39,7 @@ describe('TOKEN MIDDLEWARE', () => {
         and no userId should be added to the req`,
   () => {
     reqMock = {headers: {'x-access-token': null}};
-    verifyToken(reqMock, resMock, nextMock);
+    TokenMiddleware.verifyToken(reqMock, resMock, nextMock);
     expect(statusSpy).toHaveBeenCalledWith(400);
     expect(jsonSpy)
         .toHaveBeenCalledWith({'errors': {'Error: ': ['No token provided']}});
