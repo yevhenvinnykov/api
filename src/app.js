@@ -32,10 +32,9 @@ app.use((req, res, next) => {
 const url = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.DB_NAME}`;
 
 require('./routes/users.router')(app);
-require('./routes/articles.router')(app);
 require('./routes/profiles.router')(app);
 require('./routes/comments.router')(app);
-
+require('./routes/articles/index')(app);
 
 db.mongoose.connect(url).then(() => {
   console.log(`Successfully connected to mongodb

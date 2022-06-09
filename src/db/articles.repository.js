@@ -15,10 +15,9 @@ const ArticlesRepository = {
 
   async update(article, updateData) {
     for (const prop in updateData) {
-      if (article.hasOwnProperty(prop)) {
-        article[prop] = updateData[prop];
-        article.slug = article.title;
-      }
+      if (!(prop in article)) continue;
+      article[prop] = updateData[prop];
+      article.slug = article.title;
     }
     await article.save();
     return article;
