@@ -1,8 +1,8 @@
 const db = require('./models');
 const Article = db.article;
 
-class ArticlesRepository {
-  static async create(authUserId, articleData) {
+const ArticlesRepository = {
+  async create(authUserId, articleData) {
     return await new Article({
       title: articleData.title,
       description: articleData.description,
@@ -11,9 +11,9 @@ class ArticlesRepository {
       slug: articleData.title,
       author: authUserId,
     }).save();
-  }
+  },
 
-  static async update(article, updateData) {
+  async update(article, updateData) {
     for (const prop in updateData) {
       if (article.hasOwnProperty(prop)) {
         article[prop] = updateData[prop];
@@ -22,29 +22,29 @@ class ArticlesRepository {
     }
     await article.save();
     return article;
-  }
+  },
 
-  static async delete(conditions) {
+  async delete(conditions) {
     return await Article.deleteOne(conditions).exec();
-  }
+  },
 
-  static async findOneBy(field, value) {
+  async findOneBy(field, value) {
     return Article.findOne({[field]: value})
         .populate('author', 'username bio image following').exec();
-  }
+  },
 
-  static async find(condtions, {limit, offset}) {
+  async find(condtions, {limit, offset}) {
     return await Article.find(condtions)
         .skip(offset)
         .limit(limit)
         .sort([['updatedAt', 'descending']])
         .populate('author', 'username bio image following')
         .exec();
-  }
+  },
 
-  static async count(conditions) {
+  async count(conditions) {
     return await Article.countDocuments(conditions).exec();
-  }
-}
+  },
+};
 
 module.exports = ArticlesRepository;
