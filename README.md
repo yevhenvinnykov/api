@@ -3,9 +3,7 @@ Example Node (Express + Mongoose) app containing real world examples (CRUD, auth
 
 ### To get the Node server running locally:
 
-* ✅ Clone this repo
-* ✅ npm install to install all required dependencies
-* ✅ Install MongoDB Community Edition (instructions) and run it by executing mongod
+* ✅ Install MongoDB Community Edition (v5.0.7) and run it by executing mongod
 * ✅ npm start to start the local server
 * ✅ node v16.13
 
