@@ -1,4 +1,4 @@
-const UsersRepository = require('../../../db/users.repository');
+const UsersRepository = require('../../../db/users/users.repository');
 const ArticlesRepository = require('../../../db/articles/articles.repository');
 const {NotFoundError} = require('../../../middleware/errors/errorHandler');
 

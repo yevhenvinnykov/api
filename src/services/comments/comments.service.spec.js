@@ -1,5 +1,5 @@
 const CommentsService = require('./comments.service');
-const CommentsRepository = require('../../db/comments.repository');
+const CommentsRepository = require('../../db/comments/comments.repository');
 const ArticlesRepository = require('../../db/articles/articles.repository');
 const {BadRequestError} = require('../../middleware/errors/errorHandler');
 

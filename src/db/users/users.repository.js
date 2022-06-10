@@ -1,4 +1,4 @@
-const db = require('./models');
+const db = require('../models');
 const User = db.user;
 const bcrypt = require('bcryptjs');
 
@@ -20,7 +20,9 @@ const UsersRepository = {
       }
       user[prop] = userData[prop];
     }
-    return await user.save();
+    // return await user.save();
+    await user.save();
+    return user;
   },
 
   async follow(authUser, idToFollow) {

@@ -1,4 +1,4 @@
-const UsersRepository = require('../../db/users.repository');
+const UsersRepository = require('../../db/users/users.repository');
 const ProfilesService = require('./profiles.service');
 
 describe('PROFILES SERVICE', () => {

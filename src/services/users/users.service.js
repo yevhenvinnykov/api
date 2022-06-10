@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
-const UsersRepository = require('../../db/users.repository');
+const UsersRepository = require('../../db/users/users.repository');
 
 const UsersService = {
   async createUser({userData}) {

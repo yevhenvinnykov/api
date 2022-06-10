@@ -1,5 +1,5 @@
 const UsersService = require('./users.service');
-const UsersRepository = require('../../db/users.repository');
+const UsersRepository = require('../../db/users/users.repository');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 

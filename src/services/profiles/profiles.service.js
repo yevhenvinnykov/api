@@ -1,5 +1,5 @@
 const {NotFoundError} = require('../../middleware/errors/errorHandler');
-const UsersRepository = require('../../db/users.repository');
+const UsersRepository = require('../../db/users/users.repository');
 
 
 const ProfilesService = {

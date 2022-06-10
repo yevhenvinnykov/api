@@ -1,6 +1,6 @@
 const ArticlesLikeService = require('./articles-like.service');
 const ArticlesRepository = require('../../../db/articles/articles.repository');
-const UsersRepository = require('../../../db/users.repository');
+const UsersRepository = require('../../../db/users/users.repository');
 
 
 describe('ARTICLES LIKE SERVICE', () => {

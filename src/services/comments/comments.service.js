@@ -1,5 +1,5 @@
 const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
-const CommentsRepository = require('../../db/comments.repository');
+const CommentsRepository = require('../../db/comments/comments.repository');
 const ArticlesRepository = require('../../db/articles/articles.repository');
 
 const CommentsService = {
