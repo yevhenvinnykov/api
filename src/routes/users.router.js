@@ -14,15 +14,7 @@ module.exports = (app) => {
       ],
       UsersController.signUp)
   ;
-  app.post(
-      '/api/users/login',
-      UsersController.logIn,
-  );
-  app.get(
-      '/api/users',
-      [TokenMiddleware.verifyToken],
-      UsersController.getLoggedInUser,
-  );
+
   app.put(
       '/api/users',
       [

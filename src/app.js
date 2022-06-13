@@ -34,6 +34,7 @@ const url = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${pro
 require('./routes/users.router')(app);
 require('./routes/profiles.router')(app);
 require('./routes/comments.router')(app);
+require('./routes/session.router')(app);
 require('./routes/articles/index')(app);
 
 db.mongoose.connect(url).then(() => {

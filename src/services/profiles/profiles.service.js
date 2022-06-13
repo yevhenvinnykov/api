@@ -35,7 +35,7 @@ const ProfilesService = {
     const profile = await UsersRepository
         .findOneBy('username', username, 'username email bio image');
 
-    if (!authUser || !profile) throw new NotFoundError('User not found');
+    if (!profile) throw new NotFoundError('User not found');
 
     return [authUser, profile];
   },

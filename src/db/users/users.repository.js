@@ -20,19 +20,19 @@ const UsersRepository = {
       }
       user[prop] = userData[prop];
     }
-    // return await user.save();
+
     await user.save();
     return user;
   },
 
   async follow(authUser, idToFollow) {
     authUser.following.push(idToFollow);
-    return await authUser.save();
+    await authUser.save();
   },
 
   async unfollow(authUser, index) {
     authUser.following.splice(index, 1);
-    return await authUser.save();
+    await authUser.save();
   },
 
   async findOneBy(
