@@ -1,9 +1,10 @@
 const ArticlesDBService = require('../db/articles-db.service');
+const UsersRepository = require('../../../db/users/users.repository');
+const {BadRequestError} = require('../../../middleware/errors/errorHandler');
 
 const ArticlesLikeService = {
   async likeArticle(slug, authUserId) {
-    const authUser = await ArticlesDBService.fetchAuthUserFromDB(authUserId);
-    const article = await ArticlesDBService.fetchArticleFromDB(slug);
+    const [authUser, article] = await this.fetchDataFromDB(slug, authUserId);
 
     if (!authUser.favorites.some((id) => id.equals(article._id))) {
       article.favoritesCount++;
@@ -15,8 +16,7 @@ const ArticlesLikeService = {
   },
 
   async dislikeArticle(slug, authUserId) {
-    const authUser = await ArticlesDBService.fetchAuthUserFromDB(authUserId);
-    const article = await ArticlesDBService.fetchArticleFromDB(slug);
+    const [authUser, article] = await this.fetchDataFromDB(slug, authUserId);
 
     const index = authUser.favorites.indexOf(article._id);
     if (index !== -1) {
@@ -26,6 +26,14 @@ const ArticlesLikeService = {
     }
 
     return {...article._doc, favorited: false};
+  },
+
+  async fetchDataFromDB(slug, authUserId) {
+    const authUser = await UsersRepository.findOneBy('_id', authUserId, 'favorites following');
+    if (!authUser) throw new BadRequestError('You\'re not authorized');
+    const article = await ArticlesDBService.fetchArticleFromDB(slug);
+
+    return [authUser, article];
   },
 };
 

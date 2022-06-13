@@ -4,15 +4,6 @@ const {NotFoundError} = require('../../../middleware/errors/errorHandler');
 
 
 const ArticlesDBService = {
-  async fetchAuthUserFromDB(authUserId) {
-    const authUser = await UsersRepository
-        .findOneBy('_id', authUserId, 'favorites following');
-
-    if (!authUser) throw new NotFoundError('User not found');
-
-    return authUser;
-  },
-
   async fetchArticleFromDB(slug) {
     const article = await ArticlesRepository.findOneBy('slug', slug);
 

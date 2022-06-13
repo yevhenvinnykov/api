@@ -1,4 +1,5 @@
 const ArticlesRepository = require('../../../db/articles/articles.repository');
+const UsersRepository = require('../../../db/users/users.repository');
 const {BadRequestError} = require('../../../middleware/errors/errorHandler');
 const ArticlesDBService = require('../db/articles-db.service');
 
@@ -28,8 +29,8 @@ const ArticlesCRUDService = {
   async getArticle(slug, authUserId) {
     let article = await ArticlesDBService.fetchArticleFromDB(slug);
     const authUser = authUserId ?
-                await ArticlesDBService.fetchAuthUserFromDB(authUserId) :
-                null;
+        await UsersRepository.findOneBy('_id', authUserId, 'favorites following') :
+        null;
 
     article = JSON.parse(JSON.stringify(article));
     article.author.following = !!authUser && authUser.following
@@ -45,7 +46,7 @@ const ArticlesCRUDService = {
         .delete({slug, author: authUserId});
 
     if (!deletedCount) {
-      throw new BadRequestError('Article not found or you\'re not authorized');
+      throw new BadRequestError('Something went wrong whhile deleting the article');
     }
   },
 };

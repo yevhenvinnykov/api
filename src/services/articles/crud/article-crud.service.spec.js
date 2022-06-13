@@ -124,7 +124,7 @@ describe('ARTICLES CRUD SERVICE', () => {
         await ArticlesCRUDService.deleteArticle({slug: 'slug', authUserId: 1});
       } catch (error) {
         expect(error.message)
-            .toBe('Article not found or you\'re not authorized');
+            .toBe('Something went wrong whhile deleting the article');
       }
     });
   });

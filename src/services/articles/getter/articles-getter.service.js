@@ -1,11 +1,14 @@
 const ArticlesRepository = require('../../../db/articles/articles.repository');
+const UsersRepository = require('../../../db/users/users.repository');
 const ArticlesDBService = require('../db/articles-db.service');
+const {NotFoundError} = require('../../../middleware/errors/errorHandler');
 
 const ArticlesGetterService = {
   async getArticlesFromFollowedUsers(authUserId, query) {
     // TODO: have to work on that method because it's gonna fetch
     // loads of unnecessary articles once the offset gets larger
-    const authUser = await ArticlesDBService.fetchAuthUserFromDB(authUserId);
+    const authUser = await UsersRepository.findOneBy('_id', authUserId, 'favorites following');
+    if (!authUser) throw new NotFoundError('User not found');
     let articles = [];
     let articlesCount = 0;
     const start = +query?.offset || 0;
@@ -28,7 +31,8 @@ const ArticlesGetterService = {
     let [articles, articlesCount] = await ArticlesDBService.fetchArticlesFromDB(query);
     if (!authUserId) return {articles, articlesCount};
 
-    const authUser = await ArticlesDBService.fetchAuthUserFromDB(authUserId);
+    const authUser = await UsersRepository.findOneBy('_id', authUserId, 'favorites following');
+    if (!authUser) throw new NotFoundError('User not found');
     articles = this.addFavoritedInfoToArticles(articles, authUser.favorites);
 
     return {articles, articlesCount};
