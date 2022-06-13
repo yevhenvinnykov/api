@@ -1,11 +1,10 @@
-const ArticlesGetterService = require('../../../services/articles/getter/articles-getter.service');
+const ArticlesService = require('../../../services/articles/articles.service');
 const {ErrorHandler} = require('../../../middleware/errors/errorHandler');
 
 const ArticlesGetterController = {
   async getArticles(req, res) {
     try {
-      const {articles, articlesCount} = await ArticlesGetterService
-          .getArticles(req.userId, req.query);
+      const {articles, articlesCount} = await ArticlesService.getMany(req.userId, req.query);
       res.status(200).json({articles, articlesCount});
     } catch (error) {
       ErrorHandler.catchError(res, error);
@@ -14,8 +13,8 @@ const ArticlesGetterController = {
 
   async getArticlesFromFollowedUsers(req, res) {
     try {
-      const {articles, articlesCount} = await ArticlesGetterService
-          .getArticlesFromFollowedUsers(req.userId, req.query);
+      const {articles, articlesCount} = await ArticlesService
+          .getFromFollowed(req.userId, req.query);
       res.status(200).json({articles, articlesCount});
     } catch (error) {
       ErrorHandler.catchError(res, error);
@@ -24,7 +23,7 @@ const ArticlesGetterController = {
 
   async getTags(req, res) {
     try {
-      const tags = await ArticlesGetterService.getTags();
+      const tags = await ArticlesService.getTags();
       res.status(200).json({tags});
     } catch (error) {
       ErrorHandler.catchError(res, error);

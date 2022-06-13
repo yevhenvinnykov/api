@@ -1,10 +1,10 @@
-const ArticlesLikeService = require('../../../services/articles/like/articles-like.service');
+const ArticlesService = require('../../../services/articles/articles.service');
 const {ErrorHandler} = require('../../../middleware/errors/errorHandler');
 
 const ArticlesLikeController = {
   async likeArticle(req, res) {
     try {
-      const article = await ArticlesLikeService.likeArticle(req.params.slug, req.userId);
+      const article = await ArticlesService.like(req.params.slug, req.userId);
       res.status(200).json({article});
     } catch (error) {
       ErrorHandler.catchError(res, error);
@@ -13,7 +13,7 @@ const ArticlesLikeController = {
 
   async dislikeArticle(req, res) {
     try {
-      const article = await ArticlesLikeService.dislikeArticle(req.params.slug, req.userId);
+      const article = await ArticlesService.dislike(req.params.slug, req.userId);
       res.status(200).json({article});
     } catch (error) {
       ErrorHandler.catchError(res, error);
