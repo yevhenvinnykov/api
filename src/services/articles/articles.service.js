@@ -27,8 +27,8 @@ const ArticlesService = {
     return await ArticlesGetterService.getArticlesFromFollowedUsers(authUserId, query);
   },
 
-  async getTags(authUserId, query) {
-    return await ArticlesGetterService.getTags(authUserId, query);
+  async getTags() {
+    return await ArticlesGetterService.getTags();
   },
 
   async like(slug, authUserId) {

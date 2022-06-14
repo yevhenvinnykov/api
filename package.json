@@ -1,5 +1,9 @@
 {
   "name": "backend",
+  "jest": {
+    "collectCoverage": true,
+    "testPathIgnorePatterns" : ["__tests__/index.js"]
+},
   "version": "1.0.0",
   "description": "",
   "main": "src/app.js",
@@ -23,6 +27,7 @@
     "eslint-config-google": "^0.14.0",
     "jest": "^28.1.0",
     "mockingoose": "^2.15.2",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3"
   }
 }
