@@ -126,6 +126,14 @@ describe('COMMENTS ROUTER', () => {
       expect(response.body.comments.length).toBe(3);
       expect(response.body.comments[0].body).toEqual('TEST 1');
     });
+
+    it('should fail because no article is found', async () => {
+      const response = await request(server)
+          .get(`/api/articles/UNKNOWN-ARTICLE/comments`)
+          .set('Accept', 'application/json');
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 
   describe('DELETE /api/articles/:slug/comments/:id', () => {
