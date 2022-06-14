@@ -10,6 +10,7 @@ app.use(express.urlencoded({extended: false}));
 require('../routes/users.router')(app);
 require('../routes/session.router')(app);
 require('../routes/profiles.router')(app);
+require('../routes/comments.router')(app);
 
 
 module.exports = app;
