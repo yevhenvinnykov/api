@@ -10,7 +10,7 @@ const CommentsService = {
     const comment = await CommentsRepository
         .create(commentBody, authUserId, article._id);
     if (!comment) {
-      throw new BadRequestError('Something went wrong when creating comment');
+      throw new BadRequestError('Something went wrong while creating the comment');
     }
 
     return comment;
@@ -35,7 +35,7 @@ const CommentsService = {
     }
 
     const {deletedCount} = await CommentsRepository.deleteOneById(commentId);
-    if (!deletedCount) throw new BadRequestError('Something went wrong');
+    if (!deletedCount) throw new BadRequestError('Something went wrong while deleting the comment');
   },
 };
 

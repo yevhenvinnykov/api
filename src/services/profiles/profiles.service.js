@@ -24,7 +24,7 @@ const ProfilesService = {
   async unfollowProfile(authUserId, username) {
     const [authUser, profile] = await this.fetchDataFromDB(authUserId, username);
 
-    const index = authUser ? authUser.following.findIndex((id) => id.equals(profile._id)) : -1;
+    const index = authUser.following.findIndex((id) => id.equals(profile._id));
     if (index !== -1) await UsersRepository.unfollow(authUser, index);
 
     return {profile: {...profile._doc, following: false}};

@@ -1,8 +1,8 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const User = require('../../db/models/user.model');
+const User = require('../db/models/user.model');
 const jwt = require('jsonwebtoken');
-const app = require('../index');
+const app = require('./index');
 const bcrypt = require('bcryptjs');
 
 describe('SESSION ROUTER', () => {
@@ -13,10 +13,6 @@ describe('SESSION ROUTER', () => {
   beforeAll(async () => {
     await User.deleteMany({});
     server = app.listen(3002);
-  });
-
-  afterEach(async () => {
-    await User.deleteMany({});
   });
 
   afterAll(async () => {
@@ -30,7 +26,7 @@ describe('SESSION ROUTER', () => {
     expect(app).toBeDefined();
   });
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     user = await new User({
       username: 'John',
       email: 'doe@email.com',
@@ -42,16 +38,12 @@ describe('SESSION ROUTER', () => {
   });
 
   describe('POST /api/users/login', () => {
-    let body;
-
-    beforeEach(() => {
-      body = {
-        user: {
-          email: 'doe@email.com',
-          password: 'password1A',
-        },
-      };
-    });
+    const body = {
+      user: {
+        email: 'doe@email.com',
+        password: 'password1A',
+      },
+    };
 
     it('should login and return the user object with a token', async () => {
       const response = await request(server)
@@ -65,13 +57,23 @@ describe('SESSION ROUTER', () => {
     });
 
     it('should fail because the password is invalid', async () => {
-      body.user.password = 'invalidpassword';
+      body.user.password = 'InvalidPassword1';
       const response = await request(server)
-          .post('/api/users/signup')
+          .post('/api/users/login')
           .send(body)
           .set('Accept', 'application/json');
 
       expect(response.statusCode).toBe(400);
+    });
+
+    it('should fail because the user does not exist', async () => {
+      body.user.email = 'dontexist@email.com';
+      const response = await request(server)
+          .post('/api/users/login')
+          .send(body)
+          .set('Accept', 'application/json');
+
+      expect(response.statusCode).toBe(404);
     });
   });
 

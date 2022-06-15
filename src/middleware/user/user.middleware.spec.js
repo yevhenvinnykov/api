@@ -82,7 +82,7 @@ describe('USER MIDDLEWARE', () => {
 
       expect(statusSpy).toHaveBeenCalledWith(400);
       expect(jsonSpy)
-          .toHaveBeenCalledWith({'errors': {'Error: ': ['Email or password is not valid']}});
+          .toHaveBeenCalledWith({'errors': {'Error: ': ['Enter a valid email']}});
       expect(nextMock).toHaveBeenCalledTimes(0);
     });
 

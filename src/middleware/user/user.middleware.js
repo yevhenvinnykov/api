@@ -21,7 +21,7 @@ const UserMiddleware = {
       if (!email) return next();
       const validator = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (!validator.test(email)) {
-        throw new BadRequestError('Email or password is not valid');
+        throw new BadRequestError('Enter a valid email');
       }
       next();
     } catch (error) {

@@ -9,7 +9,8 @@
   "main": "src/app.js",
   "scripts": {
     "start": "nodemon src/app.js",
-    "test": "node node_modules/.bin/jest --coverage"
+    "unit": "node node_modules/.bin/jest --coverage  --testPathPattern=spec\\.js$",
+    "integration": "node node_modules/.bin/jest --coverage --testPathPattern=test\\.js$"
   },
   "keywords": [],
   "author": "",

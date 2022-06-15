@@ -1,10 +1,10 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const User = require('../../db/models/user.model');
-const Comment = require('../../db/models/comment.model');
-const Article = require('../../db/models/article.model');
+const User = require('../db/models/user.model');
+const Comment = require('../db/models/comment.model');
+const Article = require('../db/models/article.model');
 const jwt = require('jsonwebtoken');
-const app = require('../index');
+const app = require('./index');
 const bcrypt = require('bcryptjs');
 
 describe('COMMENTS ROUTER', () => {
@@ -12,18 +12,13 @@ describe('COMMENTS ROUTER', () => {
   let user;
   let token;
   let article;
+  let anotherToken;
 
   beforeAll(async () => {
     await User.deleteMany({});
     await Article.deleteMany({});
     await Comment.deleteMany({});
-    server = app.listen(3003);
-  });
-
-  afterEach(async () => {
-    await User.deleteMany({});
-    await Article.deleteMany({});
-    await Comment.deleteMany({});
+    server = app.listen(3004);
   });
 
   afterAll(async () => {
@@ -41,12 +36,12 @@ describe('COMMENTS ROUTER', () => {
     expect(app).toBeDefined();
   });
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     process.env.JWT_SECRET = 'secret';
     // Have no idea why, but it won't work without setting the env variable
     user = await new User({
-      username: 'Ross',
-      email: 'ross@email.com',
+      username: 'Rachel',
+      email: 'rachel@email.com',
       password: bcrypt.hashSync('Pivot1', 8),
     });
     token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: 3600});
@@ -54,9 +49,22 @@ describe('COMMENTS ROUTER', () => {
     await user.save();
   });
 
-  beforeEach(async () => {
+  beforeAll(async () => {
+    process.env.JWT_SECRET = 'secret';
+    // Have no idea why, but it won't work without setting the env variable
+    anotherUser = await new User({
+      username: 'User',
+      email: 'user@email.com',
+      password: bcrypt.hashSync('User111', 8),
+    });
+    anotherToken = jwt.sign({id: anotherUser._id}, process.env.JWT_SECRET, {expiresIn: 3600});
+    anotherUser.token = anotherToken;
+    await user.save();
+  });
+
+  beforeAll(async () => {
     article = await new Article({
-      title: 'Lorem',
+      title: 'Test',
       description: 'Lorem ipsum',
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
       tagList: ['lorem'],
@@ -101,7 +109,7 @@ describe('COMMENTS ROUTER', () => {
       comment: {body: 'Test comment'},
     };
     const response = await request(server)
-        .post('/api/articles/Unknown/comments')
+        .post('/api/articles/Test/comments')
         .send(body)
         .set('Accept', 'application/json');
 
@@ -110,21 +118,13 @@ describe('COMMENTS ROUTER', () => {
 
   describe('GET /api/articles/:slug/comments', () => {
     it('should return comments', async () => {
-      const comments = ['TEST 1', 'TEST 2', 'TEST 3'];
-      comments.forEach(async (comment) => {
-        await new Comment({
-          body: comment,
-          author: user.id,
-          article: article.id,
-        }).save();
-      });
       const response = await request(server)
           .get(`/api/articles/${article.slug}/comments`)
           .set('Accept', 'application/json');
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.comments.length).toBe(3);
-      expect(response.body.comments[0].body).toEqual('TEST 1');
+      expect(response.body.comments.length).toBe(1);
+      expect(response.body.comments[0].body).toEqual('Test comment');
     });
 
     it('should fail because no article is found', async () => {
@@ -172,6 +172,15 @@ describe('COMMENTS ROUTER', () => {
           .set('Accept', 'application/json');
 
       expect(response.statusCode).toBe(404);
+    });
+
+    it('should fail because the user is not the comment\'s author', async () => {
+      const response = await request(server)
+          .delete(`/api/articles/${article.slug}/comments/${comment.id}`)
+          .set('x-access-token', anotherToken)
+          .set('Accept', 'application/json');
+
+      expect(response.statusCode).toBe(400);
     });
   });
 });

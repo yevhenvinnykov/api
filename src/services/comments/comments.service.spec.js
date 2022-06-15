@@ -38,7 +38,7 @@ describe('COMMENTS SERVICE', () => {
         });
       } catch (error) {
         expect(error.message)
-            .toBe('Something went wrong when creating comment');
+            .toBe('Something went wrong while creating the comment');
       }
     });
   });
@@ -111,7 +111,7 @@ describe('COMMENTS SERVICE', () => {
       try {
         await CommentsService.deleteComment({commentId: 1, authUserId: 1});
       } catch (error) {
-        expect(error.message).toBe('Something went wrong');
+        expect(error.message).toBe('Something went wrong while deleting the comment');
       }
     });
   });
