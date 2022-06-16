@@ -30,7 +30,7 @@ const MockCreator = {
     const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: 3600});
     user.token = token;
     await user.save();
-    return [user, token];
+    return user;
   },
 
   async createCommentMock({body, authorId, articleId}) {
