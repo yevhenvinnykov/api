@@ -24,7 +24,7 @@ const MockCreator = {
     // Have no idea why, but it won't work without setting the env variable
     const user = await new User({
       username,
-      email: `${username}@email.com''`,
+      email: `${username}@email.com`.toLowerCase(),
       password: bcrypt.hashSync(`${username}Password1`, 8),
     });
     const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: 3600});
