@@ -1,4 +1,4 @@
-const {NotFoundError} = require('../../middleware/errors/errorHandler');
+const {NotFoundError, BadRequestError} = require('../../middleware/errors/errorHandler');
 const UsersRepository = require('../../db/users/users.repository');
 
 
@@ -13,8 +13,9 @@ const ProfilesService = {
 
   async followProfile(authUserId, username) {
     const [authUser, profile] = await this.fetchDataFromDB(authUserId, username);
+    if (!authUser) throw new BadRequestError('You\'re not authorized');
 
-    if (!authUser?.following.some((id) => id.equals(profile._id))) {
+    if (!authUser.following.some((id) => id.equals(profile._id))) {
       await UsersRepository.follow(authUser, profile._id);
     }
 
@@ -23,6 +24,7 @@ const ProfilesService = {
 
   async unfollowProfile(authUserId, username) {
     const [authUser, profile] = await this.fetchDataFromDB(authUserId, username);
+    if (!authUser) throw new BadRequestError('You\'re not authorized');
 
     const index = authUser.following.findIndex((id) => id.equals(profile._id));
     if (index !== -1) await UsersRepository.unfollow(authUser, index);
