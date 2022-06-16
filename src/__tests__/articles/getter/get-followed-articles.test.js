@@ -1,87 +1,46 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const User = require('../../../db/models/user.model');
-const Article = require('../../../db/models/article.model');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const app = require('../../index');
+
+const MockCreator = require('../../utils/MockCreator');
+const cleanUpDB = require('../../utils/cleanUpDB');
+
 
 describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
   let server;
   let user;
-  let token;
   let author;
 
   beforeAll(async () => {
-    await Article.deleteMany({});
-    await User.deleteMany({});
+    await cleanUpDB();
     server = app.listen(3006);
   });
 
   afterAll(async () => {
-    await Article.deleteMany({});
-    await User.deleteMany({});
+    await cleanUpDB();
     await mongoose.connection.close();
     await server.close();
   });
 
-  it('should have a module', () => {
-    expect(User).toBeDefined();
-    expect(Article).toBeDefined();
-    expect(app).toBeDefined();
+  beforeAll(async () => {
+    author = await MockCreator.createUserMock('Rachel');
+    user = await MockCreator.createUserMock('Chandler');
   });
 
   beforeAll(async () => {
-    process.env.JWT_SECRET = 'secret';
-    // Have no idea why, but it won't work without setting the env variable
-    author = await new User({
-      username: 'Author',
-      email: 'author@email.com',
-      password: bcrypt.hashSync('Author1', 8),
-    });
-    await author.save();
-  });
-
-  beforeAll(async () => {
-    const articlesTitles = [
-      'ArticleOne',
-      'ArticleTwo',
-      'ArticleThree',
-      'ArticleFour',
-      'ArticleFive',
-    ];
-    for (const title of articlesTitles) {
-      const article = new Article({
-        title: title,
-        description: 'Lorem ipsum',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-        tagList: ['lorem'],
-      });
-      article.slug = article.title;
+    const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
+    for (const number of articleNumbers) {
+      const article = await MockCreator.createArticleMock(`Article${number}`);
       article.author = author._id;
       await article.save();
     }
-  });
-
-  beforeAll(async () => {
-    process.env.JWT_SECRET = 'secret';
-    // Have no idea why, but it won't work without setting the env variable
-    user = await new User({
-      username: 'Chandler',
-      email: 'chandler@email.com',
-      password: bcrypt.hashSync('Chandler1', 8),
-    });
-    token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: 3600});
-    user.token = token;
-    await user.save();
   });
 
   describe('GET /api/articles/feed', () => {
     it('should return 0 articles, because the user does not follow the author', async () => {
       const response = await request(server)
           .get('/api/articles/feed')
-          .set('x-access-token', token)
-          .set('Accept', 'application/json');
+          .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(0);
@@ -93,8 +52,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
       await user.save();
       const response = await request(server)
           .get('/api/articles/feed')
-          .set('x-access-token', token)
-          .set('Accept', 'application/json');
+          .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(5);
@@ -102,9 +60,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
     });
 
     it('should fail because no token is provided', async () => {
-      const response = await request(server)
-          .get('/api/articles/feed')
-          .set('Accept', 'application/json');
+      const response = await request(server).get('/api/articles/feed');
 
       expect(response.statusCode).toBe(400);
     });
