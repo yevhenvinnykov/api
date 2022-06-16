@@ -13,10 +13,6 @@ describe('USERS ROUTER', () => {
     server = app.listen(3001);
   });
 
-  afterEach(async () => {
-    await User.deleteMany({});
-  });
-
   afterAll(async () => {
     await User.deleteMany({});
     await mongoose.connection.close();
