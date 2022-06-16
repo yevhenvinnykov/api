@@ -1,56 +1,39 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const Article = require('../../../db/models/article.model');
 const app = require('../../index');
+
+const MockCreator = require('../../utils/MockCreator');
+const cleanUpDB = require('../../utils/cleanUpDB');
+
 
 describe('ARTICLES GETTER ROUTER: GET TAGS', () => {
   let server;
 
   beforeAll(async () => {
-    await Article.deleteMany({});
+    await cleanUpDB();
     server = app.listen(3006);
   });
 
   afterAll(async () => {
-    await Article.deleteMany({});
+    await cleanUpDB();
     await mongoose.connection.close();
     await server.close();
   });
 
-  it('should have a module', () => {
-    expect(Article).toBeDefined();
-    expect(app).toBeDefined();
-  });
-
   beforeAll(async () => {
-    const articlesTitles = [
-      'ArticleOne',
-      'ArticleTwo',
-      'ArticleThree',
-      'ArticleFour',
-      'ArticleFive',
-    ];
-    for (const title of articlesTitles) {
-      const article = new Article({
-        title: title,
-        description: 'Lorem ipsum',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-        tagList: ['tag'],
-      });
-      article.slug = article.title;
-      await article.save();
+    const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
+    for (const number of articleNumbers) {
+      await MockCreator.createArticleMock(`Article${number}`);
     }
   });
 
   describe('GET /api/tags', () => {
     it('should return tags', async () => {
-      const response = await request(server)
-          .get('/api/tags')
-          .set('Accept', 'application/json');
+      const response = await request(server).get('/api/tags');
 
       expect(response.statusCode).toBe(200);
       expect(response.body.tags.length).toBe(1);
-      expect(response.body.tags).toEqual(['tag']);
+      expect(response.body.tags).toEqual(['lorem']);
     });
   });
 });
