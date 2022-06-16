@@ -1,3 +1,4 @@
+require('dotenv').config();
 const User = require('../../db/models/user.model');
 const Article = require('../../db/models/article.model');
 const Comment = require('../../db/models/comment.model');
@@ -20,14 +21,12 @@ const MockCreator = {
   },
 
   async createUserMock(username) {
-    process.env.JWT_SECRET = 'secret';
-    // Have no idea why, but it won't work without setting the env variable
     const user = await new User({
       username,
       email: `${username}@email.com`.toLowerCase(),
       password: bcrypt.hashSync(`${username}Password1`, 8),
     });
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: 3600});
+    const token = jwt.sign({id: user._id}, process.env.JWT_DEBUG_SECRET, {expiresIn: 3600});
     user.token = token;
     await user.save();
     return user;

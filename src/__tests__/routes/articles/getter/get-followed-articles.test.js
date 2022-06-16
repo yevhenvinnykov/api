@@ -1,9 +1,6 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
-const app = require('../../index');
-
-const MockCreator = require('../../utils/MockCreator');
-const cleanUpDB = require('../../utils/cleanUpDB');
+const TestInitializer = require('../../../utils/TestInitializer');
+const MockCreator = require('../../../utils/MockCreator');
 
 
 describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
@@ -12,14 +9,11 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
   let author;
 
   beforeAll(async () => {
-    await cleanUpDB();
-    server = app.listen(3006);
+    server = await TestInitializer.initializeServer();
   });
 
   afterAll(async () => {
-    await cleanUpDB();
-    await mongoose.connection.close();
-    await server.close();
+    await TestInitializer.close(server);
   });
 
   beforeAll(async () => {

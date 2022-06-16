@@ -1,23 +1,17 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
+const MockCreator = require('../utils/MockCreator');
+const TestInitializer = require('../utils/TestInitializer');
 const bcrypt = require('bcryptjs');
-const app = require('./index');
-
-const MockCreator = require('./utils/MockCreator');
-const cleanUpDB = require('./utils/cleanUpDB');
 
 describe('USERS ROUTER', () => {
   let server;
 
   beforeAll(async () => {
-    await cleanUpDB();
-    server = app.listen(3001);
+    server = await TestInitializer.initializeServer();
   });
 
   afterAll(async () => {
-    await cleanUpDB();
-    await mongoose.connection.close();
-    await server.close();
+    await TestInitializer.close(server);
   });
 
   describe('POST /api/users/signup', () => {

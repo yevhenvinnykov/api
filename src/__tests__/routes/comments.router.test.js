@@ -1,9 +1,7 @@
 const request = require('supertest');
+const MockCreator = require('../utils/MockCreator');
+const TestInitializer = require('../utils/TestInitializer');
 const mongoose = require('mongoose');
-const app = require('./index');
-
-const cleanUpDB = require('./utils/cleanUpDB');
-const MockCreator = require('./utils/MockCreator');
 
 describe('COMMENTS ROUTER', () => {
   let server;
@@ -13,20 +11,17 @@ describe('COMMENTS ROUTER', () => {
   const body = {comment: {body: 'Test comment'}};
 
   beforeAll(async () => {
-    await cleanUpDB();
-    server = app.listen(3004);
+    server = await TestInitializer.initializeServer();
+  });
+
+  afterAll(async () => {
+    await TestInitializer.close(server);
   });
 
   beforeAll(async () => {
     author = await MockCreator.createUserMock('John');
     user = await MockCreator.createUserMock('Jane');
     article = await MockCreator.createArticleMock('Test');
-  });
-
-  afterAll(async () => {
-    await cleanUpDB();
-    await mongoose.connection.close();
-    await server.close();
   });
 
   describe('POST /api/articles/:slug/comments', () => {
