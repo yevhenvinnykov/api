@@ -1,5 +1,5 @@
 const UserMiddleware = require('./user.middleware');
-const UsersRepository = require('../../db/users/users.repository');
+const UsersRepository = require('../../db/repos/users/users.repository');
 
 describe('USER MIDDLEWARE', () => {
   let reqMock;

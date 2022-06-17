@@ -1,4 +1,4 @@
-const db = require('../models');
+const db = require('../../index');
 const Comment = db.comment;
 const CommentsRepository = require('./comments.repository');
 const mockingoose = require('mockingoose');

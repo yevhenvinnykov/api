@@ -1,11 +1,11 @@
 const ArticlesGetterService = require('./articles-getter.service');
-const ArticlesRepository = require('../../../db/articles/articles.repository');
-const UsersRepository = require('../../../db/users/users.repository');
+const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
+const UsersRepository = require('../../../db/repos/users/users.repository');
 
 describe('ARTICLES GETTER SERVICE', () => {
   describe('GET ARTICLES FROM FOLLOWED USERS', () => {
     const mockArticle = {
-      _id: 1,
+      id: 1,
       _doc: {
         title: 'title',
       },
@@ -46,14 +46,14 @@ describe('ARTICLES GETTER SERVICE', () => {
   describe('GET ARTICLES', () => {
     const mockArticles = [
       {
-        _id: 1,
+        id: 1,
         _doc: {
           title: 'title',
         },
         save: () => {},
       },
       {
-        _id: 2,
+        id: 2,
         _doc: {
           title: 'another title',
         },

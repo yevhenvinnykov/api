@@ -1,11 +1,11 @@
-const UsersRepository = require('../../db/users/users.repository');
+const UsersRepository = require('../../db/repos/users/users.repository');
 const ProfilesService = require('./profiles.service');
 
 describe('PROFILES SERVICE', () => {
   describe('GET PROFILE', () => {
     test('should return profile', async () => {
       jest.spyOn(UsersRepository, 'findOneBy')
-          .mockReturnValue({_id: 1, following: [{equals: () => true}]});
+          .mockReturnValue({id: 1, following: [{equals: () => true}]});
       const profile = await ProfilesService.getProfile(1, 'username');
       expect(profile).toEqual({profile: {following: true}});
     });
@@ -22,7 +22,7 @@ describe('PROFILES SERVICE', () => {
 
   describe('FOLLOW PROFILE', () => {
     const userMock = {
-      _id: 1,
+      id: 1,
       following: [{equals: () => true}],
       save: () => {},
     };
@@ -45,7 +45,7 @@ describe('PROFILES SERVICE', () => {
 
   describe('UNFOLLOW PROFILE', () => {
     const userMock = {
-      _id: 1,
+      id: 1,
       following: [{equals: () => false}],
       save: () => {},
     };

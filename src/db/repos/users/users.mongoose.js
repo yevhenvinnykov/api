@@ -1,8 +1,8 @@
-const db = require('../models');
+const db = require('../../index');
 const User = db.user;
 const bcrypt = require('bcryptjs');
 
-const UsersRepository = {
+const UsersMongoose = {
   async create({username, email, password}) {
     return await new User({
       username,
@@ -25,12 +25,14 @@ const UsersRepository = {
     return user;
   },
 
-  async follow(authUser, idToFollow) {
+  async follow(authUserId, idToFollow) {
+    const authUser = await this.findOneBy('id', authUserId, ['following']);
     authUser.following.push(idToFollow);
     await authUser.save();
   },
 
-  async unfollow(authUser, index) {
+  async unfollow(authUserId, index) {
+    const authUser = await this.findOneBy('id', authUserId, ['following']);
     authUser.following.splice(index, 1);
     await authUser.save();
   },
@@ -38,14 +40,15 @@ const UsersRepository = {
   async findOneBy(
       field,
       value,
-      options = 'username email token bio image',
+      attributes = ['username', 'email', 'bio', 'image', 'id'],
   ) {
-    return await User.findOne({[field]: value}).select(options).exec();
+    const user = await User.findOne({[field]: value}).select(attributes.join(' ')).exec();
+    return user;
   },
 
-  async findOneByOr(values, options = 'username email token bio image') {
-    return await User.findOne({$or: values}).select(options).exec();
+  async findOneByOr(values, attributes = ['username', 'email', 'bio', 'image', 'id']) {
+    return await User.findOne({$or: values}).select(attributes.join(' ')).exec();
   },
 };
 
-module.exports = UsersRepository;
+module.exports = UsersMongoose;

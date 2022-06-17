@@ -1,5 +1,5 @@
 const ArticlesRepository = require('./articles.repository');
-const db = require('../models');
+const db = require('../../index');
 const Article = db.article;
 const mockingoose = require('mockingoose');
 const mockAuthortId = new db.mongoose.Types.ObjectId();

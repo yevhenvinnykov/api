@@ -25,7 +25,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
     const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
     for (const number of articleNumbers) {
       const article = await MockCreator.createArticleMock(`Article${number}`);
-      article.author = author._id;
+      article.author = author.id;
       await article.save();
     }
   });
@@ -42,7 +42,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
     });
 
     it('should return 5 articles, because the user follows the author', async () => {
-      user.following.push(author._id);
+      user.following.push(author.id);
       await user.save();
       const response = await request(server)
           .get('/api/articles/feed')

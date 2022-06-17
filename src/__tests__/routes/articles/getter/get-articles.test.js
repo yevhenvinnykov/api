@@ -88,7 +88,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(5);
-      expect(response.body.articles.every((article) => article.author._id === user.id)).toBe(true);
+      expect(response.body.articles.every((article) => article.author.id === user.id)).toBe(true);
     });
 
     it('should return all the liked articles', async () => {

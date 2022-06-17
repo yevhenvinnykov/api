@@ -1,5 +1,5 @@
-const UsersRepository = require('../../../db/users/users.repository');
-const ArticlesRepository = require('../../../db/articles/articles.repository');
+const UsersRepository = require('../../../db/repos/users/users.repository');
+const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
 const {NotFoundError} = require('../../../middleware/errors/errorHandler');
 
 
@@ -34,13 +34,13 @@ const ArticlesDBService = {
 
     if (query?.author) {
       queryConditions.author = await UsersRepository
-          .findOneBy('username', query.author, '_id');
+          .findOneBy('username', query.author, ['id']);
     }
 
     if (query?.favorited) {
       const user = await UsersRepository
-          .findOneBy('username', query.favorited, 'favorites');
-      queryConditions._id = {$in: user?.favorites};
+          .findOneBy('username', query.favorited, ['favorites']);
+      queryConditions.id = {$in: user?.favorites};
     }
 
     if (query?.tag) {

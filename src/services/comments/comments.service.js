@@ -1,6 +1,6 @@
 const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
-const CommentsRepository = require('../../db/comments/comments.repository');
-const ArticlesRepository = require('../../db/articles/articles.repository');
+const CommentsRepository = require('../../db/repos/comments/comments.repository');
+const ArticlesRepository = require('../../db/repos/articles/articles.repository');
 
 const CommentsService = {
   async createComment({authUserId, slug, commentBody}) {
@@ -8,7 +8,7 @@ const CommentsService = {
     if (!article) throw new NotFoundError('Article not found');
 
     const comment = await CommentsRepository
-        .create(commentBody, authUserId, article._id);
+        .create(commentBody, authUserId, article.id);
     if (!comment) {
       throw new BadRequestError('Something went wrong while creating the comment');
     }
@@ -20,13 +20,14 @@ const CommentsService = {
     const article = await await ArticlesRepository.findOneBy('slug', slug);
     if (!article) throw new NotFoundError('Article not found');
 
-    const comments = await CommentsRepository.findByArticleId(article._id);
+    const comments = await CommentsRepository.findByArticleId(article.id);
     if (!comments) throw new NotFoundError('Comments not found');
 
     return comments;
   },
 
   async deleteComment(commentId, authUserId) {
+    console.log(commentId, authUserId);
     const comment = await CommentsRepository.findOneBy('_id', commentId);
     if (!comment) throw new NotFoundError('Comment not found');
 

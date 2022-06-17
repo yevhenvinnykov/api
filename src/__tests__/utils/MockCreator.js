@@ -26,7 +26,7 @@ const MockCreator = {
       email: `${username}@email.com`.toLowerCase(),
       password: bcrypt.hashSync(`${username}Password1`, 8),
     });
-    const token = jwt.sign({id: user._id}, process.env.JWT_DEBUG_SECRET, {expiresIn: 3600});
+    const token = jwt.sign({id: user.id}, process.env.JWT_DEBUG_SECRET, {expiresIn: 3600});
     user.token = token;
     await user.save();
     return user;

@@ -1,6 +1,6 @@
 const ArticlesCRUDService = require('./articles-crud.service');
-const ArticlesRepository = require('../../../db/articles/articles.repository');
-const UsersRepository = require('../../../db/users/users.repository');
+const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
+const UsersRepository = require('../../../db/repos/users/users.repository');
 const {BadRequestError} = require('../../../middleware/errors/errorHandler');
 
 describe('ARTICLES CRUD SERVICE', () => {
@@ -69,13 +69,13 @@ describe('ARTICLES CRUD SERVICE', () => {
     beforeEach(() => {
       expectedData = {
         title: 'title',
-        author: {following: false, _id: 1},
+        author: {following: false, id: 1},
         favorited: false,
       };
     });
 
     beforeEach(() => {
-      const mockArticle = {title: 'title', author: {_id: 1}};
+      const mockArticle = {title: 'title', author: {id: 1}};
       jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
 

@@ -1,5 +1,5 @@
-const ArticlesRepository = require('../../../db/articles/articles.repository');
-const UsersRepository = require('../../../db/users/users.repository');
+const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
+const UsersRepository = require('../../../db/repos/users/users.repository');
 const {BadRequestError} = require('../../../middleware/errors/errorHandler');
 const ArticlesDBService = require('../db/articles-db.service');
 
@@ -29,7 +29,7 @@ const ArticlesCRUDService = {
   async getArticle(slug, authUserId) {
     let article = await ArticlesDBService.fetchArticleFromDB(slug);
     const authUser = authUserId ?
-        await UsersRepository.findOneBy('_id', authUserId, 'favorites following') :
+        await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following']) :
         null;
 
     article = JSON.parse(JSON.stringify(article));

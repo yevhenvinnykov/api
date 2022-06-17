@@ -1,6 +1,6 @@
 const ArticlesLikeService = require('./articles-like.service');
-const ArticlesRepository = require('../../../db/articles/articles.repository');
-const UsersRepository = require('../../../db/users/users.repository');
+const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
+const UsersRepository = require('../../../db/repos/users/users.repository');
 
 
 describe('ARTICLES LIKE SERVICE', () => {
@@ -39,7 +39,7 @@ describe('ARTICLES LIKE SERVICE', () => {
 
   describe('DISLIKE ARTICLE', () => {
     const mockArticle = {
-      _id: 1,
+      id: 1,
       _doc: {
         title: 'title',
       },

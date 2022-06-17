@@ -1,12 +1,12 @@
 const {ErrorHandler, BadRequestError} = require('../errors/errorHandler');
-const UsersRepository = require('../../db/users/users.repository');
+const UsersRepository = require('../../db/repos/users/users.repository');
 
 const UserMiddleware = {
   async checkIfUserExists(req, res, next) {
     try {
       const {email, username} = req.body.user;
       const user = await UsersRepository
-          .findOneByOr([{email}, {username}], 'email username');
+          .findOneByOr([{email}, {username}], ['email', 'username']);
       if (!user) return next();
       const takenField = user.email === email ? 'email' : 'username';
       throw new BadRequestError(`User with this ${takenField} already exists`);

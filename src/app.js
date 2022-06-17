@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const db = require('./db/models');
 const cors = require('cors');
+const db = require('./db/index');
 
 const SERVER_PORT = process.env.SERVER_PORT || 3000;
 
@@ -37,12 +37,18 @@ require('./routes/comments.router')(app);
 require('./routes/session.router')(app);
 require('./routes/articles/index')(app);
 
-db.mongoose.connect(url).then(() => {
-  console.log(`Successfully connected to mongodb
-  on port ${process.env.MONGO_PORT}`);
-}).catch((err) => console.log(err));
+if (process.env.ORM === 'MONGOOSE') {
+  db.mongoose.connect(url).then(() => {
+    console.log(`Successfully connected to mongodb on port ${process.env.MONGO_PORT}`);
+  }).catch((err) => console.log(err));
+}
+
+if (process.env.ORM === 'SEQUELIZE') {
+  db.sequelize.sync().then(() => console.log('Successfully connected to SQLite DB'));
+}
 
 
 app.listen(SERVER_PORT, () => {
   console.log('Server running on port ' + SERVER_PORT);
 });
+

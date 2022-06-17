@@ -1,5 +1,5 @@
 const SessionService = require('./session.service');
-const UsersRepository = require('../../db/users/users.repository');
+const UsersRepository = require('../../db/repos/users/users.repository');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 

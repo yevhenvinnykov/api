@@ -1,19 +1,19 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
-const UsersRepository = require('../../db/users/users.repository');
+const UsersRepository = require('../../db/repos/users/users.repository');
 
 
 const SessionService = {
   async getLoggedInUser({authUserId}) {
-    const user = await UsersRepository.findOneBy('_id', authUserId);
+    const user = await UsersRepository.findOneBy('id', authUserId);
     if (!user) throw new NotFoundError('User not found');
 
     return user;
   },
 
   async logIn(email, password) {
-    let user = await UsersRepository.findOneBy('email', email, 'password');
+    let user = await UsersRepository.findOneBy('email', email, ['password']);
     if (!user) throw new NotFoundError('User not found');
 
     this.validatePassword(password, user.password);

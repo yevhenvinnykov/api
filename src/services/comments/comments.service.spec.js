@@ -1,12 +1,12 @@
 const CommentsService = require('./comments.service');
-const CommentsRepository = require('../../db/comments/comments.repository');
-const ArticlesRepository = require('../../db/articles/articles.repository');
+const CommentsRepository = require('../../db/repos/comments/comments.repository');
+const ArticlesRepository = require('../../db/repos/articles/articles.repository');
 const {BadRequestError} = require('../../middleware/errors/errorHandler');
 
 describe('COMMENTS SERVICE', () => {
   describe('CREATE COMMENT', () => {
     test('should create a comment', async () => {
-      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({_id: 1});
+      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({id: 1});
       jest.spyOn(CommentsRepository, 'create')
           .mockReturnValue({comment: 'comment'});
       const comment = await CommentsService
@@ -29,7 +29,7 @@ describe('COMMENTS SERVICE', () => {
 
     test('should throw an error if comment was not created', async () => {
       try {
-        jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({_id: 1});
+        jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({id: 1});
         jest.spyOn(CommentsRepository, 'create').mockReturnValue(null);
         await CommentsService.createComment({
           authUserId: 1,
@@ -45,7 +45,7 @@ describe('COMMENTS SERVICE', () => {
 
   describe('GET COMMENTS', () => {
     test('should return comments', async () => {
-      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({_id: 1});
+      jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({id: 1});
       jest.spyOn(CommentsRepository, 'findByArticleId')
           .mockReturnValue([{comment: 'comment'}]);
       const comments = await CommentsService.getComments({slug: 'slug'});
@@ -63,7 +63,7 @@ describe('COMMENTS SERVICE', () => {
 
     test('should throw an error if comments were not found', async () => {
       try {
-        jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({_id: 1});
+        jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({id: 1});
         jest.spyOn(CommentsRepository, 'findByArticleId').mockReturnValue(null);
         await CommentsService.getComments({slug: 'slug'});
       } catch (error) {

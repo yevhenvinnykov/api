@@ -1,13 +1,14 @@
-const db = require('../models');
+const db = require('../../index');
 const Comment = db.comment;
 
 const CommentsRepository = {
   async create(commentBody, userId, articleId) {
-    return await new Comment({
+    const comment = await new Comment({
       body: commentBody,
       author: userId,
       article: articleId,
     }).save();
+    return comment;
   },
 
   async findByArticleId(articleId) {
@@ -22,7 +23,9 @@ const CommentsRepository = {
   },
 
   async findOneBy(field, value) {
-    return await Comment.findOne({[field]: value}).exec();
+    const comment = await Comment.findOne({[field]: value}).exec();
+    console.log(comment);
+    return comment;
   },
 };
 
