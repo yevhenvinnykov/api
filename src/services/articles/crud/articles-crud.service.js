@@ -17,7 +17,7 @@ const ArticlesCRUDService = {
   async updateArticle({slug, authUserId, updateData}) {
     let article = await ArticlesDBService.fetchArticleFromDB(slug);
 
-    if (!article.author.equals(authUserId)) {
+    if (article.author.id !== authUserId) {
       throw new BadRequestError('You are not authorized to update the article');
     }
 
@@ -27,23 +27,22 @@ const ArticlesCRUDService = {
   },
 
   async getArticle(slug, authUserId) {
-    let article = await ArticlesDBService.fetchArticleFromDB(slug);
+    const article = await ArticlesDBService.fetchArticleFromDB(slug);
     const authUser = authUserId ?
         await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following']) :
         null;
 
-    article = JSON.parse(JSON.stringify(article));
     article.author.following = !!authUser && authUser.following
-        .some((id) => id.equals(article.author._id));
+        .some((id) => id.toString() === article.author.id.toString());
     article.favorited = !!authUser && authUser.favorites
-        .some((id) => id.equals(article._id));
+        .some((id) => id.toString() === article.id.toString());
 
     return article;
   },
 
   async deleteArticle(slug, authUserId) {
     const {deletedCount} = await ArticlesRepository
-        .delete({slug, author: authUserId});
+        .delete({slug, authorId: authUserId});
 
     if (!deletedCount) {
       throw new BadRequestError('Something went wrong whhile deleting the article');

@@ -1,7 +1,7 @@
 const UsersRepository = require('../../../db/repos/users/users.repository');
 const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
 const {NotFoundError} = require('../../../middleware/errors/errorHandler');
-
+const {Op} = require('sequelize');
 
 const ArticlesDBService = {
   async fetchArticleFromDB(slug) {
@@ -33,14 +33,13 @@ const ArticlesDBService = {
     const queryConditions = {};
 
     if (query?.author) {
-      queryConditions.author = await UsersRepository
-          .findOneBy('username', query.author, ['id']);
+      const author = await UsersRepository.findOneBy('username', query.author, ['id']);
+      queryConditions.authorId = author.id;
     }
 
     if (query?.favorited) {
-      const user = await UsersRepository
-          .findOneBy('username', query.favorited, ['favorites']);
-      queryConditions.id = {$in: user?.favorites};
+      const user = await UsersRepository.findOneBy('username', query.favorited, ['favorites']);
+      queryConditions.id = {[Op.in]: user.favorites};
     }
 
     if (query?.tag) {

@@ -19,9 +19,14 @@ const SessionService = {
     this.validatePassword(password, user.password);
 
     user = await UsersRepository.findOneBy('email', email);
-    user.token = this.createToken(user.id);
 
-    return user;
+    return {
+      email: user.email,
+      token: token = this.createToken(user.id),
+      username: user.username,
+      image: user.image,
+      bio: user.bio,
+    };
   },
 
   createToken(id) {

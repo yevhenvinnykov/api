@@ -27,11 +27,10 @@ const CommentsService = {
   },
 
   async deleteComment(commentId, authUserId) {
-    console.log(commentId, authUserId);
-    const comment = await CommentsRepository.findOneBy('_id', commentId);
+    const comment = await CommentsRepository.findOneBy('id', commentId);
     if (!comment) throw new NotFoundError('Comment not found');
 
-    if (!comment.author.equals(authUserId)) {
+    if (comment.authorId.toString() !== authUserId.toString()) {
       throw new BadRequestError('You are not authorized');
     }
 

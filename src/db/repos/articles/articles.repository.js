@@ -1,48 +1,31 @@
-const db = require('../../index');
-const Article = db.article;
+const orm = process.env.ORM === 'MONGOOSE' ?
+require('./articles.mongoose') :
+require('./articles.sequelize');
+
 
 const ArticlesRepository = {
   async create(authUserId, articleData) {
-    return await new Article({
-      title: articleData.title,
-      description: articleData.description,
-      body: articleData.body,
-      tagList: articleData.tagList,
-      slug: articleData.title,
-      author: authUserId,
-    }).save();
+    return await orm.create(authUserId, articleData);
   },
 
   async update(article, updateData) {
-    for (const prop in updateData) {
-      if (!(prop in article)) continue;
-      article[prop] = updateData[prop];
-      article.slug = article.title;
-    }
-    await article.save();
-    return article;
+    return await orm.update(article, updateData);
   },
 
   async delete(conditions) {
-    return await Article.deleteOne(conditions).exec();
+    return await orm.delete(conditions);
   },
 
   async findOneBy(field, value) {
-    return Article.findOne({[field]: value})
-        .populate('author', 'username bio image following').exec();
+    return await orm.findOneBy(field, value);
   },
 
-  async find(condtions, {limit, offset}) {
-    return await Article.find(condtions)
-        .skip(offset)
-        .limit(limit)
-        .sort([['updatedAt', 'descending']])
-        .populate('author', 'username bio image following')
-        .exec();
+  async find(condtions, options) {
+    return await orm.find(condtions, options);
   },
 
   async count(conditions) {
-    return await Article.countDocuments(conditions).exec();
+    return await orm.countDocuments(conditions);
   },
 };
 

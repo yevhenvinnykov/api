@@ -2,12 +2,17 @@
 const {Model, DataTypes} = require('sequelize');
 const db = require('../../index');
 const sequelize = db.sequelize;
+const User = require('./user.model');
 
 class Article extends Model { }
 
-console.log(sequelize);
-
 Article.init({
+  id: {
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataTypes.INTEGER,
+  },
   slug: {
     type: DataTypes.STRING,
   },
@@ -21,7 +26,7 @@ Article.init({
     type: DataTypes.STRING,
   },
   tagList: {
-    type: DataTypes.STRING,
+    type: DataTypes.JSON,
   },
   favorited: {
     type: DataTypes.BOOLEAN,
@@ -31,13 +36,22 @@ Article.init({
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
-  author: {
-    type: DataTypes.STRING,
+  authorId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id',
+    },
   },
 }, {
   sequelize,
-  modelName: 'Article',
+  modelName: 'Articles',
+  freezeTableName: true,
 });
+
+User.hasMany(Article, {foreignKey: 'authorId', as: 'author'});
+Article.belongsTo(User, {foreignKey: 'authorId', as: 'author'});
 
 
 module.exports = Article;

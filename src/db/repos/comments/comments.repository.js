@@ -1,31 +1,22 @@
-const db = require('../../index');
-const Comment = db.comment;
+const orm = process.env.ORM === 'MONGOOSE' ?
+require('./comments.mongoose') :
+require('./comments.sequelize');
 
 const CommentsRepository = {
   async create(commentBody, userId, articleId) {
-    const comment = await new Comment({
-      body: commentBody,
-      author: userId,
-      article: articleId,
-    }).save();
-    return comment;
+    return await orm.create(commentBody, userId, articleId);
   },
 
   async findByArticleId(articleId) {
-    return await Comment.find({article: articleId})
-        .populate('author', 'image username bio following')
-        .sort([['updatedAt', 'descending']])
-        .exec();
+    return await orm.findByArticleId(articleId);
   },
 
   async deleteOneById(id) {
-    return await Comment.deleteOne({_id: id}).exec();
+    return await orm.deleteOneById(id);
   },
 
   async findOneBy(field, value) {
-    const comment = await Comment.findOne({[field]: value}).exec();
-    console.log(comment);
-    return comment;
+    return await orm.findOneBy(field, value);
   },
 };
 

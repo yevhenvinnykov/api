@@ -8,6 +8,12 @@ class User extends Model { }
 const defaultUserImage = 'https://st3.depositphotos.com/2229436/13671/v/600/depositphotos_136717406-stock-illustration-flat-user-icon-member-sign.jpg';
 
 User.init({
+  id: {
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataTypes.INTEGER,
+  },
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -38,11 +44,11 @@ User.init({
     defaultValue: defaultUserImage,
   },
   favorites: {
-    type: DataTypes.STRING,
+    type: DataTypes.JSON,
     defaultValue: JSON.stringify([]),
   },
   following: {
-    type: DataTypes.STRING,
+    type: DataTypes.JSON,
     defaultValue: JSON.stringify([]),
   },
 }, {
@@ -53,7 +59,8 @@ User.init({
   //   },
   // },
   sequelize,
-  modelName: 'User',
+  modelName: 'Users',
+  freezeTableName: true,
 });
 
 

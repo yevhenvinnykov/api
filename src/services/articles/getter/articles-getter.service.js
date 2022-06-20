@@ -16,7 +16,7 @@ const ArticlesGetterService = {
 
     for (const userId of authUser.following) {
       const userArticles = await ArticlesRepository
-          .find({author: userId}, {limit: 0, offset: 0});
+          .find({authorId: userId}, {limit: 0, offset: 0});
       articles.push(...userArticles);
       articlesCount += userArticles.length;
     }
@@ -52,11 +52,13 @@ const ArticlesGetterService = {
   addFavoritedInfoToArticles(articles, authUserFavorites) {
     const articlesWithFavoriteInfo = [];
     for (const article of articles) {
-      if (authUserFavorites.some((id) => id.equals(article.id))) {
-        articlesWithFavoriteInfo.push({...article._doc, favorited: true});
+      if (authUserFavorites.some((id) => id.toString() === article.id.toString())) {
+        article.favorited = true;
+        articlesWithFavoriteInfo.push(article);
         continue;
       }
-      articlesWithFavoriteInfo.push({...article._doc, favorited: false});
+      article.favorited = false;
+      articlesWithFavoriteInfo.push(article);
     }
     return articlesWithFavoriteInfo;
   },

@@ -14,7 +14,7 @@ if (process.env.ORM === 'SEQUELIZE') {
   const {Sequelize} = require('sequelize');
   db.sequelize = new Sequelize('sqlite_db', 'user', 'password', {
     dialect: 'sqlite',
-    host: './dev.sqlite',
+    storage: './dev.sqlite',
   });
 }
 
