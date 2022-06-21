@@ -46,8 +46,8 @@ const UsersMongoose = {
     return user;
   },
 
-  async findOneByOr(values, attributes = ['username', 'email', 'bio', 'image', 'id']) {
-    return await User.findOne({$or: values}).select(attributes.join(' ')).exec();
+  async findOneByOr(condtitions, attributes = ['username', 'email', 'bio', 'image', 'id']) {
+    return await User.findOne({$or: condtitions}).select(attributes.join(' ')).exec();
   },
 };
 

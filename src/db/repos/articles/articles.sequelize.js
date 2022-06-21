@@ -26,6 +26,27 @@ const ArticlesMongoose = {
     return article;
   },
 
+  async like(authUser, article) {
+    authUser.favorites.push(article.id);
+    await Article.update({
+      favoritesCount: ++article.favoritesCount,
+    }, {where: {id: article.id}});
+    await User.update({
+      favorites: authUser.favorites,
+    }, {where: {id: authUser.id}});
+  },
+
+  async dislike(authUser, article) {
+    const index = authUser.favorites.indexOf(article.id);
+    authUser.favorites.splice(index, 1);
+    await Article.update({
+      favoritesCount: --article.favoritesCount,
+    }, {where: {id: article.id}});
+    await User.update({
+      favorites: authUser.favorites,
+    }, {where: {id: authUser.id}});
+  },
+
   async delete(conditions) {
     const deletedCount = await Article.destroy({where: conditions});
     return {deletedCount};

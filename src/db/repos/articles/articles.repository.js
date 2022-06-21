@@ -16,6 +16,14 @@ const ArticlesRepository = {
     return await orm.delete(conditions);
   },
 
+  async like(authUser, article) {
+    return await orm.like(authUser, article);
+  },
+
+  async dislike(authUser, article) {
+    return await orm.dislike(authUser, article);
+  },
+
   async findOneBy(field, value) {
     return await orm.findOneBy(field, value);
   },

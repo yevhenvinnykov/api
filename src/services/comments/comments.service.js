@@ -23,6 +23,10 @@ const CommentsService = {
     const comments = await CommentsRepository.findByArticleId(article.id);
     if (!comments) throw new NotFoundError('Comments not found');
 
+    if (process.env.ORM === 'MONGOOSE') {
+      return comments.map((comment) => ({...comment.toJSON(), id: comment._id}));
+    }
+
     return comments;
   },
 

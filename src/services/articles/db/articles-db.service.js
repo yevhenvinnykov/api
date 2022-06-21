@@ -39,7 +39,12 @@ const ArticlesDBService = {
 
     if (query?.favorited) {
       const user = await UsersRepository.findOneBy('username', query.favorited, ['favorites']);
-      queryConditions.id = {[Op.in]: user.favorites};
+      if (process.env.ORM === 'MONGOOSE') {
+        queryConditions._id = {$in: user.favorites};
+      }
+      if (process.env.ORM === 'SEQUELIZE') {
+        queryConditions.id = {[Op.in]: user.favorites};
+      }
     }
 
     if (query?.tag) {

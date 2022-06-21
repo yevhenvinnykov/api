@@ -23,9 +23,9 @@ const CommentsRepository = {
   },
 
   async findOneBy(field, value) {
+    field = field === 'id' ? '_id' : field;
     const comment = await Comment.findOne({[field]: value}).exec();
-    console.log(comment);
-    return comment;
+    return {...comment.toJSON(), authorId: comment.author._id};
   },
 };
 

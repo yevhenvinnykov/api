@@ -38,13 +38,16 @@ require('./routes/session.router')(app);
 require('./routes/articles/index')(app);
 
 if (process.env.ORM === 'MONGOOSE') {
-  db.mongoose.connect(url).then(() => {
-    console.log(`Successfully connected to mongodb on port ${process.env.MONGO_PORT}`);
-  }).catch((err) => console.log(err));
+  db.mongoose.connect(url)
+      .then(() => {
+        console.log(`Successfully connected to mongodb on port ${process.env.MONGO_PORT}`);
+      }).catch((err) => console.log(err));
 }
 
 if (process.env.ORM === 'SEQUELIZE') {
-  db.sequelize.sync().then(() => console.log('Successfully connected to SQLite DB'));
+  db.sequelize.sync()
+      .then(() => console.log('Successfully connected to SQLite DB'))
+      .catch((err) => console.log(err));
 }
 
 

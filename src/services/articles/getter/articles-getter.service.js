@@ -13,10 +13,11 @@ const ArticlesGetterService = {
     let articlesCount = 0;
     const start = +query?.offset || 0;
     const end = +query?.limit + start || 5;
-
-    for (const userId of authUser.following) {
-      const userArticles = await ArticlesRepository
-          .find({authorId: userId}, {limit: 0, offset: 0});
+    const followedUsersIds = process.env.ORM === 'MONGOOSE' ?
+   authUser.following.map((u) => u._id.toString()) :
+   authUser.following;
+    for (const userId of followedUsersIds) {
+      const userArticles = await ArticlesRepository.find({authorId: userId}, {limit: 0, offset: 0});
       articles.push(...userArticles);
       articlesCount += userArticles.length;
     }

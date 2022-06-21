@@ -45,19 +45,13 @@ User.init({
   },
   favorites: {
     type: DataTypes.JSON,
-    defaultValue: JSON.stringify([]),
+    defaultValue: [],
   },
   following: {
     type: DataTypes.JSON,
-    defaultValue: JSON.stringify([]),
+    defaultValue: [],
   },
 }, {
-  // hooks: {
-  //   beforeFind: function(options) {
-  //     options.attributes.exclude = ['createdAt', 'updatedAt', 'password'];
-  //     return options;
-  //   },
-  // },
   sequelize,
   modelName: 'Users',
   freezeTableName: true,

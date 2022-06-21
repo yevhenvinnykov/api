@@ -32,12 +32,16 @@ const ArticlesCRUDService = {
         await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following']) :
         null;
 
-    article.author.following = !!authUser && authUser.following
+    const isAuthorFollowed = !!authUser && authUser.following
         .some((id) => id.toString() === article.author.id.toString());
-    article.favorited = !!authUser && authUser.favorites
+    const isArticleFavorited = !!authUser && authUser.favorites
         .some((id) => id.toString() === article.id.toString());
 
-    return article;
+    return {
+      ...article.toJSON(),
+      favorited: isArticleFavorited,
+      author: {...article.toJSON().author, following: isAuthorFollowed},
+    };
   },
 
   async deleteArticle(slug, authUserId) {

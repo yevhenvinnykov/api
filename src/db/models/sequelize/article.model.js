@@ -50,7 +50,6 @@ Article.init({
   freezeTableName: true,
 });
 
-User.hasMany(Article, {foreignKey: 'authorId', as: 'author'});
 Article.belongsTo(User, {foreignKey: 'authorId', as: 'author'});
 
 

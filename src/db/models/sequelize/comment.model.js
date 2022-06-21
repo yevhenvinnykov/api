@@ -4,7 +4,6 @@ const db = require('../../index');
 const sequelize = db.sequelize;
 const User = require('./user.model');
 
-
 class Comment extends Model { }
 
 Comment.init({
@@ -28,10 +27,6 @@ Comment.init({
   articleId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    // references: {
-    //   model: 'Articles',
-    //   key: 'id',
-    // },
   },
 }, {
   sequelize,
@@ -39,7 +34,6 @@ Comment.init({
   freezeTableName: true,
 });
 
-// Article.hasMany(Comment, {foreignKey: 'articleId', as: 'article'});
 Comment.belongsTo(User, {foreignKey: 'authorId', as: 'author'});
 
 

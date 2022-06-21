@@ -3,6 +3,7 @@
 .env
 .eslintrc.json
 .DS_Store
+dev.sqlite
 
 /coverage
 
