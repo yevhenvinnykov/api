@@ -1,3 +1,4 @@
+require('dotenv').config();
 const db = require('../../index');
 const Comment = db.comment;
 const CommentsRepository = require('./comments.repository');
@@ -49,11 +50,10 @@ describe('COMMENTS REPOSITORY', () => {
     test('should find a comment with the given field equal to the given value', async () => {
       mockingoose(Comment).toReturn(mockData, 'findOne');
 
-      const comment = await CommentsRepository
-          .findOneBy('articleId', mockData.article);
+      const comment = await CommentsRepository.findOneBy('articleId', mockData.article);
 
       expect(comment.body).toBe('body');
-      expect(comment.article).toBe(mockData.article);
+      expect(comment.article).toEqual(mockData.article);
     });
   });
 });

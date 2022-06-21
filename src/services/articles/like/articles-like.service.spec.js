@@ -1,74 +1,64 @@
+require('dotenv').config();
 const ArticlesLikeService = require('./articles-like.service');
 const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
 const UsersRepository = require('../../../db/repos/users/users.repository');
 
 
 describe('ARTICLES LIKE SERVICE', () => {
-  describe('LIKE ARTICLE', () => {
-    const mockArticle = {
-      _doc: {
-        title: 'title',
-      },
+  beforeEach(() => {
+    mockArticle = {
+      id: {toString: () => '1'},
+      favoritesCount: 1,
       save: () => {},
     };
-    const expectedData = {title: 'title', favorited: true};
-
+  });
+  describe('LIKE ARTICLE', () => {
     beforeEach(() => {
       jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
 
-    test('should mutate the article and the authUser return them', async () => {
+    test('should increment favorites count', async () => {
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-        favorites: [{equals: () => false}],
+        favorites: [{toString: () => '2'}],
         save: () => {},
       });
-      const article = await ArticlesLikeService
-          .likeArticle({slug: 'slug', authUserId: 1});
-      expect(article).toEqual(expectedData);
+      const article = await ArticlesLikeService.likeArticle({slug: 'slug', authUserId: 1});
+      expect(article.favoritesCount).toBe(2);
+      expect(article.favorited).toBe(true);
     });
 
-    test('should add favorited: true', async () => {
+    test('should add favorited: true witn no mutation since the article is liked', async () => {
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-        favorites: [{equals: () => true}],
+        favorites: [{toString: () => '1'}],
       });
-      const article = await ArticlesLikeService
-          .likeArticle({slug: 'slug', authUserId: 1});
-      expect(article).toEqual(expectedData);
+      const article = await ArticlesLikeService.likeArticle({slug: 'slug', authUserId: 1});
+      expect(article.favorited).toBe(true);
+      expect(article.favoritesCount).toBe(1);
     });
   });
-
   describe('DISLIKE ARTICLE', () => {
-    const mockArticle = {
-      id: 1,
-      _doc: {
-        title: 'title',
-      },
-      save: () => {},
-    };
-    const expectedData = {title: 'title', favorited: false};
-
     beforeEach(() => {
       jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
 
-    test('should mutate the article and the authUser and return them',
-        async () => {
-          jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-            favorites: [1],
-            save: () => {},
-          });
-          const article = await ArticlesLikeService
-              .dislikeArticle({slug: 'slug', authUserId: 1});
-          expect(article).toEqual(expectedData);
-        });
+    test('should decrement favorites count', async () => {
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
+        favorites: [{toString: () => '1'}],
+        save: () => {},
+      });
+      const article = await ArticlesLikeService.dislikeArticle({slug: 'slug', authUserId: 1});
+      mockArticle.favoritesCount = 0;
+      expect(article.favoritesCount).toBe(0);
+      expect(article.favorited).toBe(false);
+    });
 
-    test('should add favorited: false', async () => {
+    test('should add favorited: false with no mutation as the article is disliked', async () => {
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
         favorites: [],
       });
-      const article = await ArticlesLikeService
-          .dislikeArticle({slug: 'slug', authUserId: 1});
-      expect(article).toEqual(expectedData);
+      const article = await ArticlesLikeService.dislikeArticle({slug: 'slug', authUserId: 1});
+      expect(article.favoritesCount).toBe(1);
+      expect(article.favorited).toBe(false);
     });
   });
 });

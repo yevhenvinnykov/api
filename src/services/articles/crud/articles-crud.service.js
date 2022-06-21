@@ -15,13 +15,13 @@ const ArticlesCRUDService = {
   },
 
   async updateArticle({slug, authUserId, updateData}) {
-    let article = await ArticlesDBService.fetchArticleFromDB(slug);
+    const article = await ArticlesDBService.fetchArticleFromDB(slug);
 
     if (article.author.id !== authUserId) {
       throw new BadRequestError('You are not authorized to update the article');
     }
 
-    article = await ArticlesRepository.update(article, updateData);
+    await ArticlesRepository.update(article, updateData);
 
     return article;
   },
@@ -40,7 +40,7 @@ const ArticlesCRUDService = {
     return {
       ...article.toJSON(),
       favorited: isArticleFavorited,
-      author: {...article.toJSON().author, following: isAuthorFollowed},
+      author: {...article.author.toJSON(), following: isAuthorFollowed},
     };
   },
 

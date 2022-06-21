@@ -1,3 +1,4 @@
+require('dotenv').config();
 const UsersRepository = require('../../db/repos/users/users.repository');
 const ProfilesService = require('./profiles.service');
 
@@ -5,7 +6,7 @@ describe('PROFILES SERVICE', () => {
   describe('GET PROFILE', () => {
     test('should return profile', async () => {
       jest.spyOn(UsersRepository, 'findOneBy')
-          .mockReturnValue({id: 1, following: [{equals: () => true}]});
+          .mockReturnValue({id: 1, following: [{toString: () => '1'}]});
       const profile = await ProfilesService.getProfile(1, 'username');
       expect(profile).toEqual({profile: {following: true}});
     });
@@ -21,49 +22,42 @@ describe('PROFILES SERVICE', () => {
   });
 
   describe('FOLLOW PROFILE', () => {
-    const userMock = {
-      id: 1,
-      following: [{equals: () => true}],
-      save: () => {},
-    };
-
     test(`should return a profile with following: true
             if the user is alredy followed`,
     async () => {
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(userMock);
+      jest.spyOn(ProfilesService, 'fetchDataFromDB')
+          .mockReturnValue([{following: [{toString: () => '1'}]}, {id: {toString: () => '1'}}]);
       const profile = await ProfilesService.followProfile(1, 'username');
       expect(profile).toEqual({profile: {following: true}});
     });
 
     test('should follow a profile', async () => {
-      userMock.following[0].equals = () => false;
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(userMock);
+      jest.spyOn(UsersRepository, 'follow').mockReturnValue(null);
+      jest.spyOn(ProfilesService, 'fetchDataFromDB')
+          .mockReturnValue([{following: [{toString: () => '1'}]}, {id: {toString: () => '1'}}]);
       const profile = await ProfilesService.followProfile(1, 'username');
       expect(profile).toEqual({profile: {following: true}});
     });
   });
+});
 
-  describe('UNFOLLOW PROFILE', () => {
-    const userMock = {
-      id: 1,
-      following: [{equals: () => false}],
-      save: () => {},
-    };
-
-    test(`should return a profile with following: false
+describe('UNFOLLOW PROFILE', () => {
+  test(`should return a profile with following: false
             if the user is alredy unfollowed`,
-    async () => {
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(userMock);
-      const profile = await ProfilesService.unfollowProfile(1, 'username');
-      expect(profile).toEqual({profile: {following: false}});
-    });
+  async () => {
+    jest.spyOn(ProfilesService, 'fetchDataFromDB')
+        .mockReturnValue([{following: [{toString: () => '1'}]}, {id: {toString: () => '2'}}]);
+    const profile = await ProfilesService.unfollowProfile(1, 'username');
+    expect(profile).toEqual({profile: {following: false}});
+  });
 
-    test('should unfollow a profile', async () => {
-      userMock.following[0].equals = () => true;
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(userMock);
-      const profile = await ProfilesService.unfollowProfile(1, 'username');
-      expect(profile).toEqual({profile: {following: false}});
-    });
+  test('should unfollow a profile', async () => {
+    jest.spyOn(UsersRepository, 'unfollow').mockReturnValue(null);
+    jest.spyOn(ProfilesService, 'fetchDataFromDB')
+        .mockReturnValue([{following: [{toString: () => '1'}]}, {id: {toString: () => '1'}}]);
+    const profile = await ProfilesService.unfollowProfile(1, 'username');
+    expect(profile).toEqual({profile: {following: false}});
   });
 });
+
 

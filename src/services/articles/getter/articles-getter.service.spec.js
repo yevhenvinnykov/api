@@ -4,16 +4,9 @@ const UsersRepository = require('../../../db/repos/users/users.repository');
 
 describe('ARTICLES GETTER SERVICE', () => {
   describe('GET ARTICLES FROM FOLLOWED USERS', () => {
-    const mockArticle = {
-      id: 1,
-      _doc: {
-        title: 'title',
-      },
-      save: () => {},
-    };
-    const mockArticles = Array(10).fill(mockArticle, 0);
+    const mockArticles = Array(10).fill({id: 1, title: 'title'}, 0);
     const expectedData = {
-      articles: Array(5).fill({title: 'title', favorited: true}, 0),
+      articles: Array(5).fill({id: 1, title: 'title', favorited: true}, 0),
       articlesCount: 20,
     };
     const mockQuery = {limit: null, offset: null};
@@ -21,9 +14,8 @@ describe('ARTICLES GETTER SERVICE', () => {
     beforeEach(() => {
       jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-        favorites: [{equals: () => true}],
-        following: [{equals: () => true}, {equals: () => true}],
-        save: () => {},
+        favorites: [{toString: () => '1'}],
+        following: [{_id: {toString: () => '1'}}, {_id: {toString: () => '2'}}],
       });
     });
 
@@ -45,20 +37,8 @@ describe('ARTICLES GETTER SERVICE', () => {
 
   describe('GET ARTICLES', () => {
     const mockArticles = [
-      {
-        id: 1,
-        _doc: {
-          title: 'title',
-        },
-        save: () => {},
-      },
-      {
-        id: 2,
-        _doc: {
-          title: 'another title',
-        },
-        save: () => {},
-      },
+      {id: 1, title: 'title'},
+      {id: 2, title: 'another title'},
     ];
     let expectedData;
     const mockQuery = {
@@ -68,9 +48,7 @@ describe('ARTICLES GETTER SERVICE', () => {
     beforeEach(() => {
       jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-        favorites: [{equals: (id) => id === 1}, {equals: (id) => id === 3}],
-        following: [{equals: () => true}],
-        save: () => {},
+        favorites: [{toString: () => '1'}, {toString: () => '3'}],
       });
       jest.spyOn(ArticlesRepository, 'count').mockReturnValue(1);
     });
@@ -90,8 +68,8 @@ describe('ARTICLES GETTER SERVICE', () => {
     test('should get articles, add info and return them', async () => {
       const articles = await ArticlesGetterService.getArticles(1, mockQuery);
       expectedData.articles = [
-        {title: 'title', favorited: true},
-        {title: 'another title', favorited: false},
+        {id: 1, title: 'title', favorited: true},
+        {id: 2, title: 'another title', favorited: false},
       ];
       expect(articles).toEqual(expectedData);
     });

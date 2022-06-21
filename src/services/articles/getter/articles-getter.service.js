@@ -1,3 +1,4 @@
+require('dotenv').config();
 const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
 const UsersRepository = require('../../../db/repos/users/users.repository');
 const ArticlesDBService = require('../db/articles-db.service');
@@ -13,9 +14,10 @@ const ArticlesGetterService = {
     let articlesCount = 0;
     const start = +query?.offset || 0;
     const end = +query?.limit + start || 5;
+
     const followedUsersIds = process.env.ORM === 'MONGOOSE' ?
-   authUser.following.map((u) => u._id.toString()) :
-   authUser.following;
+   authUser.following.map((u) => u._id.toString()) : authUser.following;
+
     for (const userId of followedUsersIds) {
       const userArticles = await ArticlesRepository.find({authorId: userId}, {limit: 0, offset: 0});
       articles.push(...userArticles);

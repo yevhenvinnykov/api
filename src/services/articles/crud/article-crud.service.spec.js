@@ -1,3 +1,4 @@
+require('dotenv').config();
 const ArticlesCRUDService = require('./articles-crud.service');
 const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
 const UsersRepository = require('../../../db/repos/users/users.repository');
@@ -44,21 +45,20 @@ describe('ARTICLES CRUD SERVICE', () => {
 
     test('should update an article', async () => {
       jest.spyOn(ArticlesRepository, 'findOneBy')
-          .mockReturnValue({title: 'title', author: {equals: () => true}});
-      jest.spyOn(ArticlesRepository, 'update')
-          .mockReturnValue({title: 'updated'});
+          .mockReturnValue({title: 'updated', author: {id: 1}});
+      jest.spyOn(ArticlesRepository, 'update').mockReturnValue(null);
+
       const article = await ArticlesCRUDService.updateArticle(mockData);
-      expect(article).toEqual({title: 'updated'});
+      expect(article).toEqual({title: 'updated', author: {id: 1}});
     });
 
     test('should throw an error if auth user is not the author', async () => {
       jest.spyOn(ArticlesRepository, 'findOneBy')
-          .mockReturnValue({title: 'title', author: {equals: () => false}});
+          .mockReturnValue({title: 'title', author: {id: 3}});
       try {
         await ArticlesCRUDService.updateArticle(mockData);
       } catch (error) {
-        expect(error.message)
-            .toBe('You are not authorized to update the article');
+        expect(error.message).toBe('You are not authorized to update the article');
       }
     });
   });
@@ -67,23 +67,30 @@ describe('ARTICLES CRUD SERVICE', () => {
     let expectedData;
 
     beforeEach(() => {
-      expectedData = {
-        title: 'title',
-        author: {following: false, id: 1},
-        favorited: false,
-      };
+      // expectedData = {
+      //   id: 1,
+      //   title: 'title',
+      //   author: {following: false, id: {toString: () => '1'}},
+      //   favorited: true,
+      // };
+      expectedData = {favorited: true, author: {following: false}};
     });
 
     beforeEach(() => {
-      const mockArticle = {title: 'title', author: {id: 1}};
+      const mockArticle = {
+        id: 1,
+        title: 'title',
+        author: {id: {toString: () => '1'}, toJSON: () => {}},
+        toJSON: () => {},
+      };
       jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
 
     test('should get the article and add to it favorited&followed info',
         async () => {
           jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-            following: [{equals: () => true}],
-            favorites: [{equals: () => false}],
+            following: [{toString: () => '1'}],
+            favorites: [{toString: () => '1'}],
           });
           const article = await ArticlesCRUDService.getArticle('slug', 1);
           expectedData.author.following = true;
@@ -95,6 +102,7 @@ describe('ARTICLES CRUD SERVICE', () => {
     async () => {
       const article = await ArticlesCRUDService
           .getArticle({slug: 'slug', authUserId: null});
+      expectedData.favorited = false;
       expect(article).toEqual(expectedData);
     });
 

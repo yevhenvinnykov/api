@@ -1,15 +1,31 @@
+require('dotenv').config();
 const UsersService = require('./users.service');
 const UsersRepository = require('../../db/repos/users/users.repository');
 const jwt = require('jsonwebtoken');
 
 describe('USERS SERVICE', () => {
   describe('CREATE USER', () => {
+    const signUpDataMock = {
+      username: 'user',
+      email: 'user@example.com',
+      password: 'P4ssword',
+    };
+
+    const userMock = {
+      id: 1,
+      email: 'user@example.com',
+      username: 'user',
+      bio: 'bio',
+      image: 'image',
+      token: 'token',
+    };
+
     test('should create a user', async () => {
-      jest.spyOn(UsersRepository, 'create').mockReturnValue({user: 'user'});
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({user: 'user'});
+      jest.spyOn(UsersRepository, 'create').mockReturnValue(null);
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(userMock);
       jest.spyOn(jwt, 'sign').mockReturnValue('token');
-      const user = await UsersService.createUser({userData: {user: 'user'}});
-      expect(user).toEqual({user: 'user', token: 'token'});
+      const user = await UsersService.createUser({userData: {signUpDataMock}});
+      expect(user).toEqual(userMock);
     });
 
     test('should throw an error if the user wasn\'t created', async () => {

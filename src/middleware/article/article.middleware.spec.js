@@ -1,3 +1,4 @@
+require('dotenv').config();
 const ArticlesRepository = require('../../db/repos/articles/articles.repository');
 const ArticleMiddleware = require('./article.middleware');
 

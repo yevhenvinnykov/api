@@ -1,3 +1,4 @@
+require('dotenv').config();
 const db = require('../../index');
 const User = db.user;
 const bcrypt = require('bcryptjs');

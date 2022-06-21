@@ -1,3 +1,4 @@
+require('dotenv').config();
 const SessionService = require('./session.service');
 const UsersRepository = require('../../db/repos/users/users.repository');
 const jwt = require('jsonwebtoken');
@@ -23,11 +24,12 @@ describe('SESSION SERVICE', () => {
 
   describe('LOG IN', () => {
     test('should log a user in if the credentials are correct', async () => {
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({user: 'user'});
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({username: 'user'});
       jest.spyOn(jwt, 'sign').mockReturnValue('token');
       jest.spyOn(bcrypt, 'compareSync').mockReturnValue(true);
       const user = await SessionService.logIn('test@email.com', 'password');
-      expect(user).toEqual({user: 'user', token: 'token'});
+      expect(user.username).toBe('user');
+      expect(user.token).toBe('token');
     });
 
     test('should throw an error if the user wasn\'t found', async () => {
@@ -41,7 +43,7 @@ describe('SESSION SERVICE', () => {
 
     test('should throw an error if the credentials aren\'t correct',
         async () => {
-          jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({user: 'user'});
+          jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({username: 'user'});
           jest.spyOn(bcrypt, 'compareSync').mockReturnValue(false);
           try {
             await SessionService.logIn('test@email.com', 'password');
