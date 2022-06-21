@@ -41,7 +41,7 @@ describe('ARTICLES CRUD ROUTER', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body.article.title).toBe(articleTitle);
       expect(response.body.article.author).toBe(user.id);
-      expect(response.body.article.id).toBeTruthy();
+      // expect(response.body.article._id).toBeTruthy();
     });
 
     it('should fail because no token is provided', async () => {
@@ -109,7 +109,7 @@ describe('ARTICLES CRUD ROUTER', () => {
           .get(`/api/articles/${articleTitle}`)
           .set('x-access-token', user.token);
 
-      articleId = response.body.article.id;
+      articleId = response.body.article._id;
 
       expect(response.statusCode).toBe(200);
       expect(response.body.article.title).toBe('Ipsum');
@@ -125,7 +125,7 @@ describe('ARTICLES CRUD ROUTER', () => {
           .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.article.id).toBe(articleId);
+      expect(response.body.article._id).toEqual(articleId);
       expect(response.body.article.favorited).toBe(true);
     });
 
@@ -133,7 +133,7 @@ describe('ARTICLES CRUD ROUTER', () => {
       const response = await request(server).get(`/api/articles/${articleTitle}`);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.article.id).toBe(articleId);
+      expect(response.body.article._id).toBe(articleId);
       expect(response.body.article.favorited).toBe(false);
     });
 

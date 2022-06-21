@@ -1,7 +1,16 @@
 require('dotenv').config();
-const User = require('../../db/models/user.model');
-const Article = require('../../db/models/article.model');
-const Comment = require('../../db/models/comment.model');
+const User = process.env.ORM === 'MONGOOSE' ?
+require('../../db/models/mongoose/user.model') :
+require('../../db/models/sequelize/user.model');
+
+
+const Article = process.env.ORM === 'MONGOOSE' ?
+require('../../db/models/mongoose/article.model') :
+require('../../db/models/sequelize/article.model');
+
+const Comment = process.env.ORM === 'MONGOOSE' ?
+require('../../db/models/mongoose/comment.model') :
+require('../../db/models/sequelize/comment.model');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');

@@ -7,9 +7,11 @@ const bcrypt = require('bcryptjs');
 describe('SESSION SERVICE', () => {
   describe('GET LOGGED IN USER', () => {
     test('should return a logged in user', async () => {
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({user: 'user'});
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({username: 'user'});
+      jest.spyOn(jwt, 'sign').mockReturnValue('token');
       const user = await SessionService.getLoggedInUser({authUserId: 1});
-      expect(user).toEqual({user: 'user'});
+      expect(user.username).toBe('user');
+      expect(user.token).toBe('token');
     });
 
     test('should throw an error if the user wasn\'t found', async () => {

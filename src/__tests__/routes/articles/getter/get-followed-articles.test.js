@@ -1,3 +1,4 @@
+require('dotenv').config();
 const request = require('supertest');
 const TestInitializer = require('../../../utils/TestInitializer');
 const MockCreator = require('../../../utils/MockCreator');
@@ -44,6 +45,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
     it('should return 5 articles, because the user follows the author', async () => {
       user.following.push(author.id);
       await user.save();
+ 
       const response = await request(server)
           .get('/api/articles/feed')
           .set('x-access-token', user.token);

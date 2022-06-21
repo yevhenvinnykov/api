@@ -9,7 +9,13 @@ const SessionService = {
     const user = await UsersRepository.findOneBy('id', authUserId);
     if (!user) throw new NotFoundError('User not found');
 
-    return user;
+    return {
+      email: user.email,
+      token: token = this.createToken(user.id),
+      username: user.username,
+      image: user.image,
+      bio: user.bio,
+    };
   },
 
   async logIn(email, password) {

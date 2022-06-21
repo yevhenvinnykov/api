@@ -1,3 +1,4 @@
+require('dotenv').config();
 const request = require('supertest');
 const TestInitializer = require('../../utils/TestInitializer');
 const MockCreator = require('../../utils/MockCreator');
