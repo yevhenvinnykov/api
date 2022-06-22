@@ -4,6 +4,7 @@
 .eslintrc.json
 .DS_Store
 dev.sqlite
+test.sqlite
 
 /coverage
 

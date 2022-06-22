@@ -28,9 +28,22 @@ const TestInitializer = {
   },
 
   async clearDB() {
-    await User.deleteMany({});
-    await Article.deleteMany({});
-    await Comment.deleteMany({});
+    if (process.env.ORM === 'MONGOOSE') {
+      await User.deleteMany({});
+      await Article.deleteMany({});
+      await Comment.deleteMany({});
+    }
+    if (process.env.ORM === 'SEQUELIZE') {
+      await User.destroy({
+        where: {},
+      });
+      await Article.destroy({
+        where: {},
+      });
+      await Comment.destroy({
+        where: {},
+      });
+    }
   },
 };
 

@@ -15,6 +15,7 @@ if (process.env.ORM === 'SEQUELIZE') {
   db.sequelize = new Sequelize('sqlite_db', 'user', 'password', {
     dialect: 'sqlite',
     storage: './dev.sqlite',
+    logging: false,
   });
 }
 

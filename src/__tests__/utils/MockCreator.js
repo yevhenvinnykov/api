@@ -18,23 +18,49 @@ const bcrypt = require('bcryptjs');
 
 const MockCreator = {
   async createArticleMock(title) {
-    const article = await new Article({
-      title,
-      description: 'Lorem ipsum',
-      body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-      tagList: ['lorem'],
-    });
-    article.slug = article.title;
-    await article.save();
+    let article;
+    if (process.env.ORM === 'MONGOOSE') {
+      article = await new Article({
+        title,
+        description: 'Lorem ipsum',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        tagList: ['lorem'],
+      });
+      article.slug = article.title;
+      await article.save();
+    }
+    if (process.env.ORM === 'SEQUELIZE') {
+      const author = await this.createUserMock('Author');
+      article = await Article.create({
+        title,
+        description: 'Lorem ipsum',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        tagList: ['lorem'],
+        authorId: author.id,
+      });
+      article.slug = article.title;
+      await article.save();
+    }
     return article;
   },
 
   async createUserMock(username) {
-    const user = await new User({
-      username,
-      email: `${username}@email.com`.toLowerCase(),
-      password: bcrypt.hashSync(`${username}Password1`, 8),
-    });
+    let user;
+    if (process.env.ORM === 'MONGOOSE') {
+      user = await new User({
+        username,
+        email: `${username}@email.com`.toLowerCase(),
+        password: bcrypt.hashSync(`${username}Password1`, 8),
+      });
+    }
+
+    if (process.env.ORM === 'SEQUELIZE') {
+      user = await User.create({
+        username,
+        email: `${username}@email.com`.toLowerCase(),
+        password: bcrypt.hashSync(`${username}Password1`, 8),
+      });
+    }
     const token = jwt.sign({id: user.id}, process.env.JWT_DEBUG_SECRET, {expiresIn: 3600});
     user.token = token;
     await user.save();
@@ -42,12 +68,23 @@ const MockCreator = {
   },
 
   async createCommentMock({body, authorId, articleId}) {
-    const comment = await new Comment({
-      body,
-      author: authorId,
-      article: articleId,
-    });
-    comment.save();
+    let comment;
+    if (process.env.ORM === 'MONGOOSE') {
+      comment = await new Comment({
+        body,
+        author: authorId,
+        article: articleId,
+      });
+      comment.save();
+    }
+
+    if (process.env.ORM === 'SEQUELIZE') {
+      comment = await Comment.create({
+        body,
+        authorId,
+        articleId,
+      });
+    }
     return comment;
   },
 };
