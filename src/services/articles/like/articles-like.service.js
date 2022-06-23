@@ -9,7 +9,7 @@ const ArticlesLikeService = {
     const [authUser, article] = await this.fetchDataFromDB(slug, authUserId);
 
     if (!authUser.favorites.some((id) => id.toString() === article.id.toString())) {
-      await ArticlesRepository.like(authUser, article);
+      await ArticlesRepository.like(authUserId, article);
     }
 
     article.favorited = true;
@@ -21,7 +21,7 @@ const ArticlesLikeService = {
     const index = authUser.favorites.indexOf(article.id);
 
     if (index !== -1) {
-      await ArticlesRepository.dislike(authUser, article);
+      await ArticlesRepository.dislike(authUserId, article);
     }
 
     article.favorited = false;

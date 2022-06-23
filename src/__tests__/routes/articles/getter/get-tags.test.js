@@ -1,7 +1,7 @@
 require('dotenv').config();
 const request = require('supertest');
 const TestInitializer = require('../../../utils/TestInitializer');
-const MockCreator = require('../../../utils/MockCreator');
+const MockCreator = require('../../../utils/mocks/index');
 
 
 describe('ARTICLES GETTER ROUTER: GET TAGS', () => {
@@ -12,13 +12,13 @@ describe('ARTICLES GETTER ROUTER: GET TAGS', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.close(server);
+    await TestInitializer.finish();
   });
 
   beforeAll(async () => {
     const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
     for (const number of articleNumbers) {
-      await MockCreator.createArticleMock(`Article${number}`);
+      await MockCreator.createArticleMock(`Article${number}`, 'mock_user_id');
     }
   });
 

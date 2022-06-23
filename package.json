@@ -12,7 +12,7 @@
   "scripts": {
     "start": "nodemon src/app.js",
     "unit": "node node_modules/.bin/jest --coverage  --testPathPattern=spec\\.js$",
-    "integration": "node node_modules/.bin/jest --coverage --testPathPattern=test\\.js$"
+    "integration": "node node_modules/.bin/jest --coverage --testPathPattern=test\\.js$ --runInBand"
   },
   "keywords": [],
   "author": "",

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const request = require('supertest');
 const TestInitializer = require('../../utils/TestInitializer');
-const MockCreator = require('../../utils/MockCreator');
+const MockCreator = require('../../utils/mocks/index');
 
 describe('ARTICLES LIKE ROUTER', () => {
   let server;
@@ -12,12 +12,12 @@ describe('ARTICLES LIKE ROUTER', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.close(server);
+    await TestInitializer.finish();
   });
 
   beforeAll(async () => {
-    article = await MockCreator.createArticleMock('Lorem');
     user = await MockCreator.createUserMock('Chandler');
+    article = await MockCreator.createArticleMock('Lorem', user.id);
   });
 
   describe('POST /api/articles/:slug/favorite', () => {

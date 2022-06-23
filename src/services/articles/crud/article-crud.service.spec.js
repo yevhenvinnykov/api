@@ -67,12 +67,6 @@ describe('ARTICLES CRUD SERVICE', () => {
     let expectedData;
 
     beforeEach(() => {
-      // expectedData = {
-      //   id: 1,
-      //   title: 'title',
-      //   author: {following: false, id: {toString: () => '1'}},
-      //   favorited: true,
-      // };
       expectedData = {favorited: true, author: {following: false}};
     });
 

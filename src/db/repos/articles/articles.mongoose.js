@@ -1,5 +1,6 @@
 const db = require('../../index');
 const Article = db.article;
+const UsersRepository = require('../users/users.repository');
 
 const ArticlesMongoose = {
   async create(authUserId, articleData) {
@@ -23,13 +24,15 @@ const ArticlesMongoose = {
     return article;
   },
 
-  async like(authUser, article) {
+  async like(authUserId, article) {
+    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
     article.favoritesCount++;
     authUser.favorites.push(article.id);
     await Promise.all([article.save(), authUser.save()]);
   },
 
-  async dislike(authUser, article) {
+  async dislike(authUserId, article) {
+    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
     const index = authUser.favorites.indexOf(article.id);
     article.favoritesCount--;
     authUser.favorites.splice(index, 1);
@@ -46,15 +49,17 @@ const ArticlesMongoose = {
   },
 
   async find(conditions, {limit, offset}) {
-    if ('authorId' in conditions) {
+    if (conditions.hasOwnProperty('authorId')) {
       conditions = {author: conditions.authorId};
     }
-    return await Article.find(conditions)
+    const articles = await Article.find(conditions)
         .skip(offset)
         .limit(limit)
         .sort([['updatedAt', 'descending']])
         .populate('author', 'username bio image following')
         .exec();
+
+    return articles;
   },
 
   async countDocuments(conditions) {

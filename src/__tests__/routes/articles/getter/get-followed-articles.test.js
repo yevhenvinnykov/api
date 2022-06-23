@@ -1,7 +1,7 @@
 require('dotenv').config();
 const request = require('supertest');
 const TestInitializer = require('../../../utils/TestInitializer');
-const MockCreator = require('../../../utils/MockCreator');
+const MockCreator = require('../../../utils/mocks/index');
 
 
 describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
@@ -14,7 +14,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.close(server);
+    await TestInitializer.finish();
   });
 
   beforeAll(async () => {
@@ -25,9 +25,7 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
   beforeAll(async () => {
     const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
     for (const number of articleNumbers) {
-      const article = await MockCreator.createArticleMock(`Article${number}`);
-      article.author = author.id;
-      await article.save();
+      await MockCreator.createArticleMock(`Article${number}`, author.id);
     }
   });
 
@@ -43,9 +41,10 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
     });
 
     it('should return 5 articles, because the user follows the author', async () => {
-      user.following.push(author.id);
-      await user.save();
- 
+      await request(server)
+          .post(`/api/profiles/${author.username}/follow`)
+          .set('x-access-token', user.token);
+
       const response = await request(server)
           .get('/api/articles/feed')
           .set('x-access-token', user.token);

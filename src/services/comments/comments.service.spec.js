@@ -48,9 +48,11 @@ describe('COMMENTS SERVICE', () => {
     test('should return comments', async () => {
       jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue({id: 1});
       jest.spyOn(CommentsRepository, 'findByArticleId')
-          .mockReturnValue([{_id: 1, toJSON: () => ({comment: 'comment'})}]);
+          .mockReturnValue([{body: 'comment1'}, {body: 'comment2'}]);
+
       const comments = await CommentsService.getComments({slug: 'slug'});
-      expect(comments).toEqual([{id: 1, comment: 'comment'}]);
+      expect(comments[0].body).toEqual('comment1');
+      expect(comments.length).toBe(2);
     });
 
     test('should throw an error if article was not found', async () => {

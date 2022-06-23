@@ -16,8 +16,8 @@ const ArticlesDBService = {
     const condtions = await this.createQueryConditions(queryFromRequest);
 
     const options = {
-      limit: queryFromRequest?.limit || 5,
-      offset: queryFromRequest?.offset || 0,
+      limit: queryFromRequest?.limit,
+      offset: queryFromRequest?.offset,
     };
 
     const articles = await ArticlesRepository.find(condtions, options);

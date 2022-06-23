@@ -42,7 +42,9 @@ const UsersMongoose = {
       value,
       attributes = ['username', 'email', 'bio', 'image', 'id'],
   ) {
+    field = field === 'id' ? '_id' : field;
     const user = await User.findOne({[field]: value}).select(attributes.join(' ')).exec();
+
     return user;
   },
 

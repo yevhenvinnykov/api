@@ -1,5 +1,5 @@
 const request = require('supertest');
-const MockCreator = require('../utils/MockCreator');
+const MockCreator = require('../utils/mocks/index');
 const TestInitializer = require('../utils/TestInitializer');
 
 describe('PROFILES ROUTER', () => {
@@ -12,7 +12,7 @@ describe('PROFILES ROUTER', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.close(server);
+    await TestInitializer.finish();
   });
 
   beforeAll(async () => {

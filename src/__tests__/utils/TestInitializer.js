@@ -1,8 +1,8 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const User = process.env.ORM === 'MONGOOSE' ?
 require('../../db/models/mongoose/user.model') :
 require('../../db/models/sequelize/user.model');
-
 
 const Article = process.env.ORM === 'MONGOOSE' ?
 require('../../db/models/mongoose/article.model') :
@@ -18,13 +18,12 @@ const app = require('../index');
 const TestInitializer = {
   async initializeServer() {
     await this.clearDB();
-    return app.listen(3001);
+    return app;
   },
 
-  async close(server) {
+  async finish() {
     await this.clearDB();
     await mongoose.connection.close();
-    await server.close();
   },
 
   async clearDB() {

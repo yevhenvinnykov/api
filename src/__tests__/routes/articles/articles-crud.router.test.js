@@ -1,5 +1,5 @@
 const request = require('supertest');
-const MockCreator = require('../../utils/MockCreator');
+const MockCreator = require('../../utils/mocks/index');
 const TestInitializer = require('../../utils/TestInitializer');
 
 describe('ARTICLES CRUD ROUTER', () => {
@@ -13,7 +13,7 @@ describe('ARTICLES CRUD ROUTER', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.close(server);
+    await TestInitializer.finish();
   });
 
   beforeAll(() => {
@@ -39,9 +39,8 @@ describe('ARTICLES CRUD ROUTER', () => {
           .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.article.title).toBe(articleTitle);
+      expect(response.body.article.title).toBe(articleTitle, user.id);
       expect(response.body.article.author).toBe(user.id);
-      // expect(response.body.article._id).toBeTruthy();
     });
 
     it('should fail because no token is provided', async () => {
@@ -117,8 +116,9 @@ describe('ARTICLES CRUD ROUTER', () => {
     });
 
     it('should get the article, favorited: true because the article is liked', async () => {
-      user.favorites.push(articleId);
-      await user.save();
+      await request(server)
+          .post(`/api/articles/${articleTitle}/favorite`)
+          .set('x-access-token', user.token);
 
       const response = await request(server)
           .get(`/api/articles/${articleTitle}`)

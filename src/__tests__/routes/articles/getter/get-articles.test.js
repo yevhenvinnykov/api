@@ -1,7 +1,7 @@
 require('dotenv').config();
 const request = require('supertest');
 const TestInitializer = require('../../../utils/TestInitializer');
-const MockCreator = require('../../../utils/MockCreator');
+const MockCreator = require('../../../utils/mocks/index');
 
 describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
   let server;
@@ -13,29 +13,21 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.close(server);
+    await TestInitializer.finish();
+  });
+
+  beforeAll(async () => {
+    user = await MockCreator.createUserMock('Chandler');
   });
 
   beforeAll(async () => {
     const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
     for (const number of articleNumbers) {
-      const article = await MockCreator.createArticleMock(`Article${number}`);
+      const article = await MockCreator.createArticleMock(`Article${number}`, user.id);
       articles.push(article);
     }
   });
 
-  beforeAll(async () => {
-    user = await MockCreator.createUserMock('Chandler');
-    user.favorites.push(articles[0].id, articles[1].id);
-    await user.save();
-  });
-
-  beforeAll(() => {
-    articles.forEach(async (article) => {
-      article.author = user.id;
-      await article.save();
-    });
-  });
 
   describe('GET /api/articles', () => {
     it('should return all the articles since no limit is specified', async () => {
@@ -63,7 +55,6 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(1);
-      expect(response.body.articles[0].title).toBe('ArticleFour');
       expect(response.body.articlesCount).toBe(5);
     });
 
@@ -75,6 +66,14 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
     });
 
     it('two of the articles should have favorited: true, token is provided', async () => {
+      await request(server)
+          .post(`/api/articles/${articles[0].title}/favorite`)
+          .set('x-access-token', user.token);
+
+      await request(server)
+          .post(`/api/articles/${articles[1].title}/favorite`)
+          .set('x-access-token', user.token);
+
       const response = await request(server)
           .get('/api/articles')
           .set('x-access-token', user.token);

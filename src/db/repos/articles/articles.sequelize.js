@@ -1,5 +1,6 @@
 const Article = require('../../models/sequelize/article.model');
 const User = require('../../models/sequelize/user.model');
+const UsersRepository = require('../users/users.repository');
 const {Op} = require('sequelize');
 
 
@@ -26,17 +27,19 @@ const ArticlesMongoose = {
     return article;
   },
 
-  async like(authUser, article) {
+  async like(authUserId, article) {
+    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
     authUser.favorites.push(article.id);
     await Article.update({
       favoritesCount: ++article.favoritesCount,
     }, {where: {id: article.id}});
     await User.update({
       favorites: authUser.favorites,
-    }, {where: {id: authUser.id}});
+    }, {where: {id: authUserId}});
   },
 
-  async dislike(authUser, article) {
+  async dislike(authUserId, article) {
+    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites', 'id']);
     const index = authUser.favorites.indexOf(article.id);
     authUser.favorites.splice(index, 1);
     await Article.update({
@@ -44,7 +47,7 @@ const ArticlesMongoose = {
     }, {where: {id: article.id}});
     await User.update({
       favorites: authUser.favorites,
-    }, {where: {id: authUser.id}});
+    }, {where: {id: authUserId}});
   },
 
   async delete(conditions) {
