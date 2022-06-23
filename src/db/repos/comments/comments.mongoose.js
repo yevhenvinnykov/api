@@ -12,10 +12,12 @@ const CommentsRepository = {
   },
 
   async findByArticleId(articleId) {
-    return await Comment.find({article: articleId})
+    const comments = await Comment.find({article: articleId})
         .populate('author', 'image username bio following')
         .sort([['updatedAt', 'descending']])
         .exec();
+
+    return comments.map((comment) => ({...comment.toJSON(), id: comment._id}));
   },
 
   async deleteOneById(id) {
