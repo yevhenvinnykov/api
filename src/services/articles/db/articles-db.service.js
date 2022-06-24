@@ -21,7 +21,6 @@ const ArticlesDBService = {
     };
 
     const articles = await ArticlesRepository.find(condtions, options);
-
     if (!articles) throw new NotFoundError('Articles not found');
 
     const articlesCount = await ArticlesRepository.count(condtions);

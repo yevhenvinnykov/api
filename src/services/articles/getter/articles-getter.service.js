@@ -10,10 +10,11 @@ const ArticlesGetterService = {
     // loads of unnecessary articles once the offset gets larger
     const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following']);
     if (!authUser) throw new NotFoundError('User not found');
+
     let articles = [];
     let articlesCount = 0;
-    const start = +query?.offset || 0;
-    const end = +query?.limit + start || 5;
+    const start = +query?.offset ?? 0;
+    const end = +query?.limit + start ?? 5;
 
     for (const userId of authUser.following) {
       const userArticles = await ArticlesRepository.find({authorId: userId}, {limit: 0, offset: 0});
@@ -22,18 +23,19 @@ const ArticlesGetterService = {
     }
 
     articles = articles.slice(start, end);
-    articles = this.addFavoritedInfoToArticles(articles, authUser.favorites);
+    articles.forEach((article) => article.favorited = authUser.favorites.includes(article.id));
 
     return {articles, articlesCount};
   },
 
   async getArticles(authUserId, query) {
-    let [articles, articlesCount] = await ArticlesDBService.fetchArticlesFromDB(query);
+    const [articles, articlesCount] = await ArticlesDBService.fetchArticlesFromDB(query);
     if (!authUserId) return {articles, articlesCount};
 
-    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following']);
+    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
     if (!authUser) throw new NotFoundError('User not found');
-    articles = this.addFavoritedInfoToArticles(articles, authUser.favorites);
+
+    articles.forEach((article) => article.favorited = authUser.favorites.includes(article.id));
 
     return {articles, articlesCount};
   },
@@ -47,20 +49,6 @@ const ArticlesGetterService = {
     }
 
     return [...tags];
-  },
-
-  addFavoritedInfoToArticles(articles, authUserFavorites) {
-    const articlesWithFavoriteInfo = [];
-    for (const article of articles) {
-      if (authUserFavorites.some((id) => id.toString() === article.id.toString())) {
-        article.favorited = true;
-        articlesWithFavoriteInfo.push(article);
-        continue;
-      }
-      article.favorited = false;
-      articlesWithFavoriteInfo.push(article);
-    }
-    return articlesWithFavoriteInfo;
   },
 };
 

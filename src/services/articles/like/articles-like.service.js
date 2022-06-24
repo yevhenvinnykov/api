@@ -8,7 +8,7 @@ const ArticlesLikeService = {
   async likeArticle(slug, authUserId) {
     const [authUser, article] = await this.fetchDataFromDB(slug, authUserId);
 
-    if (!authUser.favorites.some((id) => id.toString() === article.id.toString())) {
+    if (!authUser.favorites.some((id) => id === article.id)) {
       await ArticlesRepository.like(authUserId, article);
     }
 

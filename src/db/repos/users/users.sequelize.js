@@ -1,6 +1,7 @@
 const User = require('../../models/sequelize/user.model');
 const bcrypt = require('bcryptjs');
 const Op = require('Sequelize').Op;
+const Normalizer = require('../normalizer');
 
 const UsersSequelize = {
   async create({username, email, password}) {
@@ -9,10 +10,13 @@ const UsersSequelize = {
       email,
       password: bcrypt.hashSync(password, 8),
     });
-    return user;
+
+    return Normalizer.user(user);
   },
 
-  async update(user, userData) {
+  async update(authUserId, userData) {
+    const user = await this.findOneBy('id', authUserId, null, 'raw');
+
     for (const prop in userData) {
       if (!(prop in user)) continue;
       if (prop === 'password') {
@@ -22,12 +26,12 @@ const UsersSequelize = {
       user[prop] = userData[prop];
     }
     await user.save();
-    return user;
   },
 
   async follow(authUserId, idToFollow) {
     const authUser = await this.findOneBy('id', authUserId, ['following']);
     authUser.following.push(idToFollow);
+
     await User.update({
       following: authUser.following,
     }, {where: {id: authUserId}});
@@ -36,6 +40,7 @@ const UsersSequelize = {
   async unfollow(authUserId, index) {
     const authUser = await this.findOneBy('id', authUserId, ['following']);
     authUser.following.splice(index, 1);
+
     await User.update({
       following: authUser.following,
     }, {where: {id: authUserId}});
@@ -44,14 +49,22 @@ const UsersSequelize = {
   async findOneBy(
       field,
       value,
-      attributes = ['username', 'email', 'bio', 'image', 'id'],
+      attributes = this.defaultAttributes,
+      normalizing,
   ) {
-    return await User.findOne({where: {[field]: value}, attributes});
+    const user = await User.findOne({where: {[field]: value}, attributes});
+
+    if (normalizing === 'raw') return user;
+    return Normalizer.user(user);
   },
 
-  async findOneByOr(conditions, attributes = ['username', 'email', 'bio', 'image', 'id']) {
-    return await User.findOne({where: {[Op.or]: conditions}, attributes});
+  async findOneByOr(conditions, attributes = this.defaultAttributes) {
+    const user = await User.findOne({where: {[Op.or]: conditions}, attributes});
+
+    return Normalizer.user(user);
   },
+
+  defaultAttributes: ['username', 'email', 'bio', 'image', 'id'],
 };
 
 module.exports = UsersSequelize;

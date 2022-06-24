@@ -12,24 +12,29 @@ const UsersService = {
       throw new BadRequestError('Something went wrong when creating the user');
     }
 
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      bio: user.bio,
-      image: user.image,
-      token: SessionService.createToken(user.id),
-    };
+    user.token = SessionService.createToken(user.id);
+    return user;
+
+    // return {
+    //   id: user.id,
+    //   email: user.email,
+    //   username: user.username,
+    //   bio: user.bio,
+    //   image: user.image,
+    //   token: SessionService.createToken(user.id),
+    // };
   },
 
   async updateUser({authUserId, userData}) {
     const user = await UsersRepository.findOneBy('id', authUserId);
     if (!user) throw new NotFoundError('User not found');
 
-    await UsersRepository.update(user, userData);
-    user.token = SessionService.createToken(user.id);
+    await UsersRepository.update(authUserId, userData);
 
-    return user;
+    const updatedUser = await UsersRepository.findOneBy('id', authUserId);
+    updatedUser.token = SessionService.createToken(user.id);
+
+    return updatedUser;
   },
 };
 

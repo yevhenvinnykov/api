@@ -58,7 +58,7 @@ const ArticlesMongoose = {
         .sort([['updatedAt', 'descending']])
         .populate('author', 'username bio image following')
         .exec();
-
+    // TODO: NORMALIZE SO IT RETURNS AUTHOR.ID NOT _ID
     return articles;
   },
 

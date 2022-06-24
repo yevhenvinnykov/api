@@ -2,6 +2,7 @@ const Article = require('../../models/sequelize/article.model');
 const User = require('../../models/sequelize/user.model');
 const UsersRepository = require('../users/users.repository');
 const {Op} = require('sequelize');
+const Normalizer = require('../normalizer');
 
 
 const ArticlesMongoose = {
@@ -14,17 +15,20 @@ const ArticlesMongoose = {
       slug: articleData.title,
       authorId: authUserId,
     });
-    return article;
+
+    return Normalizer.article(article);
   },
 
-  async update(article, updateData) {
+  async update(articleId, updateData) {
+    const article = await this.findOneBy('id', articleId, 'raw');
     for (const prop in updateData) {
       if (!(prop in article)) continue;
       article[prop] = updateData[prop];
       article.slug = article.title;
     }
     await article.save();
-    return article;
+
+    return Normalizer.article(article);
   },
 
   async like(authUserId, article) {
@@ -52,17 +56,22 @@ const ArticlesMongoose = {
 
   async delete(conditions) {
     const deletedCount = await Article.destroy({where: conditions});
+
     return {deletedCount};
   },
 
-  async findOneBy(field, value) {
-    return Article.findOne({
+  async findOneBy(field, value, normalizing) {
+    const article = await Article.findOne({
       where: {[field]: value},
       include: [{
         model: User, as: 'author',
         attributes: ['username', 'bio', 'image', 'following', 'id'],
       }],
     });
+
+    if (normalizing === 'raw') return article;
+
+    return Normalizer.article(article);
   },
 
   async find(conditions, {limit, offset}) {
@@ -79,7 +88,8 @@ const ArticlesMongoose = {
       limit: limit || 5,
       subQuery: false,
     });
-    return articles;
+
+    return articles.map((article) => Normalizer.article(article));
   },
 
   async countDocuments(conditions) {

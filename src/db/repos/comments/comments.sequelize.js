@@ -1,5 +1,6 @@
 const Comment = require('../../models/sequelize/comment.model');
 const User = require('../../models/sequelize/user.model');
+const Normalizer = require('../normalizer');
 
 const CommentsRepository = {
   async create(commentBody, userId, articleId) {
@@ -8,25 +9,34 @@ const CommentsRepository = {
       authorId: userId,
       articleId: articleId,
     });
-    return comment;
+
+    return this.findOneBy('id', comment.id);
   },
 
   async findByArticleId(articleId) {
-    return await Comment.findAll({where: {articleId}, include: [{
+    const comments = await Comment.findAll({where: {articleId}, include: [{
       model: User, as: 'author',
-      attributes: ['username', 'bio', 'image', 'following', 'id'],
+      attributes: ['username', 'bio', 'image', 'id'],
     }],
     });
+
+    return comments.map((comment) => Normalizer.comment(comment));
   },
 
   async deleteOneById(id) {
     const deletedCount = await Comment.destroy({where: {id}});
+
     return {deletedCount};
   },
 
   async findOneBy(field, value) {
-    const comment = await Comment.findOne({where: {[field]: value}});
-    return comment;
+    const comment = await Comment.findOne({where: {[field]: value}, include: [{
+      model: User, as: 'author',
+      attributes: ['username', 'bio', 'image', 'id'],
+    }],
+    });
+
+    return Normalizer.comment(comment);
   },
 };
 

@@ -7,8 +7,8 @@ const CommentsService = {
     const article = await ArticlesRepository.findOneBy('slug', slug);
     if (!article) throw new NotFoundError('Article not found');
 
-    const comment = await CommentsRepository
-        .create(commentBody, authUserId, article.id);
+    const comment = await CommentsRepository.create(commentBody, authUserId, article.id);
+
     if (!comment) {
       throw new BadRequestError('Something went wrong while creating the comment');
     }
@@ -30,7 +30,7 @@ const CommentsService = {
     const comment = await CommentsRepository.findOneBy('id', commentId);
     if (!comment) throw new NotFoundError('Comment not found');
 
-    if (comment.authorId.toString() !== authUserId.toString()) {
+    if (comment.author.id !== authUserId) {
       throw new BadRequestError('You are not authorized');
     }
 
