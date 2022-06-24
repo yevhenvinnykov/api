@@ -1,10 +1,11 @@
 const db = require('../../index');
 const Article = db.article;
 const UsersRepository = require('../users/users.repository');
+const Normalizer = require('../normalizer');
 
 const ArticlesMongoose = {
   async create(authUserId, articleData) {
-    return await new Article({
+    const article = await new Article({
       title: articleData.title,
       description: articleData.description,
       body: articleData.body,
@@ -12,30 +13,39 @@ const ArticlesMongoose = {
       slug: articleData.title,
       author: authUserId,
     }).save();
+
+    return Normalizer.article(article);
   },
 
-  async update(article, updateData) {
+  async update(articleId, updateData) {
+    const article = await this.findOneBy('id', articleId, 'raw');
+
     for (const prop in updateData) {
       if (!(prop in article)) continue;
       article[prop] = updateData[prop];
       article.slug = article.title;
     }
     await article.save();
-    return article;
   },
 
-  async like(authUserId, article) {
-    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
+  async like(authUserId, articleId) {
+    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites'], 'raw');
+    const article = await this.findOneBy('id', articleId, 'raw');
+
     article.favoritesCount++;
     authUser.favorites.push(article.id);
+
     await Promise.all([article.save(), authUser.save()]);
   },
 
-  async dislike(authUserId, article) {
-    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
+  async dislike(authUserId, articleId) {
+    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites'], 'raw');
+    const article = await this.findOneBy('id', articleId, 'raw');
     const index = authUser.favorites.indexOf(article.id);
+
     article.favoritesCount--;
     authUser.favorites.splice(index, 1);
+
     await Promise.all([article.save(), authUser.save()]);
   },
 
@@ -43,9 +53,14 @@ const ArticlesMongoose = {
     return await Article.deleteOne(conditions).exec();
   },
 
-  async findOneBy(field, value) {
-    return Article.findOne({[field]: value})
+  async findOneBy(field, value, normalizing) {
+    field = field === 'id' ? '_id' : field;
+
+    const article = await Article.findOne({[field]: value})
         .populate('author', 'username bio image following').exec();
+
+    if (normalizing === 'raw') return article;
+    return Normalizer.article(article);
   },
 
   async find(conditions, {limit, offset}) {
@@ -58,8 +73,8 @@ const ArticlesMongoose = {
         .sort([['updatedAt', 'descending']])
         .populate('author', 'username bio image following')
         .exec();
-    // TODO: NORMALIZE SO IT RETURNS AUTHOR.ID NOT _ID
-    return articles;
+
+    return articles.map((article) => Normalizer.article(article));
   },
 
   async countDocuments(conditions) {

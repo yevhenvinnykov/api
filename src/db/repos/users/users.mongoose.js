@@ -1,17 +1,21 @@
 const db = require('../../index');
 const User = db.user;
 const bcrypt = require('bcryptjs');
+const Normalizer = require('../normalizer');
 
 const UsersMongoose = {
   async create({username, email, password}) {
-    return await new User({
+    const user = await new User({
       username,
       email,
       password: bcrypt.hashSync(password, 8),
     }).save();
+
+    return Normalizer.user(user);
   },
 
-  async update(user, userData) {
+  async update(authUserId, userData) {
+    const user = this.findOneBy('id', authUserId, null, 'raw');
     for (const prop in userData) {
       if (!(prop in user)) continue;
       if (prop === 'password') {
@@ -22,17 +26,16 @@ const UsersMongoose = {
     }
 
     await user.save();
-    return user;
   },
 
   async follow(authUserId, idToFollow) {
-    const authUser = await this.findOneBy('id', authUserId, ['following']);
+    const authUser = await this.findOneBy('id', authUserId, ['following'], 'raw');
     authUser.following.push(idToFollow);
     await authUser.save();
   },
 
   async unfollow(authUserId, index) {
-    const authUser = await this.findOneBy('id', authUserId, ['following']);
+    const authUser = await this.findOneBy('id', authUserId, ['following'], 'raw');
     authUser.following.splice(index, 1);
     await authUser.save();
   },
@@ -40,17 +43,24 @@ const UsersMongoose = {
   async findOneBy(
       field,
       value,
-      attributes = ['username', 'email', 'bio', 'image', 'id'],
+      attributes = this.defaultAttributes,
+      normalizing,
   ) {
     field = field === 'id' ? '_id' : field;
+
     const user = await User.findOne({[field]: value}).select(attributes.join(' ')).exec();
 
-    return user;
+    if (normalizing === 'raw') return user;
+    return Normalizer.user(user);
   },
 
-  async findOneByOr(condtitions, attributes = ['username', 'email', 'bio', 'image', 'id']) {
-    return await User.findOne({$or: condtitions}).select(attributes.join(' ')).exec();
+  async findOneByOr(condtitions, attributes = this.defaultAttributes) {
+    const user = await User.findOne({$or: condtitions}).select(attributes.join(' ')).exec();
+
+    return Normalizer.user(user);
   },
+
+  defaultAttributes: ['username', 'email', 'bio', 'image', 'id'],
 };
 
 module.exports = UsersMongoose;

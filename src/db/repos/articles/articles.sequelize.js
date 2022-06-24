@@ -31,24 +31,32 @@ const ArticlesMongoose = {
     return Normalizer.article(article);
   },
 
-  async like(authUserId, article) {
+  async like(authUserId, articleId) {
     const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
+    const article = await this.findOneBy('id', articleId);
+
     authUser.favorites.push(article.id);
+
     await Article.update({
       favoritesCount: ++article.favoritesCount,
     }, {where: {id: article.id}});
+
     await User.update({
       favorites: authUser.favorites,
     }, {where: {id: authUserId}});
   },
 
-  async dislike(authUserId, article) {
+  async dislike(authUserId, articleId) {
     const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites', 'id']);
+    const article = await this.findOneBy('id', articleId);
     const index = authUser.favorites.indexOf(article.id);
+
     authUser.favorites.splice(index, 1);
+
     await Article.update({
       favoritesCount: --article.favoritesCount,
     }, {where: {id: article.id}});
+
     await User.update({
       favorites: authUser.favorites,
     }, {where: {id: authUserId}});

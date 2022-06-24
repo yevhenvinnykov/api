@@ -16,16 +16,16 @@ const ArticlesRepository = {
     return await orm.delete(conditions);
   },
 
-  async like(authUser, article) {
-    return await orm.like(authUser, article);
+  async like(authUserId, articleId) {
+    return await orm.like(authUserId, articleId);
   },
 
-  async dislike(authUser, article) {
-    return await orm.dislike(authUser, article);
+  async dislike(authUserId, articleId) {
+    return await orm.dislike(authUserId, articleId);
   },
 
-  async findOneBy(field, value) {
-    return await orm.findOneBy(field, value);
+  async findOneBy(field, value, normalizing) {
+    return await orm.findOneBy(field, value, normalizing);
   },
 
   async find(condtions, options) {

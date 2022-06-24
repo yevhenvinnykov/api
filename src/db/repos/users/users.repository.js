@@ -7,8 +7,8 @@ const UsersRepository = {
     return await orm.create({username, email, password});
   },
 
-  async update(user, userData) {
-    return await orm.update(user, userData);
+  async update(userId, userData) {
+    return await orm.update(userId, userData);
   },
 
   async follow(authUserId, idToFollow) {
@@ -19,8 +19,8 @@ const UsersRepository = {
     return await orm.unfollow(authUserId, index);
   },
 
-  async findOneBy(field, value, attributes) {
-    return await orm.findOneBy(field, value, attributes);
+  async findOneBy(field, value, attributes, normalizing) {
+    return await orm.findOneBy(field, value, attributes, normalizing);
   },
 
   async findOneByOr(values, attributes) {

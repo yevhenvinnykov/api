@@ -1,5 +1,6 @@
 const db = require('../../index');
 const Comment = db.comment;
+const Normalizer = require('../normalizer');
 
 const CommentsRepository = {
   async create(commentBody, userId, articleId) {
@@ -8,7 +9,8 @@ const CommentsRepository = {
       author: userId,
       article: articleId,
     }).save();
-    return comment;
+
+    return this.findOneBy('id', comment.id);
   },
 
   async findByArticleId(articleId) {
@@ -17,7 +19,7 @@ const CommentsRepository = {
         .sort([['updatedAt', 'descending']])
         .exec();
 
-    return comments.map((comment) => ({...comment.toJSON(), id: comment._id}));
+    return comments.map((comment) => Normalizer.comment(comment));
   },
 
   async deleteOneById(id) {
@@ -26,9 +28,11 @@ const CommentsRepository = {
 
   async findOneBy(field, value) {
     field = field === 'id' ? '_id' : field;
+
     const comment = await Comment.findOne({[field]: value}).exec();
+
     if (comment) {
-      return {...comment.toJSON(), authorId: comment.author._id};
+      return Normalizer.comment(comment);
     }
   },
 };

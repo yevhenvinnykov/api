@@ -45,6 +45,9 @@ const Normalizer = {
       user.favorites = entry.favorites
           .map((articleId) => isMongo ? articleId._id.toString() : articleId.toString());
     }
+    if (entry.password) {
+      user.password = entry.password;
+    }
     return user;
   },
 
