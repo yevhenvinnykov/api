@@ -50,7 +50,7 @@ describe('ARTICLES CRUD ROUTER', () => {
     });
 
     it('should fail because the article\'s title is not unique', async () => {
-      await MockCreator.createArticleMock(articleTitle);
+      await MockCreator.createArticleMock(articleTitle, user.id);
 
       const response = await request(server)
           .post('/api/articles')

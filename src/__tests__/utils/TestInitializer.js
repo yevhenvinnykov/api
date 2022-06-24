@@ -23,7 +23,13 @@ const TestInitializer = {
 
   async finish() {
     await this.clearDB();
-    await mongoose.connection.close();
+    if (process.env.ORM === 'MONGOOSE') {
+      await mongoose.connection.close();
+    }
+    if (process.env.ORM === 'SEQUELIZE') {
+      const db = require('../../db/index');
+      db.sequelize.close();
+    }
   },
 
   async clearDB() {
@@ -33,15 +39,9 @@ const TestInitializer = {
       await Comment.deleteMany({});
     }
     if (process.env.ORM === 'SEQUELIZE') {
-      await User.destroy({
-        where: {},
-      });
-      await Article.destroy({
-        where: {},
-      });
-      await Comment.destroy({
-        where: {},
-      });
+      await Article.destroy({where: {}});
+      await Comment.destroy({where: {}});
+      await User.destroy({where: {}});
     }
   },
 };

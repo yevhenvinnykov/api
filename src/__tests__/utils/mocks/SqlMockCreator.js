@@ -7,16 +7,15 @@ const bcrypt = require('bcryptjs');
 
 
 const SqlMockCreator = {
-  async createArticleMock(title, authorId) {
+  async createArticleMock(title, author) {
     const article = await Article.create({
       title,
       description: 'Lorem ipsum',
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
       tagList: ['lorem'],
-      authorId: authorId,
+      authorId: author,
       slug: title,
     });
-    await article.save();
 
     return article;
   },

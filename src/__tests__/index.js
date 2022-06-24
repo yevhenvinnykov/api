@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 
+
 if (process.env.ORM === 'MONGOOSE') {
   const mongoose = require('mongoose');
   const TEST_DB_URL = 'mongodb://127.0.0.1:27017/test_DB';
@@ -8,13 +9,8 @@ if (process.env.ORM === 'MONGOOSE') {
 }
 
 if (process.env.ORM === 'SEQUELIZE') {
-  const {Sequelize} = require('sequelize');
-  const sequelize = new Sequelize('test_db', 'user', 'password', {
-    dialect: 'sqlite',
-    storage: './test.sqlite',
-    logging: false,
-  });
-  sequelize.sync();
+  const db = require('../db/index');
+  db.sequelize.sync();
 }
 
 

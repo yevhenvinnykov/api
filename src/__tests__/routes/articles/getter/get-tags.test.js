@@ -17,8 +17,9 @@ describe('ARTICLES GETTER ROUTER: GET TAGS', () => {
 
   beforeAll(async () => {
     const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
+    const author = await MockCreator.createUserMock('Joey');
     for (const number of articleNumbers) {
-      await MockCreator.createArticleMock(`Article${number}`, 'mock_user_id');
+      await MockCreator.createArticleMock(`Article${number}`, author.id);
     }
   });
 
