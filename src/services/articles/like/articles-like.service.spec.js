@@ -22,6 +22,10 @@ describe('ARTICLES LIKE SERVICE', () => {
         favorites: [{toString: () => '2'}],
         save: () => {},
       });
+
+      jest.spyOn(ArticlesRepository, 'like').mockImplementation(() => Promise.resolve());
+      mockArticle.favoritesCount = 2;
+
       const article = await ArticlesLikeService.likeArticle({slug: 'slug', authUserId: 1});
       expect(article.favoritesCount).toBe(2);
       expect(article.favorited).toBe(true);

@@ -1,6 +1,8 @@
 require('dotenv').config();
 const db = require('../../index');
-const User = db.user;
+const User = process.env.ORM === 'MONGOOSE' ?
+db.user :
+require('../../models/sequelize/user.model');
 const bcrypt = require('bcryptjs');
 const UsersRepository = require('./users.repository');
 const mockingoose = require('mockingoose');
@@ -19,7 +21,12 @@ describe('USERS REPOSITORY', () => {
 
   describe('CREATE', () => {
     test('should create a new user', async () => {
-      mockingoose(User).toReturn(mockUser);
+      if (process.env.ORM === 'MONGOOSE') {
+        mockingoose(User).toReturn(mockUser);
+      }
+      if (process.env.ORM === 'SEQUELIZE') {
+        jest.spyOn(User, 'create').mockReturnValue(mockUser);
+      }
       jest.spyOn(bcrypt, 'hashSync').mockReturnValue('password');
 
       const user = await UsersRepository.create(mockUser);
@@ -37,7 +44,12 @@ describe('USERS REPOSITORY', () => {
         password: 'updated password',
         propToBeIgnored: 'ignore me',
       };
-      mockingoose(User).toReturn(mockUpdateData, 'save');
+      if (process.env.ORM === 'MONGOOSE') {
+        mockingoose(User).toReturn(mockUpdateData, 'save');
+      }
+      if (process.env.ORM === 'SEQUELIZE') {
+        jest.spyOn(User, 'update').mockReturnValue(mockUpdateData);
+      }
       jest.spyOn(bcrypt, 'hashSync').mockReturnValue('updated password');
 
       const updatedUser = await UsersRepository.update(mockUser, mockUpdateData);
@@ -50,7 +62,12 @@ describe('USERS REPOSITORY', () => {
 
   describe('FIND ONE BY', () => {
     test('should find a user with the given field having the given value', async () => {
-      mockingoose(User).toReturn(mockUser, 'findOne');
+      if (process.env.ORM === 'MONGOOSE') {
+        mockingoose(User).toReturn(mockUser, 'findOne');
+      }
+      if (process.env.ORM === 'SEQUELIZE') {
+        jest.spyOn(User, 'findOne').mockReturnValue(mockUser);
+      }
 
       const user = await UsersRepository.findOneBy('username', 'username');
 
@@ -61,7 +78,12 @@ describe('USERS REPOSITORY', () => {
 
   describe('FIND ONE BY OR', () => {
     test('should find a user with one of the given fields having the given value', async () => {
-      mockingoose(User).toReturn(mockUser, 'findOne');
+      if (process.env.ORM === 'MONGOOSE') {
+        mockingoose(User).toReturn(mockUser, 'findOne');
+      }
+      if (process.env.ORM === 'SEQUELIZE') {
+        jest.spyOn(User, 'findOne').mockReturnValue(mockUser);
+      }
 
       const user = await UsersRepository.findOneByOr([{username: 'username'}, {id: 'id'}]);
 

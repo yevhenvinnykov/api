@@ -1,10 +1,11 @@
 require('dotenv').config();
 const ArticlesRepository = require('./articles.repository');
 const db = require('../../index');
-const Article = db.article;
 const mockingoose = require('mockingoose');
-const mockAuthortId = new db.mongoose.Types.ObjectId();
 
+const isMongo = process.env.ORM === 'MONGOOSE';
+const mockAuthortId = isMongo ? new db.mongoose.Types.ObjectId() : 1;
+const Article = isMongo ? db.article : require('../../models/sequelize/article.model');
 
 describe('ARTICLES REPOSITORY', () => {
   let mockArticle;
@@ -26,7 +27,17 @@ describe('ARTICLES REPOSITORY', () => {
 
   describe('CREATE', () => {
     test('should create an article', async () => {
-      mockingoose(Article).toReturn(mockArticle);
+      if (isMongo) {
+        mockingoose(Article).toReturn(mockArticle);
+      }
+      if (!isMongo) {
+        jest.spyOn(Article, 'create').mockReturnValue({
+          ...mockArticle,
+          favorited: false,
+          favoritesCount: 0,
+          createdAt: new Date(),
+        });
+      }
 
       const article = await ArticlesRepository.create(mockAuthortId, {
         title: 'title',
@@ -60,7 +71,12 @@ describe('ARTICLES REPOSITORY', () => {
 
     describe('DELETE', () => {
       test('should delete the article', async () => {
-        mockingoose(Article).toReturn({deletedCount: 1}, 'deleteOne');
+        if (isMongo) {
+          mockingoose(Article).toReturn({deletedCount: 1}, 'deleteOne');
+        }
+        if (!isMongo) {
+          jest.spyOn(Article, 'destroy').mockReturnValue(1);
+        }
 
         const {deletedCount} = await ArticlesRepository.delete({slug: 'slug'});
 
@@ -70,7 +86,12 @@ describe('ARTICLES REPOSITORY', () => {
 
     describe('FIND ONE BY', () => {
       test('find an article with the given field equal to the given value', async () => {
-        mockingoose(Article).toReturn(mockArticle, 'findOne');
+        if (isMongo) {
+          mockingoose(Article).toReturn(mockArticle, 'findOne');
+        }
+        if (!isMongo) {
+          jest.spyOn(Article, 'findOne').mockReturnValue(mockArticle);
+        }
 
         const article = await ArticlesRepository.findOneBy('slug', 'slug');
 
@@ -83,7 +104,12 @@ describe('ARTICLES REPOSITORY', () => {
     describe('FIND', () => {
       test('find an array of article which suit the given conditions', async () => {
         const mockArticles = Array(5).fill(mockArticle, 0);
-        mockingoose(Article).toReturn(mockArticles, 'find');
+        if (isMongo) {
+          mockingoose(Article).toReturn(mockArticles, 'find');
+        }
+        if (!isMongo) {
+          jest.spyOn(Article, 'findAll').mockReturnValue(mockArticles);
+        }
 
         const articles = await ArticlesRepository.find({title: 'title'}, {limit: 5, offset: 0});
 
@@ -94,7 +120,12 @@ describe('ARTICLES REPOSITORY', () => {
 
     describe('COUNT', () => {
       test('return count of found documents', async () => {
-        mockingoose(Article).toReturn(3, 'countDocuments');
+        if (isMongo) {
+          mockingoose(Article).toReturn(3, 'countDocuments');
+        }
+        if (!isMongo) {
+          jest.spyOn(Article, 'count').mockReturnValue(3);
+        }
 
         const count = await ArticlesRepository.count({title: 'title'});
 

@@ -1,25 +1,32 @@
 require('dotenv').config();
 const db = require('../../index');
-const Comment = db.comment;
 const CommentsRepository = require('./comments.repository');
 const mockingoose = require('mockingoose');
+
+const isMongo = process.env.ORM === 'MONGOOSE';
+const Comment = isMongo ? db.comment : require('../../models/sequelize/comment.model');
 
 describe('COMMENTS REPOSITORY', () => {
   const mockData = {
     body: 'body',
-    author: new db.mongoose.Types.ObjectId(),
-    article: new db.mongoose.Types.ObjectId(),
+    author: isMongo ? new db.mongoose.Types.ObjectId() : 1,
+    article: isMongo ? new db.mongoose.Types.ObjectId() : 1,
   };
 
   describe('CREATE', () => {
     test('should create a comment', async () => {
-      mockingoose(Comment).toReturn(mockData);
+      if (isMongo) {
+        mockingoose(Comment).toReturn(mockData);
+      }
+      if (!isMongo) {
+        jest.spyOn(Comment, 'create').mockReturnValue(mockData);
+      }
 
       const comment = await CommentsRepository
           .create('body', mockData.author, mockData.article);
 
       expect(comment.body).toBe('body');
-      expect(comment.createdAt).toBeInstanceOf(Date);
+      //expect(comment.createdAt).toBeInstanceOf(Date);
       expect(comment.article).toBe(mockData.article);
       expect(comment.author).toBe(mockData.author);
     });
@@ -27,7 +34,12 @@ describe('COMMENTS REPOSITORY', () => {
 
   describe('FIND BY ARTICLE ID', () => {
     test('should find comments by article id', async () => {
-      mockingoose(Comment).toReturn(Array(3).fill(mockData, 0), 'find');
+      if (isMongo) {
+        mockingoose(Comment).toReturn(Array(3).fill(mockData, 0), 'find');
+      }
+      if (!isMongo) {
+        jest.spyOn(Comment, 'findAll').mockReturnValue(Array(3).fill(mockData, 0));
+      }
 
       const comments = await CommentsRepository.findByArticleId(mockData.article);
 
@@ -38,7 +50,12 @@ describe('COMMENTS REPOSITORY', () => {
 
   describe('DELETE ONE BY ID', () => {
     test('should delete the comment with the given id', async () => {
-      mockingoose(Comment).toReturn({deletedCount: 1}, 'deleteOne');
+      if (isMongo) {
+        mockingoose(Comment).toReturn({deletedCount: 1}, 'deleteOne');
+      }
+      if (!isMongo) {
+        jest.spyOn(Comment, 'destroy').mockReturnValue(1);
+      }
 
       const {deletedCount} = await CommentsRepository.deleteOneById(mockData.article);
 
@@ -48,7 +65,12 @@ describe('COMMENTS REPOSITORY', () => {
 
   describe('FIND ONE BY', () => {
     test('should find a comment with the given field equal to the given value', async () => {
-      mockingoose(Comment).toReturn(mockData, 'findOne');
+      if (isMongo) {
+        mockingoose(Comment).toReturn(mockData, 'findOne');
+      }
+      if (!isMongo) {
+        jest.spyOn(Comment, 'findOne').mockReturnValue(mockData);
+      }
 
       const comment = await CommentsRepository.findOneBy('articleId', mockData.article);
 
