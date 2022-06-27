@@ -14,15 +14,6 @@ const UsersService = {
 
     user.token = SessionService.createToken(user.id);
     return user;
-
-    // return {
-    //   id: user.id,
-    //   email: user.email,
-    //   username: user.username,
-    //   bio: user.bio,
-    //   image: user.image,
-    //   token: SessionService.createToken(user.id),
-    // };
   },
 
   async updateUser({authUserId, userData}) {

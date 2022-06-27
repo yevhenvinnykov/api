@@ -26,7 +26,7 @@ describe('SESSION ROUTER', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.body.user.username).toBe('John');
-      expect(response.body.user.token).toBe(user.token);
+      expect(response.body.user.token).toBeTruthy();
     });
 
     it('should fail because the password is invalid', async () => {
@@ -52,7 +52,7 @@ describe('SESSION ROUTER', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.body.user.username).toBe('John');
-      expect(response.body.user.token).toBe(user.token);
+      expect(response.body.user.token).toBeTruthy();
     });
   });
 

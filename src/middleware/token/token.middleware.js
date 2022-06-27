@@ -10,7 +10,7 @@ const TokenMiddleware = {
         expiresIn: 3600,
       }, (err, decoded) => {
         if (err) throw new BadRequestError('You are not authorized');
-        req.userId = decoded.id;
+        req.userId = `${decoded.id}`;
         next();
       });
     } catch (error) {
@@ -26,7 +26,7 @@ const TokenMiddleware = {
         expiresIn: 3600,
       }, (err, decoded) => {
         if (err) throw new BadRequestError('You are not authorized');
-        req.userId = decoded.id;
+        req.userId = `${decoded.id}`;
         next();
       });
     } catch (error) {

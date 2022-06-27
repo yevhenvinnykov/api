@@ -5,7 +5,7 @@ const Normalizer = require('../normalizer');
 
 const ArticlesMongoose = {
   async create(authUserId, articleData) {
-    const article = await new Article({
+    const createdArticle = await new Article({
       title: articleData.title,
       description: articleData.description,
       body: articleData.body,
@@ -14,7 +14,9 @@ const ArticlesMongoose = {
       author: authUserId,
     }).save();
 
-    return Normalizer.article(article);
+    const article = await this.findOneBy('id', createdArticle.id);
+
+    return article;
   },
 
   async update(articleId, updateData) {

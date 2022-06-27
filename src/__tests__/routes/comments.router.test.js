@@ -34,8 +34,8 @@ describe('COMMENTS ROUTER', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.body.comment.body).toBe('Test comment');
-      expect(response.body.comment.author).toBe(author.id);
-      expect(response.body.comment.article).toBe(article.id);
+      expect(response.body.comment.author.id).toBe(`${author.id}`);
+      expect(response.body.comment.article).toBe(`${article.id}`);
     });
   });
 

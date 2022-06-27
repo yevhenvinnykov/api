@@ -39,8 +39,8 @@ describe('ARTICLES CRUD ROUTER', () => {
           .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.article.title).toBe(articleTitle, user.id);
-      expect(response.body.article.author).toBe(user.id);
+      expect(response.body.article.title).toBe(articleTitle);
+      expect(response.body.article.author.id).toBe(`${user.id}`);
     });
 
     it('should fail because no token is provided', async () => {

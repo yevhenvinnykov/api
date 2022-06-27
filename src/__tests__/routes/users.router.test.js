@@ -100,7 +100,6 @@ describe('USERS ROUTER', () => {
         user: {
           username: 'Ross',
           propToBeIgnored: 'ignore me',
-          password: 'NewPassword1',
         },
       };
       const response = await request(server)
@@ -108,12 +107,11 @@ describe('USERS ROUTER', () => {
           .send(body)
           .set('x-access-token', user.token);
 
-      const {username, propToBeIgnored, password} = response.body.user;
 
+      const {username, propToBeIgnored} = response.body.user;
       expect(response.statusCode).toBe(200);
       expect(username).toBe('Ross');
       expect(propToBeIgnored).toBeUndefined();
-      expect(bcrypt.compareSync('NewPassword1', password)).toBe(true);
     });
   });
 });

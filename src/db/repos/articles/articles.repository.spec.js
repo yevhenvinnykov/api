@@ -31,17 +31,11 @@ describe('ARTICLES REPOSITORY', () => {
   describe('CREATE', () => {
     test('should create an article', async () => {
       if (isMongo) {
-        mockingoose(Article).toReturn(mockArticle);
+        mockingoose(Article).toReturn(mockArticle).toReturn(mockArticle, 'findOne');
       }
       if (!isMongo) {
-        jest.spyOn(Article, 'create').mockReturnValue({
-          ...mockArticle,
-          id: 1,
-          favorited: false,
-          favoritesCount: 0,
-          createdAt: new Date(),
-          author: {id: mockAuthortId},
-        });
+        jest.spyOn(Article, 'create').mockReturnValue(1);
+        jest.spyOn(Article, 'findOne').mockReturnValue({...mockArticle, id: 1, author: {id: 1}});
       }
 
       const article = await ArticlesRepository.create(mockAuthortId, {
@@ -52,8 +46,6 @@ describe('ARTICLES REPOSITORY', () => {
       });
 
       expect(article.title).toBe('title');
-      expect(article.createdAt).toBeInstanceOf(Date);
-      expect(article.favorited).toBe(false);
       expect(article.favoritesCount).toBe(0);
       expect(article.slug).toBe('title');
     });
