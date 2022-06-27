@@ -2,12 +2,14 @@ require('dotenv').config();
 const db = require('../../index');
 const CommentsRepository = require('./comments.repository');
 const mockingoose = require('mockingoose');
+const Normalizer = require('../normalizer');
 
 const isMongo = process.env.ORM === 'MONGOOSE';
 const Comment = isMongo ? db.comment : require('../../models/sequelize/comment.model');
 
 describe('COMMENTS REPOSITORY', () => {
   const mockData = {
+    id: 1,
     body: 'body',
     author: isMongo ? new db.mongoose.Types.ObjectId() : 1,
     article: isMongo ? new db.mongoose.Types.ObjectId() : 1,
@@ -16,17 +18,18 @@ describe('COMMENTS REPOSITORY', () => {
   describe('CREATE', () => {
     test('should create a comment', async () => {
       if (isMongo) {
-        mockingoose(Comment).toReturn(mockData);
+        mockingoose(Comment).toReturn(mockData).toReturn(mockData, 'findOne');
       }
       if (!isMongo) {
-        jest.spyOn(Comment, 'create').mockReturnValue(mockData);
+        jest.spyOn(Comment, 'create').mockImplementation(() => Promise.resolve(1));
+        jest.spyOn(Comment, 'findOne').mockReturnValue(mockData);
       }
 
-      const comment = await CommentsRepository
-          .create('body', mockData.author, mockData.article);
+      jest.spyOn(Normalizer, 'comment').mockReturnValue(mockData);
+
+      const comment = await CommentsRepository.create('body', mockData.author, mockData.article);
 
       expect(comment.body).toBe('body');
-      //expect(comment.createdAt).toBeInstanceOf(Date);
       expect(comment.article).toBe(mockData.article);
       expect(comment.author).toBe(mockData.author);
     });

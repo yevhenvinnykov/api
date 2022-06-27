@@ -27,13 +27,11 @@ const ArticlesMongoose = {
       article.slug = article.title;
     }
     await article.save();
-
-    return Normalizer.article(article);
   },
 
   async like(authUserId, articleId) {
     const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
-    const article = await this.findOneBy('id', articleId);
+    const article = await this.findOneBy('id', articleId, 'raw');
 
     authUser.favorites.push(article.id);
 
@@ -48,7 +46,7 @@ const ArticlesMongoose = {
 
   async dislike(authUserId, articleId) {
     const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites', 'id']);
-    const article = await this.findOneBy('id', articleId);
+    const article = await this.findOneBy('id', articleId, 'raw');
     const index = authUser.favorites.indexOf(article.id);
 
     authUser.favorites.splice(index, 1);

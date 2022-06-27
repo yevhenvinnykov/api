@@ -13,8 +13,8 @@ const ArticlesGetterService = {
 
     let articles = [];
     let articlesCount = 0;
-    const start = +query?.offset ?? 0;
-    const end = +query?.limit + start ?? 5;
+    const start = query?.offset ? +query.offset : 0;
+    const end = query?.limit ? (+query.limit + start) : 5;
 
     for (const userId of authUser.following) {
       const userArticles = await ArticlesRepository.find({authorId: userId}, {limit: 0, offset: 0});

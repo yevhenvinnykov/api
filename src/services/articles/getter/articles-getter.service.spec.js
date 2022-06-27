@@ -5,24 +5,28 @@ const UsersRepository = require('../../../db/repos/users/users.repository');
 describe('ARTICLES GETTER SERVICE', () => {
   describe('GET ARTICLES FROM FOLLOWED USERS', () => {
     const mockArticles = Array(10).fill({id: 1, title: 'title'}, 0);
+
     const expectedData = {
       articles: Array(5).fill({id: 1, title: 'title', favorited: true}, 0),
       articlesCount: 20,
     };
+
     const mockQuery = {limit: null, offset: null};
 
-    beforeEach(() => {
-      jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
+    test('should get articles and add info favorited: true', async () => {
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-        favorites: [{toString: () => '1'}],
-        following: [{_id: {toString: () => '1'}}, {_id: {toString: () => '2'}}],
+        favorites: [1],
+        following: [1, 2],
       });
-    });
+      jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
 
-    test('should get articles and add info to them', async () => {
-      const articles = await ArticlesGetterService
-          .getArticlesFromFollowedUsers(1, mockQuery);
-      expect(articles).toEqual(expectedData);
+      const {
+        articles,
+        articlesCount,
+      } = await ArticlesGetterService.getArticlesFromFollowedUsers(1, mockQuery);
+
+      expect(articles).toEqual(expectedData.articles);
+      expect(articlesCount).toBe(expectedData.articlesCount);
     });
 
     test('should throw an error if no authUserId found', async () => {
@@ -36,20 +40,20 @@ describe('ARTICLES GETTER SERVICE', () => {
   });
 
   describe('GET ARTICLES', () => {
+    let expectedData;
+
     const mockArticles = [
       {id: 1, title: 'title'},
       {id: 2, title: 'another title'},
     ];
-    let expectedData;
+
     const mockQuery = {
       limit: 0, offset: 0, author: 'author', favorited: 'user', tag: 'tag',
     };
 
     beforeEach(() => {
       jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-        favorites: [{toString: () => '1'}, {toString: () => '3'}],
-      });
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({favorites: [1, 3]});
       jest.spyOn(ArticlesRepository, 'count').mockReturnValue(1);
     });
 
@@ -67,10 +71,12 @@ describe('ARTICLES GETTER SERVICE', () => {
 
     test('should get articles, add info and return them', async () => {
       const articles = await ArticlesGetterService.getArticles(1, mockQuery);
+
       expectedData.articles = [
         {id: 1, title: 'title', favorited: true},
         {id: 2, title: 'another title', favorited: false},
       ];
+
       expect(articles).toEqual(expectedData);
     });
 

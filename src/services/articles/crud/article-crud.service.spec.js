@@ -15,10 +15,10 @@ describe('ARTICLES CRUD SERVICE', () => {
     });
 
     test('should create an article', async () => {
-      jest.spyOn(ArticlesRepository, 'create')
-          .mockReturnValue({article: 'article'});
-      const article = await ArticlesCRUDService
-          .createArticle(mockData);
+      jest.spyOn(ArticlesRepository, 'create').mockReturnValue({article: 'article'});
+
+      const article = await ArticlesCRUDService.createArticle(mockData);
+
       expect(article).toEqual({article: 'article'});
     });
 
@@ -27,8 +27,7 @@ describe('ARTICLES CRUD SERVICE', () => {
       try {
         await ArticlesCRUDService.createArticle(mockData);
       } catch (error) {
-        expect(error.message)
-            .toBe('Something went wrong when creating article');
+        expect(error.message).toBe('Something went wrong when creating article');
       }
     });
   });
@@ -46,9 +45,10 @@ describe('ARTICLES CRUD SERVICE', () => {
     test('should update an article', async () => {
       jest.spyOn(ArticlesRepository, 'findOneBy')
           .mockReturnValue({title: 'updated', author: {id: 1}});
-      jest.spyOn(ArticlesRepository, 'update').mockReturnValue(null);
+      jest.spyOn(ArticlesRepository, 'update').mockImplementation(() => Promise.resolvenull);
 
       const article = await ArticlesCRUDService.updateArticle(mockData);
+
       expect(article).toEqual({title: 'updated', author: {id: 1}});
     });
 
@@ -64,18 +64,11 @@ describe('ARTICLES CRUD SERVICE', () => {
   });
 
   describe('GET ARTICLE', () => {
-    let expectedData;
-
-    beforeEach(() => {
-      expectedData = {favorited: true, author: {following: false}};
-    });
-
     beforeEach(() => {
       const mockArticle = {
-        id: 1,
+        id: 10,
         title: 'title',
-        author: {id: {toString: () => '1'}, toJSON: () => {}},
-        toJSON: () => {},
+        author: {id: 1},
       };
       jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(mockArticle);
     });
@@ -83,21 +76,24 @@ describe('ARTICLES CRUD SERVICE', () => {
     test('should get the article and add to it favorited&followed info',
         async () => {
           jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
-            following: [{toString: () => '1'}],
-            favorites: [{toString: () => '1'}],
+            following: [1],
+            favorites: [10],
           });
           const article = await ArticlesCRUDService.getArticle('slug', 1);
-          expectedData.author.following = true;
-          expect(article).toEqual(expectedData);
+
+          expect(article.id).toBe(10);
+          expect(article.favorited).toBe(true);
+          expect(article.author.following).toBe(true);
         });
 
     test(`should get the article and add favorited&followed: false
-              because no authUserId provided`,
+          because no authUserId provided`,
     async () => {
-      const article = await ArticlesCRUDService
-          .getArticle({slug: 'slug', authUserId: null});
-      expectedData.favorited = false;
-      expect(article).toEqual(expectedData);
+      const article = await ArticlesCRUDService.getArticle({slug: 'slug', authUserId: null});
+
+      expect(article.id).toBe(10);
+      expect(article.favorited).toBe(false);
+      expect(article.author.following).toBe(false);
     });
 
     test('should throw an error if no article found', async () => {
@@ -112,21 +108,20 @@ describe('ARTICLES CRUD SERVICE', () => {
 
   describe('DELETE ARTICLE', () => {
     test('should delete an article', async () => {
-      jest.spyOn(ArticlesRepository, 'delete')
-          .mockReturnValue({deletedCount: 1});
+      jest.spyOn(ArticlesRepository, 'delete').mockReturnValue({deletedCount: 1});
+
       const fn = async () => await ArticlesCRUDService
           .deleteArticle({slug: 'slug', authUserId: 1});
+
       expect(fn).not.toThrow(BadRequestError);
     });
 
     test('should throw an error if article wasn\'t deleted', async () => {
+      jest.spyOn(ArticlesRepository, 'delete').mockReturnValue({deletedCount: 0});
       try {
-        jest.spyOn(ArticlesRepository, 'delete')
-            .mockReturnValue({deletedCount: 0});
         await ArticlesCRUDService.deleteArticle({slug: 'slug', authUserId: 1});
       } catch (error) {
-        expect(error.message)
-            .toBe('Something went wrong whhile deleting the article');
+        expect(error.message).toBe('Something went wrong whhile deleting the article');
       }
     });
   });

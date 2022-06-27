@@ -15,7 +15,8 @@ const UsersMongoose = {
   },
 
   async update(authUserId, userData) {
-    const user = this.findOneBy('id', authUserId, null, 'raw');
+    const user = await this.findOneBy('id', authUserId, this.defaultAttributes, 'raw');
+
     for (const prop in userData) {
       if (!(prop in user)) continue;
       if (prop === 'password') {
