@@ -9,7 +9,7 @@ const ProfilesService = {
     const isProfileFollowed = !!authUser && authUser.following.includes(profile.id);
     profile.following = isProfileFollowed;
 
-    return {profile};
+    return profile;
   },
 
   async followProfile(authUserId, username) {
@@ -21,7 +21,7 @@ const ProfilesService = {
     }
     profile.following = true;
 
-    return {profile};
+    return profile;
   },
 
   async unfollowProfile(authUserId, username) {
@@ -32,7 +32,7 @@ const ProfilesService = {
     if (index !== -1) await UsersRepository.unfollow(authUserId, index);
     profile.following = false;
 
-    return {profile};
+    return profile;
   },
 
   async fetchDataFromDB(authUserId, username) {

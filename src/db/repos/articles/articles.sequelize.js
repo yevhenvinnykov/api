@@ -92,6 +92,7 @@ const ArticlesMongoose = {
         model: User, as: 'author',
         attributes: ['username', 'bio', 'image', 'following', 'id'],
       }],
+      order: [['updatedAt', 'DESC']],
       offset: offset || 0,
       limit: limit || 5,
       subQuery: false,
@@ -100,7 +101,7 @@ const ArticlesMongoose = {
     return articles.map((article) => Normalizer.article(article));
   },
 
-  async countDocuments(conditions) {
+  async count(conditions) {
     if (conditions.tagList) {
       conditions = {tagList: {[Op.substring]: conditions.tagList}};
     }

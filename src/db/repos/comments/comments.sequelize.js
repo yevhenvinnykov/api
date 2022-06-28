@@ -14,10 +14,13 @@ const CommentsRepository = {
   },
 
   async findByArticleId(articleId) {
-    const comments = await Comment.findAll({where: {articleId}, include: [{
-      model: User, as: 'author',
-      attributes: ['username', 'bio', 'image', 'id'],
-    }],
+    const comments = await Comment.findAll({
+      where: {articleId},
+      include: [{
+        model: User, as: 'author',
+        attributes: ['username', 'bio', 'image', 'id'],
+      }],
+      order: [['updatedAt', 'DESC']],
     });
 
     return comments.map((comment) => Normalizer.comment(comment));

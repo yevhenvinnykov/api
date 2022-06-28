@@ -28,9 +28,9 @@ const ArticlesCRUDService = {
 
   async getArticle(slug, authUserId) {
     const article = await ArticlesDBService.fetchArticleFromDB(slug);
-    const authUser = authUserId ?
-        await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following']) :
-        null;
+    const authUser = authUserId
+        ? await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following'])
+        : null;
 
     article.favorited = !!authUser && authUser.favorites.includes(article.id);
     article.author.following = !!authUser && authUser.following.includes(article.author.id);

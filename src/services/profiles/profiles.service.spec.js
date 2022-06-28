@@ -9,7 +9,7 @@ describe('PROFILES SERVICE', () => {
 
       const profile = await ProfilesService.getProfile(1, 'username');
 
-      expect(profile).toEqual({profile: {id: 1, following: false}});
+      expect(profile).toEqual({id: 1, following: false});
     });
 
     test('should throw an error if user/profile wasn\'t found', async () => {
@@ -30,7 +30,7 @@ describe('PROFILES SERVICE', () => {
 
       const profile = await ProfilesService.followProfile(1, 'username');
 
-      expect(profile).toEqual({profile: {id: 3, following: true}});
+      expect(profile).toEqual({id: 3, following: true});
     });
 
     test('should follow a profile', async () => {
@@ -39,7 +39,7 @@ describe('PROFILES SERVICE', () => {
 
       const profile = await ProfilesService.followProfile(1, 'username');
 
-      expect(profile).toEqual({profile: {id: 2, following: true}});
+      expect(profile).toEqual({id: 2, following: true});
     });
 
     test('should throw an error if the user is not authorized', async () => {
@@ -61,7 +61,7 @@ describe('UNFOLLOW PROFILE', () => {
 
     const profile = await ProfilesService.unfollowProfile(1, 'username');
 
-    expect(profile).toEqual({profile: {id: 2, following: false}});
+    expect(profile).toEqual({id: 2, following: false});
   });
 
   test('should unfollow a profile', async () => {
@@ -70,7 +70,7 @@ describe('UNFOLLOW PROFILE', () => {
 
     const profile = await ProfilesService.unfollowProfile(1, 'username');
 
-    expect(profile).toEqual({profile: {id: 2, following: false}});
+    expect(profile).toEqual({id: 2, following: false});
   });
 
   test('should throw an error if the user is not authorized', async () => {

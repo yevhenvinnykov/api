@@ -1,4 +1,4 @@
-const config = require('./config');
+const sequelizeConfig = require('./sequelize-config');
 
 const db = {
   initializeWithMongo() {
@@ -9,7 +9,12 @@ const db = {
   },
   initializeWithSequelize() {
     const {Sequelize} = require('sequelize');
-    this.sequelize = new Sequelize(config.dbName, config.username, config.password, config.options);
+    this.sequelize = new Sequelize(
+        sequelizeConfig.dbName,
+        sequelizeConfig.username,
+        sequelizeConfig.password,
+        sequelizeConfig.options,
+    );
   },
 };
 

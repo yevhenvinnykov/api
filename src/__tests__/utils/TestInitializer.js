@@ -1,16 +1,16 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const User = process.env.ORM === 'MONGOOSE' ?
-require('../../db/models/mongoose/user.model') :
-require('../../db/models/sequelize/user.model');
+const User = process.env.ORM === 'MONGOOSE'
+? require('../../db/models/mongoose/user.model')
+: require('../../db/models/sequelize/user.model');
 
-const Article = process.env.ORM === 'MONGOOSE' ?
-require('../../db/models/mongoose/article.model') :
-require('../../db/models/sequelize/article.model');
+const Article = process.env.ORM === 'MONGOOSE'
+? require('../../db/models/mongoose/article.model')
+: require('../../db/models/sequelize/article.model');
 
-const Comment = process.env.ORM === 'MONGOOSE' ?
-require('../../db/models/mongoose/comment.model') :
-require('../../db/models/sequelize/comment.model');
+const Comment = process.env.ORM === 'MONGOOSE'
+? require('../../db/models/mongoose/comment.model')
+: require('../../db/models/sequelize/comment.model');
 
 const app = require('../index');
 

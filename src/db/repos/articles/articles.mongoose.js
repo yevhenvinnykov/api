@@ -79,7 +79,7 @@ const ArticlesMongoose = {
     return articles.map((article) => Normalizer.article(article));
   },
 
-  async countDocuments(conditions) {
+  async count(conditions) {
     return await Article.countDocuments(conditions).exec();
   },
 };

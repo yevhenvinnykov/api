@@ -116,7 +116,7 @@ describe('ARTICLES REPOSITORY', () => {
   });
 
   describe('FIND', () => {
-    test('find an array of article which suit the given conditions', async () => {
+    test('find an array of articles which suit the given conditions', async () => {
       const mockArticles = Array(5).fill({...mockArticle, id: 1, author: {id: mockAuthortId}}, 0);
       if (isMongo) {
         mockingoose(Article).toReturn(mockArticles, 'find');

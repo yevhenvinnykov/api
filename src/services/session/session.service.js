@@ -9,13 +9,9 @@ const SessionService = {
     const user = await UsersRepository.findOneBy('id', authUserId);
     if (!user) throw new NotFoundError('User not found');
 
-    return {
-      email: user.email,
-      token: token = this.createToken(user.id),
-      username: user.username,
-      image: user.image,
-      bio: user.bio,
-    };
+    user.token = this.createToken(user.id);
+
+    return user;
   },
 
   async logIn(email, password) {
@@ -25,14 +21,9 @@ const SessionService = {
     this.validatePassword(password, user.password);
 
     user = await UsersRepository.findOneBy('email', email);
+    user.token = this.createToken(user.id);
 
-    return {
-      email: user.email,
-      token: token = this.createToken(user.id),
-      username: user.username,
-      image: user.image,
-      bio: user.bio,
-    };
+    return user;
   },
 
   createToken(id) {
