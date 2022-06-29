@@ -5,7 +5,7 @@ const {Op} = require('sequelize');
 const Normalizer = require('../normalizer');
 
 
-const ArticlesMongoose = {
+const ArticlesSequelize = {
   async create(authUserId, articleData) {
     const createdArticle = await Article.create({
       title: articleData.title,
@@ -111,5 +111,5 @@ const ArticlesMongoose = {
   },
 };
 
-module.exports = ArticlesMongoose;
+module.exports = ArticlesSequelize;
 

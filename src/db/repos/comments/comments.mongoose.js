@@ -2,7 +2,7 @@ const db = require('../../index');
 const Comment = db.comment;
 const Normalizer = require('../normalizer');
 
-const CommentsRepository = {
+const CommentsMongoose = {
   async create(commentBody, userId, articleId) {
     const comment = await new Comment({
       body: commentBody,
@@ -37,4 +37,4 @@ const CommentsRepository = {
   },
 };
 
-module.exports = CommentsRepository;
+module.exports = CommentsMongoose;

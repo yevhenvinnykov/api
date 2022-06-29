@@ -2,7 +2,7 @@ const Comment = require('../../models/sequelize/comment.model');
 const User = require('../../models/sequelize/user.model');
 const Normalizer = require('../normalizer');
 
-const CommentsRepository = {
+const CommentsSequelize = {
   async create(commentBody, userId, articleId) {
     const comment = await Comment.create({
       body: commentBody,
@@ -43,4 +43,4 @@ const CommentsRepository = {
   },
 };
 
-module.exports = CommentsRepository;
+module.exports = CommentsSequelize;
