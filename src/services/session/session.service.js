@@ -15,12 +15,14 @@ const SessionService = {
   },
 
   async logIn(email, password) {
-    let user = await UsersRepository.findOneBy('email', email, ['password']);
+    const user = await UsersRepository.findOneBy(
+        'email',
+        email,
+        ['username', 'email', 'bio', 'image', 'id', 'password'],
+    );
     if (!user) throw new NotFoundError('User not found');
 
     this.validatePassword(password, user.password);
-
-    user = await UsersRepository.findOneBy('email', email);
     user.token = this.createToken(user.id);
 
     return user;

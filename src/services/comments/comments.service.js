@@ -8,7 +8,6 @@ const CommentsService = {
     if (!article) throw new NotFoundError('Article not found');
 
     const comment = await CommentsRepository.create(commentBody, authUserId, article.id);
-
     if (!comment) {
       throw new BadRequestError('Something went wrong while creating the comment');
     }

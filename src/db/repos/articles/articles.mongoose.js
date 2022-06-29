@@ -28,6 +28,8 @@ const ArticlesMongoose = {
       article.slug = article.title;
     }
     await article.save();
+
+    return Normalizer.article(article);
   },
 
   async like(authUserId, articleId) {
@@ -66,9 +68,6 @@ const ArticlesMongoose = {
   },
 
   async find(conditions, {limit, offset}) {
-    if (conditions.hasOwnProperty('authorId')) {
-      conditions = {author: conditions.authorId};
-    }
     const articles = await Article.find(conditions)
         .skip(offset)
         .limit(limit)

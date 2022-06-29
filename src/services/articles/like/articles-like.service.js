@@ -1,7 +1,6 @@
-const ArticlesDBService = require('../db/articles-db.service');
 const UsersRepository = require('../../../db/repos/users/users.repository');
 const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
-const {BadRequestError} = require('../../../middleware/errors/errorHandler');
+const {BadRequestError, NotFoundError} = require('../../../middleware/errors/errorHandler');
 
 
 const ArticlesLikeService = {
@@ -33,10 +32,10 @@ const ArticlesLikeService = {
   async fetchDataFromDB(slug, authUserId) {
     const authUser = await UsersRepository
         .findOneBy('id', authUserId, ['favorites', 'following', 'id']);
-
     if (!authUser) throw new BadRequestError('You\'re not authorized');
 
-    const article = await ArticlesDBService.fetchArticleFromDB(slug);
+    const article = await ArticlesRepository.findOneBy('slug', slug);
+    if (!article) throw new NotFoundError('Article not found');
 
     return [authUser, article];
   },

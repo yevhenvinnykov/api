@@ -29,6 +29,8 @@ const ArticlesMongoose = {
       article.slug = article.title;
     }
     await article.save();
+
+    return Normalizer.article(article);
   },
 
   async like(authUserId, articleId) {
@@ -93,8 +95,8 @@ const ArticlesMongoose = {
         attributes: ['username', 'bio', 'image', 'following', 'id'],
       }],
       order: [['updatedAt', 'DESC']],
-      offset: offset || 0,
-      limit: limit || 5,
+      offset,
+      limit,
       subQuery: false,
     });
 

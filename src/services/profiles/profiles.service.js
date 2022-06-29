@@ -6,15 +6,13 @@ const ProfilesService = {
   async getProfile(authUserId, username) {
     const [authUser, profile] = await this.fetchDataFromDB(authUserId, username);
 
-    const isProfileFollowed = !!authUser && authUser.following.includes(profile.id);
-    profile.following = isProfileFollowed;
+    profile.following = authUser.following.includes(profile.id);
 
     return profile;
   },
 
   async followProfile(authUserId, username) {
     const [authUser, profile] = await this.fetchDataFromDB(authUserId, username);
-    if (!authUser) throw new BadRequestError('You\'re not authorized');
 
     if (!authUser.following.includes(profile.id)) {
       await UsersRepository.follow(authUserId, profile.id);
@@ -26,7 +24,6 @@ const ProfilesService = {
 
   async unfollowProfile(authUserId, username) {
     const [authUser, profile] = await this.fetchDataFromDB(authUserId, username);
-    if (!authUser) throw new BadRequestError('You\'re not authorized');
 
     const index = authUser.following.findIndex((id) => id === profile.id);
     if (index !== -1) await UsersRepository.unfollow(authUserId, index);
@@ -37,9 +34,9 @@ const ProfilesService = {
 
   async fetchDataFromDB(authUserId, username) {
     const authUser = await UsersRepository.findOneBy('id', authUserId, ['following']);
-    const profile = await UsersRepository
-        .findOneBy('username', username, ['username', 'email', 'bio', 'image', 'id']);
+    if (!authUser) throw new BadRequestError('You\'re not authorized');
 
+    const profile = await UsersRepository.findOneBy('username', username);
     if (!profile) throw new NotFoundError('User not found');
 
     return [authUser, profile];

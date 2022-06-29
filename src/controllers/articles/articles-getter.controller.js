@@ -14,7 +14,7 @@ const ArticlesGetterController = {
   async getArticlesFromFollowedUsers(req, res) {
     try {
       const {articles, articlesCount} = await ArticlesService
-          .getFromFollowed(req.userId, req.query);
+          .getMany(req.userId, {...req.query, feedFor: req.userId});
       res.status(200).json({articles, articlesCount});
     } catch (error) {
       ErrorHandler.catchError(res, error);

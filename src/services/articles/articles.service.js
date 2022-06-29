@@ -23,10 +23,6 @@ const ArticlesService = {
     return await ArticlesGetterService.getArticles(authUserId, query);
   },
 
-  async getFromFollowed(authUserId, query) {
-    return await ArticlesGetterService.getArticlesFromFollowedUsers(authUserId, query);
-  },
-
   async getTags() {
     return await ArticlesGetterService.getTags();
   },

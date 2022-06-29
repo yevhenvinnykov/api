@@ -26,6 +26,8 @@ const UsersSequelize = {
       user[prop] = userData[prop];
     }
     await user.save();
+
+    return Normalizer.user(user);
   },
 
   async follow(authUserId, idToFollow) {

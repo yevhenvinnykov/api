@@ -1,12 +1,10 @@
 const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
 const UsersRepository = require('../../../db/repos/users/users.repository');
-const {BadRequestError} = require('../../../middleware/errors/errorHandler');
-const ArticlesDBService = require('../db/articles-db.service');
+const {BadRequestError, NotFoundError} = require('../../../middleware/errors/errorHandler');
 
 const ArticlesCRUDService = {
   async createArticle(authUserId, articleData) {
     const article = await ArticlesRepository.create(authUserId, articleData);
-
     if (!article) {
       throw new BadRequestError('Something went wrong when creating article');
     }
@@ -15,19 +13,22 @@ const ArticlesCRUDService = {
   },
 
   async updateArticle({slug, authUserId, updateData}) {
-    const article = await ArticlesDBService.fetchArticleFromDB(slug);
+    let article = await ArticlesRepository.findOneBy('slug', slug);
+    if (!article) throw new NotFoundError('Article not found');
 
     if (article.author.id !== authUserId) {
       throw new BadRequestError('You are not authorized to update the article');
     }
 
-    await ArticlesRepository.update(article.id, updateData);
+    article = await ArticlesRepository.update(article.id, updateData);
 
-    return await ArticlesRepository.findOneBy('id', article.id);
+    return article;
   },
 
   async getArticle(slug, authUserId) {
-    const article = await ArticlesDBService.fetchArticleFromDB(slug);
+    const article = await ArticlesRepository.findOneBy('slug', slug);
+    if (!article) throw new NotFoundError('Article not found');
+
     const authUser = authUserId
         ? await UsersRepository.findOneBy('id', authUserId, ['favorites', 'following'])
         : null;

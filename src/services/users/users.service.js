@@ -5,9 +5,8 @@ const SessionService = require('../session/session.service');
 
 const UsersService = {
   async createUser({userData}) {
-    await UsersRepository.create(userData);
+    const user = await UsersRepository.create(userData);
 
-    const user = await UsersRepository.findOneBy('email', userData.email);
     if (!user) {
       throw new BadRequestError('Something went wrong when creating the user');
     }
@@ -17,15 +16,13 @@ const UsersService = {
   },
 
   async updateUser({authUserId, userData}) {
-    const user = await UsersRepository.findOneBy('id', authUserId);
+    const user = await UsersRepository.update(authUserId, userData);
+
     if (!user) throw new NotFoundError('User not found');
 
-    await UsersRepository.update(authUserId, userData);
+    user.token = SessionService.createToken(user.id);
 
-    const updatedUser = await UsersRepository.findOneBy('id', authUserId);
-    updatedUser.token = SessionService.createToken(user.id);
-
-    return updatedUser;
+    return user;
   },
 };
 
