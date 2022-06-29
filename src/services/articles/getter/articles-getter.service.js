@@ -12,7 +12,7 @@ const ArticlesGetterService = {
       articles,
       articlesCount,
       authUser,
-    } = await this.fetchDataFromDB(query, authUserId);
+    } = await this.fetchDataFromDB(authUserId, query);
 
     if (authUser) {
       articles.forEach((article) => article.favorited = authUser.favorites.includes(article.id));
@@ -22,7 +22,7 @@ const ArticlesGetterService = {
   },
 
   async getTags() {
-    const {articles} = await this.fetchDataFromDB({limit: 30});
+    const {articles} = await this.fetchDataFromDB(null, {limit: 30});
     const tags = new Set();
 
     for (const article of articles) {
@@ -32,7 +32,7 @@ const ArticlesGetterService = {
     return [...tags];
   },
 
-  async fetchDataFromDB(query, authUserId) {
+  async fetchDataFromDB(authUserId, query) {
     const data = {};
 
     if (authUserId) {

@@ -45,10 +45,9 @@ describe('ARTICLES CRUD SERVICE', () => {
     test('should update an article', async () => {
       jest.spyOn(ArticlesRepository, 'findOneBy')
           .mockReturnValue({title: 'updated', author: {id: 1}});
-      jest.spyOn(ArticlesRepository, 'update').mockImplementation(() => Promise.resolvenull);
+      jest.spyOn(ArticlesRepository, 'update').mockReturnValue({title: 'updated', author: {id: 1}});
 
       const article = await ArticlesCRUDService.updateArticle(mockData);
-
       expect(article).toEqual({title: 'updated', author: {id: 1}});
     });
 

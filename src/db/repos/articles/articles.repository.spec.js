@@ -14,6 +14,7 @@ describe('ARTICLES REPOSITORY', () => {
 
   beforeEach(() => {
     mockArticle = {
+      id: 1,
       title: 'title',
       description: 'description',
       body: 'body',
@@ -22,10 +23,6 @@ describe('ARTICLES REPOSITORY', () => {
       slug: 'title',
       favoritesCount: 0,
     };
-  });
-
-  beforeEach(() => {
-    mockingoose.resetAll();
   });
 
   describe('CREATE', () => {
@@ -54,27 +51,27 @@ describe('ARTICLES REPOSITORY', () => {
   describe('UPDATE', () => {
     test('should update the article, ignoring the props that aren\'t present in the schema',
         async () => {
-          mockArticle.save = async function() {
-            this.title = mockUpdateData.title;
-          };
+          mockArticle.save = () => {};
+
           if (!isMongo) {
             jest.spyOn(Article, 'findOne').mockReturnValue(mockArticle);
           }
 
           if (isMongo) {
-            jest.spyOn(Article, 'findOne')
-                .mockReturnValue({populate: () => ({exec: () => mockArticle})});
+            mockingoose(Article).toReturn(mockArticle, 'findOne');
           }
+
+          jest.spyOn(Normalizer, 'article').mockReturnValue({title: 'new title'});
 
           const mockUpdateData = {
             title: 'new title',
             propThatShouldBeIgnored: 'ignore me',
           };
 
-          await ArticlesRepository.update(1, mockUpdateData);
+          const article = await ArticlesRepository.update(1, mockUpdateData);
 
-          expect(mockArticle.title).toBe(mockUpdateData.title);
-          expect(mockArticle.propThatShouldBeIgnored).toBeUndefined();
+          expect(article.title).toBe(mockUpdateData.title);
+          expect(article.propThatShouldBeIgnored).toBeUndefined();
         });
   });
 
@@ -99,13 +96,9 @@ describe('ARTICLES REPOSITORY', () => {
         mockingoose(Article).toReturn(mockArticle, 'findOne');
       }
       if (!isMongo) {
-        jest.spyOn(Article, 'findOne').mockReturnValue({
-          ...mockArticle,
-          id: 1,
-          author: {id: mockAuthortId},
-          save: () => {},
-        });
+        jest.spyOn(Article, 'findOne').mockReturnValue(mockArticle);
       }
+
       jest.spyOn(Normalizer, 'article').mockReturnValue({...mockArticle, author: {id: '1'}});
       const article = await ArticlesRepository.findOneBy('slug', 'slug');
 
@@ -147,51 +140,33 @@ describe('ARTICLES REPOSITORY', () => {
     });
   });
 
-  describe('LIKE', () => {
+  describe('LIKE AND DISLIKE', () => {
     beforeEach(() => {
+      mockArticle.favoritesCount = 1;
       if (isMongo) {
+        mockArticle.save = async () => {};
         jest.spyOn(Article, 'findOne')
             .mockReturnValue({populate: () => ({exec: () => mockArticle})});
       }
+
       if (!isMongo) {
         jest.spyOn(Article, 'findOne').mockReturnValue(mockArticle);
         const User = require('../../models/sequelize/user.model');
         jest.spyOn(User, 'update').mockImplementation(() => Promise.resolve());
-      }
-    });
-
-    test('should increment likes', async () => {
-      if (isMongo) {
-        mockArticle.save = async () => mockArticle.favoritesCount = 1;
-      }
-      if (!isMongo) {
-        jest.spyOn(Article, 'update').mockImplementation(() => mockArticle.favoritesCount = 1);
+        jest.spyOn(Article, 'update').mockImplementation(() => Promise.resolve());
       }
 
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({favorites: [], save: () => {}});
-
-      const mockAuthUserId = 1;
-      const mockArticleId = 2;
-      await ArticlesRepository.like(mockAuthUserId, mockArticleId);
-
-      expect(mockArticle.favoritesCount).toBe(1);
     });
-  });
 
-  describe('DISLIKE', () => {
+    test('should increment likes count', async () => {
+      await ArticlesRepository.like(mockAuthortId, mockArticle.id);
+
+      expect(mockArticle.favoritesCount).toBe(2);
+    });
+
     test('should decrement likes count', async () => {
-      if (isMongo) {
-        mockArticle.save = async () => mockArticle.favoritesCount = 0;
-      }
-      if (!isMongo) {
-        jest.spyOn(Article, 'update').mockImplementation(() => mockArticle.favoritesCount = 0);
-      }
-
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({favorites: [], save: () => {}});
-
-      const mockAuthUserId = 1;
-      const mockArticleId = 2;
-      await ArticlesRepository.dislike(mockAuthUserId, mockArticleId);
+      await ArticlesRepository.dislike(mockAuthortId, mockArticle.id);
 
       expect(mockArticle.favoritesCount).toBe(0);
     });

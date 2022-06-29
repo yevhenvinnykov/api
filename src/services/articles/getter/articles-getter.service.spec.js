@@ -4,26 +4,27 @@ const UsersRepository = require('../../../db/repos/users/users.repository');
 
 describe('ARTICLES GETTER SERVICE', () => {
   describe('GET ARTICLES FROM FOLLOWED USERS', () => {
-    const mockArticles = Array(10).fill({id: 1, title: 'title'}, 0);
+    const mockArticles = Array(5).fill({id: 1, title: 'title'}, 0);
 
     const expectedData = {
-      articles: Array(5).fill({id: 1, title: 'title', favorited: true}, 0),
-      articlesCount: 20,
+      articles: mockArticles.map((article) => ({...article, favorited: true})),
+      articlesCount: 5,
     };
 
-    const mockQuery = {limit: null, offset: null};
+    const mockQuery = {limit: null, offset: null, feedFor: 1};
 
-    test('should get articles and add info favorited: true', async () => {
+    test('should get articles and add favorited: true', async () => {
       jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({
         favorites: [1],
         following: [1, 2],
       });
       jest.spyOn(ArticlesRepository, 'find').mockReturnValue(mockArticles);
+      jest.spyOn(ArticlesRepository, 'count').mockReturnValue(5);
 
       const {
         articles,
         articlesCount,
-      } = await ArticlesGetterService.getArticlesFromFollowedUsers(1, mockQuery);
+      } = await ArticlesGetterService.getArticles(1, mockQuery);
 
       expect(articles).toEqual(expectedData.articles);
       expect(articlesCount).toBe(expectedData.articlesCount);
@@ -32,7 +33,7 @@ describe('ARTICLES GETTER SERVICE', () => {
     test('should throw an error if no authUserId found', async () => {
       try {
         jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(null);
-        await ArticlesGetterService.getArticlesFromFollowedUsers(1, mockQuery);
+        await ArticlesGetterService.getArticles(1, mockQuery);
       } catch (error) {
         expect(error.message).toBe('User not found');
       }
@@ -69,7 +70,7 @@ describe('ARTICLES GETTER SERVICE', () => {
       expect(articles).toEqual(expectedData);
     });
 
-    test('should get articles, add info and return them', async () => {
+    test('should get articles and add favorited info', async () => {
       const articles = await ArticlesGetterService.getArticles(1, mockQuery);
 
       expectedData.articles = [
@@ -91,9 +92,7 @@ describe('ARTICLES GETTER SERVICE', () => {
   });
 
   describe('GET TAGS', () => {
-    const mockArticles = [{
-      tagList: ['tag', 'tag'],
-    }];
+    const mockArticles = [{tagList: ['tag', 'tag']}];
     const expectedData = ['tag'];
 
     beforeEach(() => {

@@ -17,7 +17,7 @@ describe('PROFILES SERVICE', () => {
       try {
         await ProfilesService.getProfile(1, 'username');
       } catch (error) {
-        expect(error.message).toBe('User not found');
+        expect(error).toBeInstanceOf(Error);
       }
     });
   });
@@ -43,7 +43,7 @@ describe('PROFILES SERVICE', () => {
     });
 
     test('should throw an error if the user is not authorized', async () => {
-      jest.spyOn(ProfilesService, 'fetchDataFromDB').mockReturnValue([null, {id: 3}]);
+      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(null);
       try {
         await ProfilesService.followProfile(1, 'username');
       } catch (error) {
@@ -74,7 +74,7 @@ describe('UNFOLLOW PROFILE', () => {
   });
 
   test('should throw an error if the user is not authorized', async () => {
-    jest.spyOn(ProfilesService, 'fetchDataFromDB').mockReturnValue([null, {id: 3}]);
+    jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(null);
     try {
       await ProfilesService.unfollowProfile(1, 'username');
     } catch (error) {

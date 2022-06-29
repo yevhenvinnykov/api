@@ -21,16 +21,16 @@ describe('USERS SERVICE', () => {
     };
 
     test('should create a user', async () => {
-      jest.spyOn(UsersRepository, 'create').mockReturnValue(null);
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(userMock);
+      jest.spyOn(UsersRepository, 'create').mockReturnValue(userMock);
       jest.spyOn(jwt, 'sign').mockReturnValue('token');
+
       const user = await UsersService.createUser({userData: {signUpDataMock}});
+
       expect(user).toEqual(userMock);
     });
 
     test('should throw an error if the user wasn\'t created', async () => {
-      jest.spyOn(UsersRepository, 'create');
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(null);
+      jest.spyOn(UsersRepository, 'create').mockReturnValue(null);
       try {
         await UsersService.createUser({userData: {user: 'user'}});
       } catch (error) {
@@ -42,17 +42,16 @@ describe('USERS SERVICE', () => {
 
   describe('UPDATE USER', () => {
     test('should update a logged in user', async () => {
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue({user: 'user'});
       jest.spyOn(UsersRepository, 'update').mockReturnValue({user: 'updated user'});
       jest.spyOn(jwt, 'sign').mockReturnValue('token');
-      const user = await UsersService
-          .updateUser({authUserId: 1, updateData: 'update data'});
-      user.user = 'updated user';
+
+      const user = await UsersService.updateUser({authUserId: 1, updateData: 'update data'});
+
       expect(user).toEqual({user: 'updated user', token: 'token'});
     });
 
     test('should throw an error if the user wasn\'t found', async () => {
-      jest.spyOn(UsersRepository, 'findOneBy').mockReturnValue(null);
+      jest.spyOn(UsersRepository, 'update').mockReturnValue(null);
       try {
         await UsersService.updateUser({authUserId: 1});
       } catch (error) {
