@@ -1,5 +1,5 @@
-const ArticlesService = require('../../../services/articles/articles.service');
-const {ErrorHandler} = require('../../../middleware/errors/errorHandler');
+const ArticlesService = require('../../services/articles/articles.service');
+const {ErrorHandler} = require('../../middleware/errors/errorHandler');
 
 const ArticlesGetterController = {
   async getArticles(req, res) {

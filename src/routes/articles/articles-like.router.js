@@ -1,7 +1,6 @@
-const ArticlesLikeController =
-require('../../../controllers/articles/like/articles-like.controller');
+const ArticlesLikeController = require('../../controllers/articles/articles-like.controller');
 
-const TokenMiddleware = require('../../../middleware/token/token.middleware');
+const TokenMiddleware = require('../../middleware/token/token.middleware');
 
 module.exports = (app) => {
   app.post(

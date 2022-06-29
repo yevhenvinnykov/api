@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  require('./getter/articles-getter.router')(app);
-  require('./crud/articles-crud.router')(app);
-  require('./like/articles-like.router')(app);
+  require('./articles-getter.router')(app);
+  require('./articles-crud.router')(app);
+  require('./articles-like.router')(app);
 };

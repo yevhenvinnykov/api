@@ -1,8 +1,7 @@
-const ArticlesCRUDController =
-require('../../../controllers/articles/crud/articles-crud.controller');
+const ArticlesCRUDController = require('../../controllers/articles/articles-crud.controller');
 
-const TokenMiddleware = require('../../../middleware/token/token.middleware');
-const ArticleMiddleware = require('../../../middleware/article/article.middleware');
+const TokenMiddleware = require('../../middleware/token/token.middleware');
+const ArticleMiddleware = require('../../middleware/article/article.middleware');
 
 
 module.exports = (app) => {

@@ -1,7 +1,6 @@
-const ArticlesGetterController =
-require('../../../controllers/articles/getter/articles-getter.controller');
+const ArticlesGetterController = require('../../controllers/articles/articles-getter.controller');
 
-const TokenMiddleware = require('../../../middleware/token/token.middleware');
+const TokenMiddleware = require('../../middleware/token/token.middleware');
 
 
 module.exports = (app) => {
