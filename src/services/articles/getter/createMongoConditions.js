@@ -1,17 +1,16 @@
-const UsersRepository = require('../../db/repos/users/users.repository');
-const {Op} = require('sequelize');
+const UsersRepository = require('../../../db/repos/users/users.repository');
 
 module.exports = async (query) => {
   const queryConditions = {};
 
   if (query.author) {
     const author = await UsersRepository.findOneBy('username', query.author, ['id']);
-    queryConditions.authorId = author.id;
+    queryConditions.author = author.id;
   }
 
   if (query.favorited) {
     const user = await UsersRepository.findOneBy('username', query.favorited, ['favorites']);
-    queryConditions.id = {[Op.in]: user.favorites};
+    queryConditions._id = {$in: user.favorites};
   }
 
   if (query.tag) {
@@ -20,7 +19,7 @@ module.exports = async (query) => {
 
   if (query.feedFor) {
     const authUser = await UsersRepository.findOneBy('id', query.feedFor, ['following']);
-    queryConditions.authorId = {[Op.in]: authUser.following};
+    queryConditions.author = {$in: authUser.following};
   }
 
   return queryConditions;

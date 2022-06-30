@@ -1,8 +1,8 @@
 require('dotenv').config();
 const UsersRepository = require('../../../db/repos/users/users.repository');
 const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
-const createMongoConditions = require('../createMongoConditions');
-const createSequelizeConditions = require('../createSequelizeConditions');
+const createMongoConditions = require('./createMongoConditions');
+const createSequelizeConditions = require('./createSequelizeConditions');
 const {NotFoundError} = require('../../../middleware/errors/errorHandler');
 
 const ArticlesGetterService = {
