@@ -5,7 +5,9 @@ const mockingoose = require('mockingoose');
 const Normalizer = require('../normalizer');
 
 const isMongo = process.env.ORM === 'MONGOOSE';
-const Comment = isMongo ? db.comment : require('../../models/sequelize/comment.model');
+const Comment = isMongo
+? require('../../models/mongoose/comment.model')
+: require('../../models/sequelize/comment.model');
 
 describe('COMMENTS REPOSITORY', () => {
   const mockData = {

@@ -1,5 +1,4 @@
-const db = require('../../index');
-const User = db.user;
+const User = require('../../models/mongoose/user.model');
 const bcrypt = require('bcryptjs');
 const Normalizer = require('../normalizer');
 

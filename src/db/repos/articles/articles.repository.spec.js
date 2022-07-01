@@ -6,7 +6,9 @@ const UsersRepository = require('../users/users.repository');
 const Normalizer = require('../normalizer');
 
 const isMongo = process.env.ORM === 'MONGOOSE';
-const Article = isMongo ? db.article : require('../../models/sequelize/article.model');
+const Article = isMongo
+? require('../../models/mongoose/article.model')
+: require('../../models/sequelize/article.model');
 const mockAuthortId = isMongo ? new db.mongoose.Types.ObjectId() : 1;
 
 describe('ARTICLES REPOSITORY', () => {

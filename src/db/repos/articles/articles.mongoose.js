@@ -1,5 +1,4 @@
-const db = require('../../index');
-const Article = db.article;
+const Article = require('../../models/mongoose/article.model');
 const UsersRepository = require('../users/users.repository');
 const Normalizer = require('../normalizer');
 

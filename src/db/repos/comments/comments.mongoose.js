@@ -1,5 +1,4 @@
-const db = require('../../index');
-const Comment = db.comment;
+const Comment = require('../../models/mongoose/comment.model');
 const Normalizer = require('../normalizer');
 
 const CommentsMongoose = {

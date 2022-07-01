@@ -1,7 +1,6 @@
 require('dotenv').config();
-const db = require('../../index');
 const User = process.env.ORM === 'MONGOOSE'
-? db.user
+? require('../../models/mongoose/user.model')
 : require('../../models/sequelize/user.model');
 const bcrypt = require('bcryptjs');
 const UsersRepository = require('./users.repository');
