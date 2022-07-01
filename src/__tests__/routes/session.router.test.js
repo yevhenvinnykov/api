@@ -11,7 +11,8 @@ describe('SESSION ROUTER', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.finish();
+    await TestInitializer.clearDB();
+    await TestInitializer.closeServer();
   });
 
   beforeAll(async () => {

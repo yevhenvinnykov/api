@@ -12,7 +12,8 @@ describe('ARTICLES GETTER ROUTER: GET TAGS', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.finish();
+    await TestInitializer.clearDB();
+    await TestInitializer.closeServer();
   });
 
   beforeAll(async () => {

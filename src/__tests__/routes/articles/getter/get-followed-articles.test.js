@@ -14,7 +14,8 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.finish();
+    await TestInitializer.clearDB();
+    await TestInitializer.closeServer();
   });
 
   beforeAll(async () => {

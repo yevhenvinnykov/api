@@ -1,7 +1,6 @@
 const request = require('supertest');
 const MockCreator = require('../utils/mocks/index');
 const TestInitializer = require('../utils/TestInitializer');
-const bcrypt = require('bcryptjs');
 
 describe('USERS ROUTER', () => {
   let server;
@@ -11,7 +10,8 @@ describe('USERS ROUTER', () => {
   });
 
   afterAll(async () => {
-    await TestInitializer.finish();
+    await TestInitializer.clearDB();
+    await TestInitializer.closeServer();
   });
 
   describe('POST /api/users/signup', () => {

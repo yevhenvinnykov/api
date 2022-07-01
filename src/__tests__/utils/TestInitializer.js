@@ -21,8 +21,7 @@ const TestInitializer = {
     return app;
   },
 
-  async finish() {
-    await this.clearDB();
+  async closeServer() {
     if (process.env.ORM === 'MONGOOSE') {
       await mongoose.connection.close();
     }
