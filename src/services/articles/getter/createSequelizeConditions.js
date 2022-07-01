@@ -1,4 +1,4 @@
-const UsersRepository = require('../../../db/repos/users/users.repository');
+const UsersRepository = require('../../../db/repos/users/index');
 const {Op} = require('sequelize');
 
 module.exports = async (query) => {

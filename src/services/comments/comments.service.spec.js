@@ -1,7 +1,7 @@
 require('dotenv').config();
 const CommentsService = require('./comments.service');
-const CommentsRepository = require('../../db/repos/comments/comments.repository');
-const ArticlesRepository = require('../../db/repos/articles/articles.repository');
+const CommentsRepository = require('../../db/repos/comments/index');
+const ArticlesRepository = require('../../db/repos/articles/index');
 const {BadRequestError} = require('../../middleware/errors/errorHandler');
 
 describe('COMMENTS SERVICE', () => {

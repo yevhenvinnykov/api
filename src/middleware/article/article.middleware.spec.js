@@ -1,5 +1,5 @@
 require('dotenv').config();
-const ArticlesRepository = require('../../db/repos/articles/articles.repository');
+const ArticlesRepository = require('../../db/repos/articles/index');
 const ArticleMiddleware = require('./article.middleware');
 
 describe('CHECK IF ARTICLE TITLE IS UNIQUE', () => {

@@ -1,6 +1,6 @@
 require('dotenv').config();
 const UserMiddleware = require('./user.middleware');
-const UsersRepository = require('../../db/repos/users/users.repository');
+const UsersRepository = require('../../db/repos/users/index');
 
 describe('USER MIDDLEWARE', () => {
   let reqMock;

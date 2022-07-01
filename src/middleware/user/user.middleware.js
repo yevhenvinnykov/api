@@ -1,5 +1,5 @@
 const {ErrorHandler, BadRequestError} = require('../errors/errorHandler');
-const UsersRepository = require('../../db/repos/users/users.repository');
+const UsersRepository = require('../../db/repos/users/index');
 
 const UserMiddleware = {
   async checkIfUserExists(req, res, next) {

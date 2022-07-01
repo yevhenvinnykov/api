@@ -1,6 +1,6 @@
 require('dotenv').config();
 const SessionService = require('./session.service');
-const UsersRepository = require('../../db/repos/users/users.repository');
+const UsersRepository = require('../../db/repos/users/index');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 

@@ -1,6 +1,6 @@
 require('dotenv').config();
 const db = require('../../index');
-const CommentsRepository = require('./comments.repository');
+const CommentsRepository = require('./index');
 const mockingoose = require('mockingoose');
 const Normalizer = require('../normalizer');
 

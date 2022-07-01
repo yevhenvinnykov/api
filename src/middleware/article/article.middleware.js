@@ -1,4 +1,4 @@
-const ArticlesRepository = require('../../db/repos/articles/articles.repository');
+const ArticlesRepository = require('../../db/repos/articles/index');
 const {ErrorHandler, BadRequestError} = require('../errors/errorHandler');
 
 const ArticleMiddleware = {

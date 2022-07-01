@@ -1,6 +1,6 @@
 const Article = require('../../models/sequelize/article.model');
 const User = require('../../models/sequelize/user.model');
-const UsersRepository = require('../users/users.repository');
+const UsersRepository = require('../users/index');
 const {Op} = require('sequelize');
 const Normalizer = require('../normalizer');
 

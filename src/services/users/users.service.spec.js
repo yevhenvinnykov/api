@@ -1,6 +1,6 @@
 require('dotenv').config();
 const UsersService = require('./users.service');
-const UsersRepository = require('../../db/repos/users/users.repository');
+const UsersRepository = require('../../db/repos/users/index');
 const jwt = require('jsonwebtoken');
 
 describe('USERS SERVICE', () => {

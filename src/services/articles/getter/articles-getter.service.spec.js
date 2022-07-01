@@ -1,6 +1,6 @@
 const ArticlesGetterService = require('./articles-getter.service');
-const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
-const UsersRepository = require('../../../db/repos/users/users.repository');
+const ArticlesRepository = require('../../../db/repos/articles/index');
+const UsersRepository = require('../../../db/repos/users/index');
 
 describe('ARTICLES GETTER SERVICE', () => {
   describe('GET ARTICLES FROM FOLLOWED USERS', () => {

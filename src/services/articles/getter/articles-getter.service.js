@@ -1,6 +1,6 @@
 require('dotenv').config();
-const UsersRepository = require('../../../db/repos/users/users.repository');
-const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
+const UsersRepository = require('../../../db/repos/users/index');
+const ArticlesRepository = require('../../../db/repos/articles/index');
 const createMongoConditions = require('./createMongoConditions');
 const createSequelizeConditions = require('./createSequelizeConditions');
 const {NotFoundError} = require('../../../middleware/errors/errorHandler');

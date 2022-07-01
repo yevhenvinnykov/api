@@ -1,4 +1,4 @@
-const UsersRepository = require('../../../db/repos/users/users.repository');
+const UsersRepository = require('../../../db/repos/users/index');
 
 module.exports = async (query) => {
   const queryConditions = {};

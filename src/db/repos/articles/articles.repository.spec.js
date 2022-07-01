@@ -1,8 +1,8 @@
 require('dotenv').config();
-const ArticlesRepository = require('./articles.repository');
+const ArticlesRepository = require('./index');
 const db = require('../../index');
 const mockingoose = require('mockingoose');
-const UsersRepository = require('../users/users.repository');
+const UsersRepository = require('../users/index');
 const Normalizer = require('../normalizer');
 
 const isMongo = process.env.ORM === 'MONGOOSE';

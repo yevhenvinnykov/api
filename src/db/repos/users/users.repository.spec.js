@@ -3,7 +3,7 @@ const User = process.env.ORM === 'MONGOOSE'
 ? require('../../models/mongoose/user.model')
 : require('../../models/sequelize/user.model');
 const bcrypt = require('bcryptjs');
-const UsersRepository = require('./users.repository');
+const UsersRepository = require('./index');
 const mockingoose = require('mockingoose');
 
 describe('USERS REPOSITORY', () => {

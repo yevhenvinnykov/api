@@ -1,7 +1,7 @@
 require('dotenv').config();
 const ArticlesLikeService = require('./articles-like.service');
-const ArticlesRepository = require('../../../db/repos/articles/articles.repository');
-const UsersRepository = require('../../../db/repos/users/users.repository');
+const ArticlesRepository = require('../../../db/repos/articles/index');
+const UsersRepository = require('../../../db/repos/users/index');
 
 
 describe('ARTICLES LIKE SERVICE', () => {
