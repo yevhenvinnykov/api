@@ -20,7 +20,8 @@ const db = {
 
   async connect() {
     if (this.isMongo) {
-      const url = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.DB_NAME}`;
+      const dbName = process.env.NODE_ENV === 'DEV' ? process.env.DB_NAME : 'test_DB';
+      const url = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${dbName}`;
       try {
         await this.mongoose.connect(url);
         console.log(`Successfully connected to mongodb on port ${process.env.MONGO_PORT}`);
