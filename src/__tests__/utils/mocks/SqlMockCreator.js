@@ -5,7 +5,6 @@ const Comment = require('../../../db/models/sequelize/comment.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-
 const SqlMockCreator = {
   async createArticleMock(title, author) {
     const article = await Article.create({
@@ -26,14 +25,16 @@ const SqlMockCreator = {
       email: `${username}@email.com`.toLowerCase(),
       password: bcrypt.hashSync(`${username}Password1`, 8),
     });
-    const token = jwt.sign({id: user.id}, process.env.JWT_DEBUG_SECRET, {expiresIn: 3600});
+    const token = jwt.sign({ id: user.id }, process.env.JWT_DEBUG_SECRET, {
+      expiresIn: 3600,
+    });
     user.token = token;
     await user.save();
 
     return user;
   },
 
-  async createCommentMock({body, authorId, articleId}) {
+  async createCommentMock({ body, authorId, articleId }) {
     const comment = await Comment.create({
       body,
       authorId,

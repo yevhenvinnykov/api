@@ -1,11 +1,14 @@
 const ArticlesService = require('../../services/articles/articles.service');
-const {ErrorHandler} = require('../../middleware/errors/errorHandler');
+const { ErrorHandler } = require('../../middleware/errors/errorHandler');
 
 const ArticlesGetterController = {
   async getArticles(req, res) {
     try {
-      const {articles, articlesCount} = await ArticlesService.getMany(req.userId, req.query);
-      res.status(200).json({articles, articlesCount});
+      const { articles, articlesCount } = await ArticlesService.getMany(
+        req.userId,
+        req.query
+      );
+      res.status(200).json({ articles, articlesCount });
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }
@@ -13,9 +16,11 @@ const ArticlesGetterController = {
 
   async getArticlesFromFollowedUsers(req, res) {
     try {
-      const {articles, articlesCount} = await ArticlesService
-          .getMany(req.userId, {...req.query, feedFor: req.userId});
-      res.status(200).json({articles, articlesCount});
+      const { articles, articlesCount } = await ArticlesService.getMany(
+        req.userId,
+        { ...req.query, feedFor: req.userId }
+      );
+      res.status(200).json({ articles, articlesCount });
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }
@@ -24,7 +29,7 @@ const ArticlesGetterController = {
   async getTags(req, res) {
     try {
       const tags = await ArticlesService.getTags();
-      res.status(200).json({tags});
+      res.status(200).json({ tags });
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }

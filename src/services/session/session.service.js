@@ -1,11 +1,13 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
+const {
+  BadRequestError,
+  NotFoundError,
+} = require('../../middleware/errors/errorHandler');
 const UsersRepository = require('../../db/repos/users/index');
 
-
 const SessionService = {
-  async getLoggedInUser({authUserId}) {
+  async getLoggedInUser({ authUserId }) {
     const user = await UsersRepository.findOneBy('id', authUserId);
     if (!user) throw new NotFoundError('User not found');
 
@@ -15,11 +17,8 @@ const SessionService = {
   },
 
   async logIn(email, password) {
-    const user = await UsersRepository.findOneBy(
-        'email',
-        email,
-        ['username', 'email', 'bio', 'image', 'id', 'password'],
-    );
+    const attributes = ['username', 'email', 'bio', 'image', 'id', 'password'];
+    const user = await UsersRepository.findOneBy('email', email, attributes);
     if (!user) throw new NotFoundError('User not found');
 
     this.validatePassword(password, user.password);
@@ -29,7 +28,7 @@ const SessionService = {
   },
 
   createToken(id) {
-    return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: 3600});
+    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: 3600 });
   },
 
   validatePassword(decoded, encoded) {

@@ -6,24 +6,23 @@ const UsersController = require('../controllers/users.controller');
 
 module.exports = (app) => {
   app.post(
-      '/api/users/signup',
-      [
-        UserMiddleware.checkIfUserExists,
-        UserMiddleware.validateEmail,
-        UserMiddleware.validatePassword,
-      ],
-      UsersController.signUp)
-  ;
+    '/api/users/signup',
+    [
+      UserMiddleware.checkIfUserExists,
+      UserMiddleware.validateEmail,
+      UserMiddleware.validatePassword,
+    ],
+    UsersController.signUp
+  );
 
   app.put(
-      '/api/users',
-      [
-        TokenMiddleware.verifyToken,
-        UserMiddleware.checkIfUserExists,
-        UserMiddleware.validateEmail,
-        UserMiddleware.validatePassword,
-      ],
-      UsersController.updateUser,
+    '/api/users',
+    [
+      TokenMiddleware.verifyToken,
+      UserMiddleware.checkIfUserExists,
+      UserMiddleware.validateEmail,
+      UserMiddleware.validatePassword,
+    ],
+    UsersController.updateUser
   );
 };
-

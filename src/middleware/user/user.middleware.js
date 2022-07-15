@@ -1,11 +1,14 @@
-const {ErrorHandler, BadRequestError} = require('../errors/errorHandler');
+const { ErrorHandler, BadRequestError } = require('../errors/errorHandler');
 const UsersRepository = require('../../db/repos/users/index');
 
 const UserMiddleware = {
   async checkIfUserExists(req, res, next) {
     try {
-      const {email = '', username = ''} = req.body.user;
-      const user = await UsersRepository.findOneByOr([{email}, {username}], ['email', 'username']);
+      const { email = '', username = '' } = req.body.user;
+      const user = await UsersRepository.findOneByOr(
+        [{ email }, { username }],
+        ['email', 'username']
+      );
 
       if (!user) return next();
 
@@ -55,6 +58,5 @@ const UserMiddleware = {
     }
   },
 };
-
 
 module.exports = UserMiddleware;

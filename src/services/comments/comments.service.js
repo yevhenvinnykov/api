@@ -1,15 +1,24 @@
-const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
+const {
+  BadRequestError,
+  NotFoundError,
+} = require('../../middleware/errors/errorHandler');
 const CommentsRepository = require('../../db/repos/comments/index');
 const ArticlesRepository = require('../../db/repos/articles/index');
 
 const CommentsService = {
-  async createComment({authUserId, slug, commentBody}) {
+  async createComment({ authUserId, slug, commentBody }) {
     const article = await ArticlesRepository.findOneBy('slug', slug);
     if (!article) throw new NotFoundError('Article not found');
 
-    const comment = await CommentsRepository.create(commentBody, authUserId, article.id);
+    const comment = await CommentsRepository.create(
+      commentBody,
+      authUserId,
+      article.id
+    );
     if (!comment) {
-      throw new BadRequestError('Something went wrong while creating the comment');
+      throw new BadRequestError(
+        'Something went wrong while creating the comment'
+      );
     }
 
     return comment;
@@ -33,8 +42,11 @@ const CommentsService = {
       throw new BadRequestError('You are not authorized');
     }
 
-    const {deletedCount} = await CommentsRepository.deleteOneById(commentId);
-    if (!deletedCount) throw new BadRequestError('Something went wrong while deleting the comment');
+    const { deletedCount } = await CommentsRepository.deleteOneById(commentId);
+    if (!deletedCount)
+      throw new BadRequestError(
+        'Something went wrong while deleting the comment'
+      );
   },
 };
 

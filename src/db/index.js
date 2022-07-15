@@ -7,24 +7,27 @@ const db = {
     }
 
     if (!this.isMongo) {
-      const {Sequelize} = require('sequelize');
+      const { Sequelize } = require('sequelize');
       const sequelizeConfig = require('./sequelize-config');
       this.sequelize = new Sequelize(
-          sequelizeConfig.dbName,
-          sequelizeConfig.username,
-          sequelizeConfig.password,
-          sequelizeConfig.options,
+        sequelizeConfig.dbName,
+        sequelizeConfig.username,
+        sequelizeConfig.password,
+        sequelizeConfig.options
       );
     }
   },
 
   async connect() {
     if (this.isMongo) {
-      const dbName = process.env.NODE_ENV === 'DEV' ? process.env.DB_NAME : 'test_DB';
+      const dbName =
+        process.env.NODE_ENV === 'DEV' ? process.env.DB_NAME : 'test_DB';
       const url = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${dbName}`;
       try {
         await this.mongoose.connect(url);
-        console.log(`Successfully connected to mongodb on port ${process.env.MONGO_PORT}`);
+        console.log(
+          `Successfully connected to mongodb on port ${process.env.MONGO_PORT}`
+        );
       } catch (error) {
         console.log(error);
       }

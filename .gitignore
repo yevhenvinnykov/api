@@ -12,4 +12,6 @@ test.sqlite
 
 launch.json
 
-/old
+.eslintrc.json
+.prettierrc.json
+.prettierignore

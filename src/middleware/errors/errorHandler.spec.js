@@ -10,10 +10,11 @@ describe('ERROR HANDLER', () => {
   let res;
   beforeEach(() => {
     res = {
-      status: function() {
+      status: function () {
         return this;
       },
-      json: () => {}};
+      json: () => {},
+    };
     statusSpy = jest.spyOn(res, 'status');
     jsonSpy = jest.spyOn(res, 'json');
   });
@@ -53,4 +54,3 @@ describe('ERROR HANDLER', () => {
     expect(jsonSpy).toHaveBeenCalledWith(errorResponse);
   });
 });
-

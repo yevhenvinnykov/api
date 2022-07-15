@@ -4,7 +4,7 @@ const Op = require('Sequelize').Op;
 const Normalizer = require('../normalizer');
 
 const UsersSequelize = {
-  async create({username, email, password}) {
+  async create({ username, email, password }) {
     const user = await User.create({
       username,
       email,
@@ -15,7 +15,12 @@ const UsersSequelize = {
   },
 
   async update(authUserId, userData) {
-    const user = await this.findOneBy('id', authUserId, this.defaultAttributes, 'raw');
+    const user = await this.findOneBy(
+      'id',
+      authUserId,
+      this.defaultAttributes,
+      'raw'
+    );
 
     for (const prop in userData) {
       if (!(prop in user)) continue;
@@ -34,34 +39,43 @@ const UsersSequelize = {
     const authUser = await this.findOneBy('id', authUserId, ['following']);
     authUser.following.push(idToFollow);
 
-    await User.update({
-      following: authUser.following,
-    }, {where: {id: authUserId}});
+    await User.update(
+      {
+        following: authUser.following,
+      },
+      { where: { id: authUserId } }
+    );
   },
 
   async unfollow(authUserId, index) {
     const authUser = await this.findOneBy('id', authUserId, ['following']);
     authUser.following.splice(index, 1);
 
-    await User.update({
-      following: authUser.following,
-    }, {where: {id: authUserId}});
+    await User.update(
+      {
+        following: authUser.following,
+      },
+      { where: { id: authUserId } }
+    );
   },
 
   async findOneBy(
-      field,
-      value,
-      attributes = this.defaultAttributes,
-      normalizing,
+    field,
+    value,
+    attributes = this.defaultAttributes,
+    normalizing
   ) {
-    const user = await User.findOne({where: {[field]: value}, attributes});
+    const user = await User.findOne({ where: { [field]: value }, attributes });
 
     if (normalizing === 'raw') return user;
     return Normalizer.user(user);
   },
 
   async findOneByOr(conditions, attributes = this.defaultAttributes) {
-    const user = await User.findOne({where: {[Op.or]: conditions}, attributes});
+    const user = await User.findOne({
+      where: { [Op.or]: conditions },
+      attributes,
+    });
 
     return Normalizer.user(user);
   },

@@ -24,36 +24,44 @@ describe('USERS SERVICE', () => {
       jest.spyOn(UsersRepository, 'create').mockReturnValue(userMock);
       jest.spyOn(jwt, 'sign').mockReturnValue('token');
 
-      const user = await UsersService.createUser({userData: {signUpDataMock}});
+      const user = await UsersService.createUser({
+        userData: { signUpDataMock },
+      });
 
       expect(user).toEqual(userMock);
     });
 
-    test('should throw an error if the user wasn\'t created', async () => {
+    test("should throw an error if the user wasn't created", async () => {
       jest.spyOn(UsersRepository, 'create').mockReturnValue(null);
       try {
-        await UsersService.createUser({userData: {user: 'user'}});
+        await UsersService.createUser({ userData: { user: 'user' } });
       } catch (error) {
-        expect(error.message)
-            .toBe('Something went wrong when creating the user');
+        expect(error.message).toBe(
+          'Something went wrong when creating the user'
+        );
       }
     });
   });
 
   describe('UPDATE USER', () => {
     test('should update a logged in user', async () => {
-      jest.spyOn(UsersRepository, 'update').mockReturnValue({user: 'updated user'});
+      jest
+        .spyOn(UsersRepository, 'update')
+        .mockReturnValue({ user: 'updated user' });
       jest.spyOn(jwt, 'sign').mockReturnValue('token');
 
-      const user = await UsersService.updateUser({authUserId: 1, updateData: 'update data'});
+      const user = await UsersService.updateUser({
+        authUserId: 1,
+        updateData: 'update data',
+      });
 
-      expect(user).toEqual({user: 'updated user', token: 'token'});
+      expect(user).toEqual({ user: 'updated user', token: 'token' });
     });
 
-    test('should throw an error if the user wasn\'t found', async () => {
+    test("should throw an error if the user wasn't found", async () => {
       jest.spyOn(UsersRepository, 'update').mockReturnValue(null);
       try {
-        await UsersService.updateUser({authUserId: 1});
+        await UsersService.updateUser({ authUserId: 1 });
       } catch (error) {
         expect(error.message).toBe('User not found');
       }

@@ -3,7 +3,6 @@ const request = require('supertest');
 const TestInitializer = require('../../../utils/TestInitializer');
 const MockCreator = require('../../../utils/mocks/index');
 
-
 describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
   let server;
   let user;
@@ -33,8 +32,8 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
   describe('GET /api/articles/feed', () => {
     it('should return 0 articles, because the user does not follow the author', async () => {
       const response = await request(server)
-          .get('/api/articles/feed')
-          .set('x-access-token', user.token);
+        .get('/api/articles/feed')
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(0);
@@ -43,12 +42,12 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES FROM FOLLOWED USERS', () => {
 
     it('should return 5 articles, because the user follows the author', async () => {
       await request(server)
-          .post(`/api/profiles/${author.username}/follow`)
-          .set('x-access-token', user.token);
+        .post(`/api/profiles/${author.username}/follow`)
+        .set('x-access-token', user.token);
 
       const response = await request(server)
-          .get('/api/articles/feed')
-          .set('x-access-token', user.token);
+        .get('/api/articles/feed')
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(5);

@@ -24,11 +24,13 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
   beforeAll(async () => {
     const articleNumbers = ['One', 'Two', 'Three', 'Four', 'Five'];
     for (const number of articleNumbers) {
-      const article = await MockCreator.createArticleMock(`Article${number}`, user.id);
+      const article = await MockCreator.createArticleMock(
+        `Article${number}`,
+        user.id
+      );
       articles.push(article);
     }
   });
-
 
   describe('GET /api/articles', () => {
     it('should return all the articles since no limit is specified', async () => {
@@ -41,8 +43,8 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
 
     it('should return specified number of articles', async () => {
       const response = await request(server)
-          .get('/api/articles?limit=3')
-          .set('Accept', 'application/json');
+        .get('/api/articles?limit=3')
+        .set('Accept', 'application/json');
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(3);
@@ -51,8 +53,8 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
 
     it('should skip the specified number of articles', async () => {
       const response = await request(server)
-          .get('/api/articles?limit=1&offset=3')
-          .set('Accept', 'application/json');
+        .get('/api/articles?limit=1&offset=3')
+        .set('Accept', 'application/json');
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(1);
@@ -63,60 +65,73 @@ describe('ARTICLES GETTER ROUTER: GET ARTICLES', () => {
       const response = await request(server).get('/api/articles');
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.articles.every((article) => !article.favorited)).toBe(true);
+      expect(
+        response.body.articles.every((article) => !article.favorited)
+      ).toBe(true);
     });
 
     it('two of the articles should have favorited: true, token is provided', async () => {
       await request(server)
-          .post(`/api/articles/${articles[0].title}/favorite`)
-          .set('x-access-token', user.token);
+        .post(`/api/articles/${articles[0].title}/favorite`)
+        .set('x-access-token', user.token);
 
       await request(server)
-          .post(`/api/articles/${articles[1].title}/favorite`)
-          .set('x-access-token', user.token);
+        .post(`/api/articles/${articles[1].title}/favorite`)
+        .set('x-access-token', user.token);
 
       const response = await request(server)
-          .get('/api/articles')
-          .set('x-access-token', user.token);
+        .get('/api/articles')
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
-      const likedArticles = response.body.articles.filter((article) => article.favorited);
+      const likedArticles = response.body.articles.filter(
+        (article) => article.favorited
+      );
       expect(likedArticles.length).toBe(2);
     });
 
     it('should return all the articles of the given author', async () => {
-      const response = await request(server).get(`/api/articles?author=${user.username}`);
+      const response = await request(server).get(
+        `/api/articles?author=${user.username}`
+      );
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(5);
-      expect(response.body.articles.every((article) => article.author.id === `${user.id}`))
-          .toBe(true);
+      expect(
+        response.body.articles.every(
+          (article) => article.author.id === `${user.id}`
+        )
+      ).toBe(true);
     });
 
     it('should return all the liked articles', async () => {
       const response = await request(server)
-          .get(`/api/articles?favorited=${user.username}`)
-          .set('x-access-token', user.token);
+        .get(`/api/articles?favorited=${user.username}`)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.articles.length).toBe(2);
-      expect(response.body.articles.every((article) => article.favorited)).toBe(true);
+      expect(response.body.articles.every((article) => article.favorited)).toBe(
+        true
+      );
     });
 
     it('should return all the articles with the given tag', async () => {
       const response = await request(server).get('/api/articles?tag=lorem');
 
-      const {articles} = response.body;
+      const { articles } = response.body;
 
       expect(response.statusCode).toBe(200);
       expect(articles.length).toBe(5);
-      expect(articles.every((article) => article.tagList.includes('lorem'))).toBe(true);
+      expect(
+        articles.every((article) => article.tagList.includes('lorem'))
+      ).toBe(true);
     });
 
     it('should fail because the token is invalid', async () => {
       const response = await request(server)
-          .get('/api/articles')
-          .set('x-access-token', 'INVALID_TOKEN');
+        .get('/api/articles')
+        .set('x-access-token', 'INVALID_TOKEN');
 
       expect(response.statusCode).toBe(400);
     });

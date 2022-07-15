@@ -2,21 +2,16 @@ const ArticlesGetterController = require('../../controllers/articles/articles-ge
 
 const TokenMiddleware = require('../../middleware/token/token.middleware');
 
-
 module.exports = (app) => {
   app.get(
-      '/api/articles/feed',
-      [TokenMiddleware.verifyToken],
-      ArticlesGetterController.getArticlesFromFollowedUsers,
+    '/api/articles/feed',
+    [TokenMiddleware.verifyToken],
+    ArticlesGetterController.getArticlesFromFollowedUsers
   );
   app.get(
-      '/api/articles/',
-      [TokenMiddleware.verifyOptionalToken],
-      ArticlesGetterController.getArticles,
+    '/api/articles/',
+    [TokenMiddleware.verifyOptionalToken],
+    ArticlesGetterController.getArticles
   );
-  app.get(
-      '/api/tags',
-      ArticlesGetterController.getTags,
-  );
+  app.get('/api/tags', ArticlesGetterController.getTags);
 };
-

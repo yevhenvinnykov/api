@@ -3,26 +3,27 @@ const UsersRepository = require('../../../db/repos/users/index');
 const ArticlesRepository = require('../../../db/repos/articles/index');
 const createMongoConditions = require('./createMongoConditions');
 const createSequelizeConditions = require('./createSequelizeConditions');
-const {NotFoundError} = require('../../../middleware/errors/errorHandler');
+const { NotFoundError } = require('../../../middleware/errors/errorHandler');
 
 const ArticlesGetterService = {
-
   async getArticles(authUserId, query) {
-    const {
-      articles,
-      articlesCount,
-      authUser,
-    } = await this.fetchDataFromDB(authUserId, query);
+    const { articles, articlesCount, authUser } = await this.fetchDataFromDB(
+      authUserId,
+      query
+    );
 
     if (authUser) {
-      articles.forEach((article) => article.favorited = authUser.favorites.includes(article.id));
+      articles.forEach(
+        (article) =>
+          (article.favorited = authUser.favorites.includes(article.id))
+      );
     }
 
-    return {articles, articlesCount};
+    return { articles, articlesCount };
   },
 
   async getTags() {
-    const {articles} = await this.fetchDataFromDB(null, {limit: 30});
+    const { articles } = await this.fetchDataFromDB(null, { limit: 30 });
     const tags = new Set();
 
     for (const article of articles) {
@@ -36,7 +37,9 @@ const ArticlesGetterService = {
     const data = {};
 
     if (authUserId) {
-      const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
+      const authUser = await UsersRepository.findOneBy('id', authUserId, [
+        'favorites',
+      ]);
       if (!authUser) throw new NotFoundError('User not found');
       data.authUser = authUser;
     }
@@ -46,9 +49,10 @@ const ArticlesGetterService = {
       offset: query?.offset ? Number(query.offset) : 0,
     };
 
-    const condtions = process.env.ORM === 'MONGOOSE'
-    ? await createMongoConditions(query)
-    : await createSequelizeConditions(query);
+    const condtions =
+      process.env.ORM === 'MONGOOSE'
+        ? await createMongoConditions(query)
+        : await createSequelizeConditions(query);
 
     const articles = await ArticlesRepository.find(condtions, options);
     if (!articles) throw new NotFoundError('Articles not found');

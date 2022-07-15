@@ -7,8 +7,12 @@ const ArticlesService = {
     return await ArticlesCRUDService.createArticle(authUserId, articleData);
   },
 
-  async update({slug, authUserId, updateData}) {
-    return await ArticlesCRUDService.updateArticle({slug, authUserId, updateData});
+  async update({ slug, authUserId, updateData }) {
+    return await ArticlesCRUDService.updateArticle({
+      slug,
+      authUserId,
+      updateData,
+    });
   },
 
   async getOne(slug, authUserId) {

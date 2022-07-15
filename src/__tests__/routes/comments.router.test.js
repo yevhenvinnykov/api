@@ -3,13 +3,12 @@ const MockCreator = require('../utils/mocks/index');
 const TestInitializer = require('../utils/TestInitializer');
 const mongoose = require('mongoose');
 
-
 describe('COMMENTS ROUTER', () => {
   let server;
   let author;
   let user;
   let article;
-  const body = {comment: {body: 'Test comment'}};
+  const body = { comment: { body: 'Test comment' } };
 
   beforeAll(async () => {
     server = await TestInitializer.initializeServer();
@@ -29,9 +28,9 @@ describe('COMMENTS ROUTER', () => {
   describe('POST /api/articles/:slug/comments', () => {
     it('should create a comment', async () => {
       const response = await request(server)
-          .post(`/api/articles/${article.slug}/comments`)
-          .send(body)
-          .set('x-access-token', author.token);
+        .post(`/api/articles/${article.slug}/comments`)
+        .send(body)
+        .set('x-access-token', author.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.comment.body).toBe('Test comment');
@@ -42,25 +41,26 @@ describe('COMMENTS ROUTER', () => {
 
   it('should fail because no article is found', async () => {
     const response = await request(server)
-        .post('/api/articles/UNKNOWN-ARTICLE/comments')
-        .send(body)
-        .set('x-access-token', author.token);
+      .post('/api/articles/UNKNOWN-ARTICLE/comments')
+      .send(body)
+      .set('x-access-token', author.token);
 
     expect(response.statusCode).toBe(404);
   });
 
   it('should fail because no token is provided', async () => {
     const response = await request(server)
-        .post('/api/articles/Test/comments')
-        .send(body);
+      .post('/api/articles/Test/comments')
+      .send(body);
 
     expect(response.statusCode).toBe(400);
   });
 
   describe('GET /api/articles/:slug/comments', () => {
     it('should return comments', async () => {
-      const response = await request(server)
-          .get(`/api/articles/${article.slug}/comments`);
+      const response = await request(server).get(
+        `/api/articles/${article.slug}/comments`
+      );
 
       expect(response.statusCode).toBe(200);
       expect(response.body.comments.length).toBe(1);
@@ -68,8 +68,9 @@ describe('COMMENTS ROUTER', () => {
     });
 
     it('should fail because no article is found', async () => {
-      const response = await request(server)
-          .get(`/api/articles/UNKNOWN-ARTICLE/comments`);
+      const response = await request(server).get(
+        `/api/articles/UNKNOWN-ARTICLE/comments`
+      );
 
       expect(response.statusCode).toBe(404);
     });
@@ -79,38 +80,46 @@ describe('COMMENTS ROUTER', () => {
     let comment;
 
     beforeEach(async () => {
-      comment = await MockCreator
-          .createCommentMock({body: 'TEST', authorId: author.id, articleId: article.id});
+      comment = await MockCreator.createCommentMock({
+        body: 'TEST',
+        authorId: author.id,
+        articleId: article.id,
+      });
     });
 
     it('should delete the comment', async () => {
       const response = await request(server)
-          .delete(`/api/articles/${article.slug}/comments/${comment.id}`)
-          .set('x-access-token', author.token);
+        .delete(`/api/articles/${article.slug}/comments/${comment.id}`)
+        .set('x-access-token', author.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual({});
     });
 
     it('should fail because no token is provided', async () => {
-      const response = await request(server)
-          .delete(`/api/articles/${article.slug}/comments/${comment.id}`);
+      const response = await request(server).delete(
+        `/api/articles/${article.slug}/comments/${comment.id}`
+      );
 
       expect(response.statusCode).toBe(400);
     });
 
     it('should fail because no comment is found', async () => {
       const response = await request(server)
-          .delete(`/api/articles/${article.slug}/comments/${new mongoose.Types.ObjectId()}`)
-          .set('x-access-token', author.token);
+        .delete(
+          `/api/articles/${
+            article.slug
+          }/comments/${new mongoose.Types.ObjectId()}`
+        )
+        .set('x-access-token', author.token);
 
       expect(response.statusCode).toBe(404);
     });
 
-    it('should fail because the user is not the comment\'s author', async () => {
+    it("should fail because the user is not the comment's author", async () => {
       const response = await request(server)
-          .delete(`/api/articles/${article.slug}/comments/${comment.id}`)
-          .set('x-access-token', user.token);
+        .delete(`/api/articles/${article.slug}/comments/${comment.id}`)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(400);
     });

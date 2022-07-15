@@ -3,7 +3,6 @@ const request = require('supertest');
 const TestInitializer = require('../../../utils/TestInitializer');
 const MockCreator = require('../../../utils/mocks/index');
 
-
 describe('ARTICLES GETTER ROUTER: GET TAGS', () => {
   let server;
 

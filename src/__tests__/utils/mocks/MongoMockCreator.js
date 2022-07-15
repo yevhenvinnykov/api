@@ -5,7 +5,6 @@ const Comment = require('../../../db/models/mongoose/comment.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-
 const MongoMockCreator = {
   async createArticleMock(title, author) {
     const article = await new Article({
@@ -27,14 +26,16 @@ const MongoMockCreator = {
       email: `${username}@email.com`.toLowerCase(),
       password: bcrypt.hashSync(`${username}Password1`, 8),
     });
-    const token = jwt.sign({id: user.id}, process.env.JWT_DEBUG_SECRET, {expiresIn: 3600});
+    const token = jwt.sign({ id: user.id }, process.env.JWT_DEBUG_SECRET, {
+      expiresIn: 3600,
+    });
     user.token = token;
     await user.save();
 
     return user;
   },
 
-  async createCommentMock({body, authorId, articleId}) {
+  async createCommentMock({ body, authorId, articleId }) {
     const comment = await new Comment({
       body,
       author: authorId,

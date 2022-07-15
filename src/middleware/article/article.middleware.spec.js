@@ -10,13 +10,13 @@ describe('CHECK IF ARTICLE TITLE IS UNIQUE', () => {
   let jsonSpy;
 
   beforeEach(() => {
-    reqMock = {body: {article: {title: 'title'}}};
+    reqMock = { body: { article: { title: 'title' } } };
 
     resMock = {
       status() {
         return this;
       },
-      json() { },
+      json() {},
     };
 
     nextMock = jest.fn();
@@ -24,23 +24,22 @@ describe('CHECK IF ARTICLE TITLE IS UNIQUE', () => {
     jsonSpy = jest.spyOn(resMock, 'json');
   });
 
-  test('when there\'s no article with such a title',
-      async () => {
-        jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(null);
-        await ArticleMiddleware.checkIfTitleIsUnique(reqMock, resMock, nextMock);
-        expect(nextMock).toHaveBeenCalledTimes(1);
-      });
+  test("when there's no article with such a title", async () => {
+    jest.spyOn(ArticlesRepository, 'findOneBy').mockReturnValue(null);
+    await ArticleMiddleware.checkIfTitleIsUnique(reqMock, resMock, nextMock);
+    expect(nextMock).toHaveBeenCalledTimes(1);
+  });
 
   test(`should send the response with a corresponding
-        error when the article\'s title is not unique`,
-  async () => {
-    jest.spyOn(ArticlesRepository, 'findOneBy')
-        .mockReturnValue({title: 'title'});
+        error when the article\'s title is not unique`, async () => {
+    jest
+      .spyOn(ArticlesRepository, 'findOneBy')
+      .mockReturnValue({ title: 'title' });
     await ArticleMiddleware.checkIfTitleIsUnique(reqMock, resMock, nextMock);
     expect(nextMock).toHaveBeenCalledTimes(0);
     expect(statusSpy).toHaveBeenCalledWith(400);
     expect(jsonSpy).toHaveBeenCalledWith({
-      'errors': {'Error: ': ['Article with this title already exists']},
+      errors: { 'Error: ': ['Article with this title already exists'] },
     });
   });
 });

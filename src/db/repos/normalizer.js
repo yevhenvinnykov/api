@@ -38,12 +38,14 @@ const Normalizer = {
       username: entry.username,
     };
     if (entry.following) {
-      user.following = entry.following
-          .map((userId) => isMongo ? userId._id.toString() : userId.toString());
+      user.following = entry.following.map((userId) =>
+        isMongo ? userId._id.toString() : userId.toString()
+      );
     }
     if (entry.favorites) {
-      user.favorites = entry.favorites
-          .map((articleId) => isMongo ? articleId._id.toString() : articleId.toString());
+      user.favorites = entry.favorites.map((articleId) =>
+        isMongo ? articleId._id.toString() : articleId.toString()
+      );
     }
     if (entry.password) {
       user.password = entry.password;
@@ -69,7 +71,9 @@ const Normalizer = {
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,
       body: entry.body,
-      article: isMongo ? entry.article._id.toString() : entry.articleId.toString(),
+      article: isMongo
+        ? entry.article._id.toString()
+        : entry.articleId.toString(),
       author: {
         id: isMongo ? entry.author._id.toString() : entry.author.id.toString(),
         username: entry.author.username,
@@ -79,6 +83,5 @@ const Normalizer = {
     };
   },
 };
-
 
 module.exports = Normalizer;

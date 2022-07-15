@@ -35,9 +35,9 @@ describe('ARTICLES CRUD ROUTER', () => {
   describe('POST /api/articles', () => {
     it('should create an article', async () => {
       const response = await request(server)
-          .post('/api/articles')
-          .send(body)
-          .set('x-access-token', user.token);
+        .post('/api/articles')
+        .send(body)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.article.title).toBe(articleTitle);
@@ -50,13 +50,13 @@ describe('ARTICLES CRUD ROUTER', () => {
       expect(response.statusCode).toBe(400);
     });
 
-    it('should fail because the article\'s title is not unique', async () => {
+    it("should fail because the article's title is not unique", async () => {
       await MockCreator.createArticleMock(articleTitle, user.id);
 
       const response = await request(server)
-          .post('/api/articles')
-          .send(body)
-          .set('x-access-token', user.token);
+        .post('/api/articles')
+        .send(body)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(400);
     });
@@ -72,11 +72,11 @@ describe('ARTICLES CRUD ROUTER', () => {
         },
       };
       const response = await request(server)
-          .put(`/api/articles/${articleTitle}`)
-          .send(body)
-          .set('x-access-token', user.token);
+        .put(`/api/articles/${articleTitle}`)
+        .send(body)
+        .set('x-access-token', user.token);
 
-      const {title, description, propToBeIgnored} = response.body.article;
+      const { title, description, propToBeIgnored } = response.body.article;
       articleTitle = title;
 
       expect(response.statusCode).toBe(200);
@@ -86,7 +86,9 @@ describe('ARTICLES CRUD ROUTER', () => {
     });
 
     it('should fail because no token is provided', async () => {
-      const response = await request(server).put(`/api/articles/${articleTitle}`).send(body);
+      const response = await request(server)
+        .put(`/api/articles/${articleTitle}`)
+        .send(body);
 
       expect(response.statusCode).toBe(400);
     });
@@ -94,9 +96,9 @@ describe('ARTICLES CRUD ROUTER', () => {
     it('should fail because no article is found', async () => {
       body.article.title = 'new title';
       const response = await request(server)
-          .put('/api/articles/UNKNOWN')
-          .send(body)
-          .set('x-access-token', user.token);
+        .put('/api/articles/UNKNOWN')
+        .send(body)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(404);
     });
@@ -104,10 +106,10 @@ describe('ARTICLES CRUD ROUTER', () => {
 
   describe('GET /api/articles/:slug', () => {
     let articleId;
-    it('should get the article, favorited: false because the article isn\'t liked', async () => {
+    it("should get the article, favorited: false because the article isn't liked", async () => {
       const response = await request(server)
-          .get(`/api/articles/${articleTitle}`)
-          .set('x-access-token', user.token);
+        .get(`/api/articles/${articleTitle}`)
+        .set('x-access-token', user.token);
 
       articleId = response.body.article._id;
 
@@ -118,12 +120,12 @@ describe('ARTICLES CRUD ROUTER', () => {
 
     it('should get the article, favorited: true because the article is liked', async () => {
       await request(server)
-          .post(`/api/articles/${articleTitle}/favorite`)
-          .set('x-access-token', user.token);
+        .post(`/api/articles/${articleTitle}/favorite`)
+        .set('x-access-token', user.token);
 
       const response = await request(server)
-          .get(`/api/articles/${articleTitle}`)
-          .set('x-access-token', user.token);
+        .get(`/api/articles/${articleTitle}`)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.article._id).toEqual(articleId);
@@ -131,7 +133,9 @@ describe('ARTICLES CRUD ROUTER', () => {
     });
 
     it('should get the article, favorited: false because no token is provided', async () => {
-      const response = await request(server).get(`/api/articles/${articleTitle}`);
+      const response = await request(server).get(
+        `/api/articles/${articleTitle}`
+      );
 
       expect(response.statusCode).toBe(200);
       expect(response.body.article._id).toBe(articleId);
@@ -147,23 +151,25 @@ describe('ARTICLES CRUD ROUTER', () => {
 
   describe('DELETE /api/articles/:slug', () => {
     it('should fail because no token is provided', async () => {
-      const response = await request(server).delete(`/api/articles/${articleTitle}`);
+      const response = await request(server).delete(
+        `/api/articles/${articleTitle}`
+      );
 
       expect(response.statusCode).toBe(400);
     });
 
     it('should fail because the article does not exist', async () => {
       const response = await request(server)
-          .delete('/api/articles/UNKNOWN')
-          .set('x-access-token', user.token);
+        .delete('/api/articles/UNKNOWN')
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(400);
     });
 
     it('should delete the article', async () => {
       const response = await request(server)
-          .delete(`/api/articles/${articleTitle}`)
-          .set('x-access-token', user.token);
+        .delete(`/api/articles/${articleTitle}`)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual({});

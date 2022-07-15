@@ -1,11 +1,11 @@
 const CommentsService = require('../services/comments/comments.service');
-const {ErrorHandler} = require('../middleware/errors/errorHandler');
+const { ErrorHandler } = require('../middleware/errors/errorHandler');
 
 const CommentsController = {
   async getComments(req, res) {
     try {
       const comments = await CommentsService.getComments(req.params.slug);
-      res.status(200).json({comments});
+      res.status(200).json({ comments });
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }
@@ -19,7 +19,7 @@ const CommentsController = {
         authUserId: req.userId,
       };
       const comment = await CommentsService.createComment(data);
-      res.status(200).json({comment});
+      res.status(200).json({ comment });
     } catch (error) {
       ErrorHandler.catchError(res, error);
     }

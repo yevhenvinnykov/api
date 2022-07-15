@@ -6,6 +6,9 @@
       "__tests__/index.js"
     ]
   },
+  "prettier": {
+    "singleQuote": true
+  },
   "version": "1.0.0",
   "description": "",
   "main": "src/app.js",
@@ -30,9 +33,11 @@
   "devDependencies": {
     "eslint": "^8.17.0",
     "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.5.0",
     "jest": "^28.1.0",
     "mockingoose": "^2.15.2",
     "nodemon": "^2.0.16",
+    "prettier": "2.7.1",
     "supertest": "^6.2.3"
   }
 }

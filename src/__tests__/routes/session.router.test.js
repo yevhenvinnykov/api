@@ -20,10 +20,14 @@ describe('SESSION ROUTER', () => {
   });
 
   describe('POST /api/users/login', () => {
-    const body = {user: {email: 'john@email.com', password: 'JohnPassword1'}};
+    const body = {
+      user: { email: 'john@email.com', password: 'JohnPassword1' },
+    };
 
     it('should login and return the user object with a token', async () => {
-      const response = await request(server).post('/api/users/login').send(body);
+      const response = await request(server)
+        .post('/api/users/login')
+        .send(body);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.user.username).toBe('John');
@@ -32,14 +36,18 @@ describe('SESSION ROUTER', () => {
 
     it('should fail because the password is invalid', async () => {
       body.user.password = 'InvalidPassword1';
-      const response = await request(server).post('/api/users/login').send(body);
+      const response = await request(server)
+        .post('/api/users/login')
+        .send(body);
 
       expect(response.statusCode).toBe(400);
     });
 
     it('should fail because the user does not exist', async () => {
       body.user.email = 'doesntexist@email.com';
-      const response = await request(server).post('/api/users/login').send(body);
+      const response = await request(server)
+        .post('/api/users/login')
+        .send(body);
 
       expect(response.statusCode).toBe(404);
     });
@@ -48,8 +56,8 @@ describe('SESSION ROUTER', () => {
   describe('GET /api/users', () => {
     it('should return a logged-in user object with a token ', async () => {
       const response = await request(server)
-          .get('/api/users')
-          .set('x-access-token', user.token);
+        .get('/api/users')
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.user.username).toBe('John');
@@ -59,8 +67,8 @@ describe('SESSION ROUTER', () => {
 
   it('should fail because the token is invalid', async () => {
     const response = await request(server)
-        .get('/api/users')
-        .set('x-access-token', 'INVALID_TOKEN');
+      .get('/api/users')
+      .set('x-access-token', 'INVALID_TOKEN');
 
     expect(response.statusCode).toBe(400);
   });
@@ -71,4 +79,3 @@ describe('SESSION ROUTER', () => {
     expect(response.statusCode).toBe(400);
   });
 });
-

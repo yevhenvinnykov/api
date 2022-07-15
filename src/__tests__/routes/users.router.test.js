@@ -28,23 +28,27 @@ describe('USERS ROUTER', () => {
     });
 
     it('should create a user and return the user object with a token', async () => {
-      const response = await request(server).post('/api/users/signup').send(body);
+      const response = await request(server)
+        .post('/api/users/signup')
+        .send(body);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.user.username).toBe('John');
       expect(response.body.user.token).toBeTruthy();
     });
 
-    it('should fail because the password won\'t pass the validation', async () => {
+    it("should fail because the password won't pass the validation", async () => {
       body.user.password = 'invld';
-      const response = await request(server).post('/api/users/signup').send(body);
+      const response = await request(server)
+        .post('/api/users/signup')
+        .send(body);
 
       expect(response.statusCode).toBe(400);
     });
   });
 
   it('should fail because no email was provided', async () => {
-    body = {user: {username: 'username', password: 'Password1'}};
+    body = { user: { username: 'username', password: 'Password1' } };
     const response = await request(server).post('/api/users/signup').send(body);
 
     expect(response.statusCode).toBe(500);
@@ -66,29 +70,31 @@ describe('USERS ROUTER', () => {
     });
 
     it('should fail because the email is taken', async () => {
-      const body = {user: {username: 'New Username', email: 'jack@email.com'}};
+      const body = {
+        user: { username: 'New Username', email: 'jack@email.com' },
+      };
 
       const response = await request(server)
-          .put('/api/users')
-          .send(body)
-          .set('x-access-token', user.token);
+        .put('/api/users')
+        .send(body)
+        .set('x-access-token', user.token);
 
       expect(response.statusCode).toBe(400);
     });
 
     it('should fail because the token is invalid', async () => {
-      const body = {user: {username: 'New Username'}};
+      const body = { user: { username: 'New Username' } };
 
       const response = await request(server)
-          .put('/api/users')
-          .send(body)
-          .set('x-access-token', 'INVALID_TOKEN');
+        .put('/api/users')
+        .send(body)
+        .set('x-access-token', 'INVALID_TOKEN');
 
       expect(response.statusCode).toBe(400);
     });
 
     it('should fail because the token is not provided', async () => {
-      const body = {user: {username: 'New Username'}};
+      const body = { user: { username: 'New Username' } };
 
       const response = await request(server).put('/api/users').send(body);
 
@@ -103,12 +109,11 @@ describe('USERS ROUTER', () => {
         },
       };
       const response = await request(server)
-          .put('/api/users')
-          .send(body)
-          .set('x-access-token', user.token);
+        .put('/api/users')
+        .send(body)
+        .set('x-access-token', user.token);
 
-
-      const {username, propToBeIgnored} = response.body.user;
+      const { username, propToBeIgnored } = response.body.user;
       expect(response.statusCode).toBe(200);
       expect(username).toBe('Ross');
       expect(propToBeIgnored).toBeUndefined();

@@ -9,22 +9,22 @@ const app = express();
 
 app.use(express.json());
 
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 if (process.env.DEBUG) {
-  app.use(cors({
-    origin: '*',
-  }));
+  app.use(
+    cors({
+      origin: '*',
+    })
+  );
 }
 
 app.use((req, res, next) => {
   res.header(
-      'Access-Control-Allow-Headers',
-      'x-access-token, Origin, Content-Type, Accept',
+    'Access-Control-Allow-Headers',
+    'x-access-token, Origin, Content-Type, Accept'
   );
-  res.header(
-      'Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS',
-  );
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
   next();
 });
 
@@ -39,4 +39,3 @@ db.connect();
 app.listen(SERVER_PORT, () => {
   console.log('Server running on port ' + SERVER_PORT);
 });
-

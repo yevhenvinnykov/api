@@ -3,8 +3,8 @@ const Normalizer = require('./normalizer');
 describe('NORMALIZER', () => {
   describe('ARTICLE', () => {
     const mockEntry = {
-      _id: {toString: () => '1'},
-      id: {toString: () => '1'},
+      _id: { toString: () => '1' },
+      id: { toString: () => '1' },
       slug: 'slug',
       title: 'title',
       description: 'description',
@@ -17,8 +17,8 @@ describe('NORMALIZER', () => {
       ormMethod: 'ormMethod',
       ormProp: 'ormProp',
       author: {
-        _id: {toString: () => '1'},
-        id: {toString: () => '1'},
+        _id: { toString: () => '1' },
+        id: { toString: () => '1' },
         username: 'author',
         bio: 'bio',
         image: 'image',
@@ -54,13 +54,13 @@ describe('NORMALIZER', () => {
 
   describe('USER', () => {
     const mockEntry = {
-      _id: {toString: () => '1'},
-      id: {toString: () => '1'},
+      _id: { toString: () => '1' },
+      id: { toString: () => '1' },
       bio: 'bio',
       image: 'image',
       username: 'username',
-      following: [{_id: {toString: () => '5'}, toString: () => '5'}],
-      favorites: [{_id: {toString: () => '10'}, toString: () => '10'}],
+      following: [{ _id: { toString: () => '5' }, toString: () => '5' }],
+      favorites: [{ _id: { toString: () => '10' }, toString: () => '10' }],
       password: 'password',
       ormMethod: 'ormMethod',
       ormProp: 'ormProp',
@@ -83,8 +83,8 @@ describe('NORMALIZER', () => {
 
   describe('PROFILE', () => {
     const mockEntry = {
-      _id: {toString: () => '1'},
-      id: {toString: () => '1'},
+      _id: { toString: () => '1' },
+      id: { toString: () => '1' },
       bio: 'bio',
       image: 'image',
       username: 'username',
@@ -107,18 +107,18 @@ describe('NORMALIZER', () => {
 
   describe('COMMENT', () => {
     const mockEntry = {
-      _id: {toString: () => '1'},
-      id: {toString: () => '1'},
+      _id: { toString: () => '1' },
+      id: { toString: () => '1' },
       createdAt: new Date(),
       updatedAt: new Date(),
       body: 'body',
-      articleId: {toString: () => '1'},
-      article: {_id: {toString: () => '1'}},
+      articleId: { toString: () => '1' },
+      article: { _id: { toString: () => '1' } },
       ormMethod: 'ormMethod',
       ormProp: 'ormProp',
       author: {
-        id: {toString: () => '1'},
-        _id: {toString: () => '1'},
+        id: { toString: () => '1' },
+        _id: { toString: () => '1' },
         username: 'username',
         bio: 'bio',
         image: 'image',

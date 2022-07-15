@@ -1,7 +1,8 @@
 require('dotenv').config();
-const User = process.env.ORM === 'MONGOOSE'
-? require('../../models/mongoose/user.model')
-: require('../../models/sequelize/user.model');
+const User =
+  process.env.ORM === 'MONGOOSE'
+    ? require('../../models/mongoose/user.model')
+    : require('../../models/sequelize/user.model');
 const bcrypt = require('bcryptjs');
 const UsersRepository = require('./index');
 const mockingoose = require('mockingoose');
@@ -21,13 +22,14 @@ describe('USERS REPOSITORY', () => {
 
   beforeEach(() => {
     if (process.env.ORM === 'MONGOOSE') {
-      jest.spyOn(User, 'findOne').mockReturnValue({select: () => ({exec: () => mockUser})});
+      jest
+        .spyOn(User, 'findOne')
+        .mockReturnValue({ select: () => ({ exec: () => mockUser }) });
     }
     if (process.env.ORM === 'SEQUELIZE') {
       jest.spyOn(User, 'findOne').mockReturnValue(mockUser);
     }
   });
-
 
   describe('CREATE', () => {
     test('should create a new user', async () => {
@@ -73,22 +75,26 @@ describe('USERS REPOSITORY', () => {
     });
   });
 
-
   describe('FIND ONE BY OR', () => {
     test('should find a user with one of the given fields having the given value', async () => {
-      const user = await UsersRepository.findOneByOr([{username: 'username'}, {id: 'id'}]);
+      const user = await UsersRepository.findOneByOr([
+        { username: 'username' },
+        { id: 'id' },
+      ]);
 
       expect(user.username).toBe(mockUser.username);
     });
   });
 
   describe('FOLLOW', () => {
-    test('should push the id to authUsers\'s following array', async () => {
-      mockUser.save = async function() {
+    test("should push the id to authUsers's following array", async () => {
+      mockUser.save = async function () {
         this.following = [2];
       };
       if (process.env.ORM === 'SEQUELIZE') {
-        jest.spyOn(User, 'update').mockImplementation(() => mockUser.following = [2]);
+        jest
+          .spyOn(User, 'update')
+          .mockImplementation(() => (mockUser.following = [2]));
       }
       await UsersRepository.follow(1, 2);
 
@@ -97,12 +103,14 @@ describe('USERS REPOSITORY', () => {
   });
 
   describe('UNFOLLOW', () => {
-    test('should delete the id from authUsers\'s following array', async () => {
-      mockUser.save = async function() {
+    test("should delete the id from authUsers's following array", async () => {
+      mockUser.save = async function () {
         this.following = [];
       };
       if (process.env.ORM === 'SEQUELIZE') {
-        jest.spyOn(User, 'update').mockImplementation(() => mockUser.following = []);
+        jest
+          .spyOn(User, 'update')
+          .mockImplementation(() => (mockUser.following = []));
       }
       await UsersRepository.unfollow(1, 2);
 

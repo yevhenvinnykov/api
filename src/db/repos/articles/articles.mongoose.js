@@ -32,7 +32,12 @@ const ArticlesMongoose = {
   },
 
   async like(authUserId, articleId) {
-    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites'], 'raw');
+    const authUser = await UsersRepository.findOneBy(
+      'id',
+      authUserId,
+      ['favorites'],
+      'raw'
+    );
     const article = await this.findOneBy('id', articleId, 'raw');
 
     article.favoritesCount++;
@@ -42,7 +47,12 @@ const ArticlesMongoose = {
   },
 
   async dislike(authUserId, articleId) {
-    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites'], 'raw');
+    const authUser = await UsersRepository.findOneBy(
+      'id',
+      authUserId,
+      ['favorites'],
+      'raw'
+    );
     const article = await this.findOneBy('id', articleId, 'raw');
     const index = authUser.favorites.indexOf(article.id);
 
@@ -59,20 +69,21 @@ const ArticlesMongoose = {
   async findOneBy(field, value, normalizing) {
     field = field === 'id' ? '_id' : field;
 
-    const article = await Article.findOne({[field]: value})
-        .populate('author', 'username bio image following').exec();
+    const article = await Article.findOne({ [field]: value })
+      .populate('author', 'username bio image following')
+      .exec();
 
     if (normalizing === 'raw') return article;
     return Normalizer.article(article);
   },
 
-  async find(conditions, {limit, offset}) {
+  async find(conditions, { limit, offset }) {
     const articles = await Article.find(conditions)
-        .skip(offset)
-        .limit(limit)
-        .sort([['updatedAt', 'descending']])
-        .populate('author', 'username bio image following')
-        .exec();
+      .skip(offset)
+      .limit(limit)
+      .sort([['updatedAt', 'descending']])
+      .populate('author', 'username bio image following')
+      .exec();
 
     return articles.map((article) => Normalizer.article(article));
   },

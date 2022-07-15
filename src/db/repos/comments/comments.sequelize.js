@@ -15,11 +15,14 @@ const CommentsSequelize = {
 
   async findByArticleId(articleId) {
     const comments = await Comment.findAll({
-      where: {articleId},
-      include: [{
-        model: User, as: 'author',
-        attributes: ['username', 'bio', 'image', 'id'],
-      }],
+      where: { articleId },
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['username', 'bio', 'image', 'id'],
+        },
+      ],
       order: [['updatedAt', 'DESC']],
     });
 
@@ -27,16 +30,21 @@ const CommentsSequelize = {
   },
 
   async deleteOneById(id) {
-    const deletedCount = await Comment.destroy({where: {id}});
+    const deletedCount = await Comment.destroy({ where: { id } });
 
-    return {deletedCount};
+    return { deletedCount };
   },
 
   async findOneBy(field, value) {
-    const comment = await Comment.findOne({where: {[field]: value}, include: [{
-      model: User, as: 'author',
-      attributes: ['username', 'bio', 'image', 'id'],
-    }],
+    const comment = await Comment.findOne({
+      where: { [field]: value },
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['username', 'bio', 'image', 'id'],
+        },
+      ],
     });
 
     return Normalizer.comment(comment);

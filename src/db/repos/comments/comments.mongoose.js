@@ -13,22 +13,22 @@ const CommentsMongoose = {
   },
 
   async findByArticleId(articleId) {
-    const comments = await Comment.find({article: articleId})
-        .populate('author', 'image username bio following')
-        .sort([['updatedAt', 'descending']])
-        .exec();
+    const comments = await Comment.find({ article: articleId })
+      .populate('author', 'image username bio following')
+      .sort([['updatedAt', 'descending']])
+      .exec();
 
     return comments.map((comment) => Normalizer.comment(comment));
   },
 
   async deleteOneById(id) {
-    return await Comment.deleteOne({_id: id}).exec();
+    return await Comment.deleteOne({ _id: id }).exec();
   },
 
   async findOneBy(field, value) {
     field = field === 'id' ? '_id' : field;
 
-    const comment = await Comment.findOne({[field]: value}).exec();
+    const comment = await Comment.findOne({ [field]: value }).exec();
 
     if (comment) {
       return Normalizer.comment(comment);

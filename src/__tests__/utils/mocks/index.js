@@ -1,8 +1,8 @@
 require('dotenv').config();
-const MockService = process.env.ORM === 'MONGOOSE'
-? require('./MongoMockCreator')
-: require('./SqlMockCreator');
-
+const MockService =
+  process.env.ORM === 'MONGOOSE'
+    ? require('./MongoMockCreator')
+    : require('./SqlMockCreator');
 
 const MockCreator = {
   async createArticleMock(title, author) {

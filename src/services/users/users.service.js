@@ -1,10 +1,12 @@
-const {BadRequestError, NotFoundError} = require('../../middleware/errors/errorHandler');
+const {
+  BadRequestError,
+  NotFoundError,
+} = require('../../middleware/errors/errorHandler');
 const UsersRepository = require('../../db/repos/users/index');
 const SessionService = require('../session/session.service');
 
-
 const UsersService = {
-  async createUser({userData}) {
+  async createUser({ userData }) {
     const user = await UsersRepository.create(userData);
 
     if (!user) {
@@ -15,7 +17,7 @@ const UsersService = {
     return user;
   },
 
-  async updateUser({authUserId, userData}) {
+  async updateUser({ authUserId, userData }) {
     const user = await UsersRepository.update(authUserId, userData);
 
     if (!user) throw new NotFoundError('User not found');

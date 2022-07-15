@@ -1,9 +1,8 @@
 const Article = require('../../models/sequelize/article.model');
 const User = require('../../models/sequelize/user.model');
 const UsersRepository = require('../users/index');
-const {Op} = require('sequelize');
+const { Op } = require('sequelize');
 const Normalizer = require('../normalizer');
-
 
 const ArticlesSequelize = {
   async create(authUserId, articleData) {
@@ -34,49 +33,69 @@ const ArticlesSequelize = {
   },
 
   async like(authUserId, articleId) {
-    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites']);
+    const authUser = await UsersRepository.findOneBy('id', authUserId, [
+      'favorites',
+    ]);
     const article = await this.findOneBy('id', articleId, 'raw');
 
     authUser.favorites.push(article.id);
 
-    await Article.update({
-      favoritesCount: ++article.favoritesCount,
-    }, {where: {id: article.id}});
+    await Article.update(
+      {
+        favoritesCount: ++article.favoritesCount,
+      },
+      { where: { id: article.id } }
+    );
 
-    await User.update({
-      favorites: authUser.favorites,
-    }, {where: {id: authUserId}});
+    await User.update(
+      {
+        favorites: authUser.favorites,
+      },
+      { where: { id: authUserId } }
+    );
   },
 
   async dislike(authUserId, articleId) {
-    const authUser = await UsersRepository.findOneBy('id', authUserId, ['favorites', 'id']);
+    const authUser = await UsersRepository.findOneBy('id', authUserId, [
+      'favorites',
+      'id',
+    ]);
     const article = await this.findOneBy('id', articleId, 'raw');
     const index = authUser.favorites.indexOf(article.id);
 
     authUser.favorites.splice(index, 1);
 
-    await Article.update({
-      favoritesCount: --article.favoritesCount,
-    }, {where: {id: article.id}});
+    await Article.update(
+      {
+        favoritesCount: --article.favoritesCount,
+      },
+      { where: { id: article.id } }
+    );
 
-    await User.update({
-      favorites: authUser.favorites,
-    }, {where: {id: authUserId}});
+    await User.update(
+      {
+        favorites: authUser.favorites,
+      },
+      { where: { id: authUserId } }
+    );
   },
 
   async delete(conditions) {
-    const deletedCount = await Article.destroy({where: conditions});
+    const deletedCount = await Article.destroy({ where: conditions });
 
-    return {deletedCount};
+    return { deletedCount };
   },
 
   async findOneBy(field, value, normalizing) {
     const article = await Article.findOne({
-      where: {[field]: value},
-      include: [{
-        model: User, as: 'author',
-        attributes: ['username', 'bio', 'image', 'following', 'id'],
-      }],
+      where: { [field]: value },
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['username', 'bio', 'image', 'following', 'id'],
+        },
+      ],
     });
 
     if (normalizing === 'raw') return article;
@@ -84,16 +103,19 @@ const ArticlesSequelize = {
     return Normalizer.article(article);
   },
 
-  async find(conditions, {limit, offset}) {
+  async find(conditions, { limit, offset }) {
     if (conditions.tagList) {
-      conditions = {tagList: {[Op.substring]: conditions.tagList}};
+      conditions = { tagList: { [Op.substring]: conditions.tagList } };
     }
     const articles = await Article.findAll({
       where: conditions,
-      include: [{
-        model: User, as: 'author',
-        attributes: ['username', 'bio', 'image', 'following', 'id'],
-      }],
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['username', 'bio', 'image', 'following', 'id'],
+        },
+      ],
       order: [['updatedAt', 'DESC']],
       offset,
       limit,
@@ -105,11 +127,10 @@ const ArticlesSequelize = {
 
   async count(conditions) {
     if (conditions.tagList) {
-      conditions = {tagList: {[Op.substring]: conditions.tagList}};
+      conditions = { tagList: { [Op.substring]: conditions.tagList } };
     }
-    return await Article.count({where: conditions});
+    return await Article.count({ where: conditions });
   },
 };
 
 module.exports = ArticlesSequelize;
-
