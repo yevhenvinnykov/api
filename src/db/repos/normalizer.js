@@ -10,6 +10,7 @@ const Normalizer = {
       title: entry.title,
       description: entry.description,
       body: entry.body,
+      image: entry.image,
       tagList: entry.tagList,
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,

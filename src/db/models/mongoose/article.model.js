@@ -6,6 +6,7 @@ const articleSchema = mongoose.Schema(
     title: String,
     description: String,
     body: String,
+    image: String,
     tagList: [String],
     favorited: { type: Boolean, default: false },
     favoritesCount: { type: Number, default: 0 },

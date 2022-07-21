@@ -25,6 +25,9 @@ Article.init(
     body: {
       type: DataTypes.STRING,
     },
+    image: {
+      type: DataTypes.STRING,
+    },
     tagList: {
       type: DataTypes.JSON,
     },
