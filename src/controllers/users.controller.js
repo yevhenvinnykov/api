@@ -1,5 +1,5 @@
 const UsersService = require('../services/users/users.service');
-const { ErrorHandler } = require('../middleware/errors/ErrorHandler');
+const { ErrorHandler } = require('../middleware/errors/errorHandler');
 
 const UsersController = {
   async signUp(req, res) {
