@@ -11,13 +11,13 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-if (process.env.DEBUG) {
+//if (process.env.DEBUG) {
   app.use(
     cors({
       origin: '*',
     })
   );
-}
+//}
 
 app.use((req, res, next) => {
   res.header(
