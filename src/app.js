@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./db/index');
 
-const SERVER_PORT = process.env.SERVER_PORT || 3000;
+const PORT = process.env.SERVER_PORT || 3000;
 
 const app = express();
 
@@ -36,6 +36,6 @@ require('./routes/articles/index')(app);
 
 db.connect();
 
-app.listen(SERVER_PORT, () => {
-  console.log('Server running on port ' + SERVER_PORT);
+app.listen(PORT, () => {
+  console.log('Server running on port ' + PORT);
 });
