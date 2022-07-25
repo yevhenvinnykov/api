@@ -11,13 +11,19 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-//if (process.env.DEBUG) {
+if (process.env.DEBUG) {
   app.use(
     cors({
       origin: '*',
     })
   );
-//}
+} else {
+  app.use(
+    cors({
+      origin: 'https://real-world-api-edu.herokuapp.com/api',
+    })
+  );
+}
 
 app.use((req, res, next) => {
   res.header(

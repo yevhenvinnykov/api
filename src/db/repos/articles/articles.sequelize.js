@@ -11,7 +11,7 @@ const ArticlesSequelize = {
       description: articleData.description,
       body: articleData.body,
       tagList: articleData.tagList,
-      slug: articleData.title,
+      slug: articleData.title.replace(' ', '-'),
       authorId: authUserId,
     });
 

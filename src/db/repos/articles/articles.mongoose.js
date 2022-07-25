@@ -9,7 +9,7 @@ const ArticlesMongoose = {
       description: articleData.description,
       body: articleData.body,
       tagList: articleData.tagList,
-      slug: articleData.title,
+      slug: articleData.title.replace(' ', '-'),
       author: authUserId,
     }).save();
 
