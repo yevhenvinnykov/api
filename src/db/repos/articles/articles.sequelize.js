@@ -25,7 +25,7 @@ const ArticlesSequelize = {
     for (const prop in updateData) {
       if (!(prop in article)) continue;
       article[prop] = updateData[prop];
-      article.slug = article.title;
+      article.slug = article.title.replaceAll(' ', '-');
     }
     await article.save();
 
