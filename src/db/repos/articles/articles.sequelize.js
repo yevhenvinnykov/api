@@ -10,6 +10,7 @@ const ArticlesSequelize = {
       title: articleData.title,
       description: articleData.description,
       body: articleData.body,
+      image: articleData.image,
       tagList: articleData.tagList,
       slug: articleData.title.replaceAll(' ', '-'),
       authorId: authUserId,
