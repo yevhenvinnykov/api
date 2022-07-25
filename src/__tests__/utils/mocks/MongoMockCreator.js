@@ -12,7 +12,7 @@ const MongoMockCreator = {
       description: 'Lorem ipsum',
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
       tagList: ['lorem'],
-      slug: title,
+      slug: title.replace(' ', '-'),
       author,
     });
     await article.save();

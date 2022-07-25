@@ -13,7 +13,7 @@ const SqlMockCreator = {
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
       tagList: ['lorem'],
       authorId: author,
-      slug: title,
+      slug: title.replace(' ', '-'),
     });
 
     return article;

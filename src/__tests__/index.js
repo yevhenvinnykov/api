@@ -16,6 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 require('../routes/users.router')(app);
 require('../routes/session.router')(app);
 require('../routes/profiles.router')(app);

@@ -23,6 +23,7 @@ describe('ARTICLES CRUD ROUTER', () => {
         title: 'Lorem',
         description: 'Lorem ipsum',
         body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        image: 'http://placehold.it/',
         tagList: ['lorem'],
       },
     };
