@@ -20,7 +20,7 @@ if (process.env.DEBUG) {
 } else {
   app.use(
     cors({
-      origin: 'https://real-world-api-edu.herokuapp.com/api',
+      origin: 'https://real-world-app-8743f.web.app',
     })
   );
 }
